@@ -4,6 +4,24 @@ $is_auth = rand(0, 1);
 
 $user_name = 'Макарий';
 
+function addLinkForBigText ($string, $symbols = 300) {
+    $arrayWords = explode (" ", $string);
+    $length = 0;
+    $newString ='';
+    foreach ($arrayWords as $key => $value) {
+      $length = $length + iconv_strlen($value);
+      $newString = $newString . ' ' . $value;
+      if ($length > 300) {
+        $newString = $newString . '...';
+        return $newString;
+      }
+    }
+    if ($length < 300) {
+        $newString = implode (" ", $arrayWords);
+        return $newString;
+    }
+}
+
 $cards = [
     [
         "title" => "Цитата",
@@ -256,8 +274,13 @@ $cards = [
                         </blockquote>
                     <?php elseif ($value["type"] == "post-text"): ?>
                         <p>
-                            <?=$value["description"]; ?>
+                           <?=addLinkForBigText($value["description"]); ?>
                         </p>
+                        <?php if (iconv_strlen(addLinkForBigText($value["description"])) > 300): ?>
+                            <div class="post-text__more-link-wrapper">
+                                <a class="post-text__more-link" href="#">Читать далее</a>
+                            </div>
+                        <?php endif; ?>
                     <?php elseif ($value["type"] == "post-photo"): ?>
                         <div class="post-photo__image-wrapper">
                           <img src="img/<?=$value["description"]; ?>" alt="Фото от пользователя" width="360" height="240">
