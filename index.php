@@ -6,20 +6,22 @@ $user_name = 'Макарий';
 
 function addLinkForBigText ($string, $symbols = 300) {
     $arrayWords = explode (" ", $string);
-    $length = 0;
     $newString ='';
+    $cut = false;
     foreach ($arrayWords as $key => $value) {
-      $length = $length + iconv_strlen($value);
-      $newString = $newString . ' ' . $value;
+      $length += iconv_strlen($value);
+      $newString .= ' ' . $value;
       if ($length > 300) {
-        $newString = $newString . '...';
-        return $newString;
+        $newString .= '...';
+        $cut = true;
       }
     }
     if ($length < 300) {
         $newString = implode (" ", $arrayWords);
-        return $newString;
+
     }
+
+    return [$newString, $cut];
 }
 
 $cards = [
@@ -33,7 +35,7 @@ $cards = [
     [
         "title" => "Игра престолов",
         "type" => "post-text",
-        "description" => "Не могу дождаться начала финального сезона своего любимого сериала!",
+        "description" => "агрузка и успешная инициализация карты (карта реализуется сторонней библиотекой Leaflet) переводит страницу в активное состояние. В активном состоянии страница позволяет: Вносить изменения в форму и отправлять её на сервер; После загрузки данных с сервера просматривать похожие объявления на карте, фильтровать их и уточнять подробную информацию о них, показывая для каждого из объявл",
         "userName" => "Владик",
         "avatar" => "userpic.jpg"
     ],
@@ -272,11 +274,12 @@ $cards = [
                             </p>
                         <cite>Неизвестный Автор</cite>
                         </blockquote>
-                    <?php elseif ($value["type"] == "post-text"): ?>
+                    <?php elseif ($value["type"] == "post-text"):
+                        list($arrayWords, $cut) = addLinkForBigText($value["description"]);?>
                         <p>
-                           <?=addLinkForBigText($value["description"]); ?>
+                           <?= $arrayWords; ?>
                         </p>
-                        <?php if (iconv_strlen(addLinkForBigText($value["description"])) > 300): ?>
+                        <?php if ($cut): ?>
                             <div class="post-text__more-link-wrapper">
                                 <a class="post-text__more-link" href="#">Читать далее</a>
                             </div>
