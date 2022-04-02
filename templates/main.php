@@ -1,3 +1,6 @@
+<?php
+
+?>
 <section class="page__main page__main--popular">
     <div class="container">
         <h1 class="page__title page__title--popular">Популярное</h1>
