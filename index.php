@@ -5,20 +5,22 @@ $is_auth = rand(0, 1);
 $user_name = 'Макарий';
 
 function addLinkForBigText ($string, $symbols = 300) {
-    $arrayWords = explode (" ", $string);
-    $newString ='';
-    $cut = false;
-    foreach ($arrayWords as $key => $value) {
-      $length += iconv_strlen($value);
-      $newString .= ' ' . $value;
-      if ($length > 300) {
-        $newString .= '...';
-        $cut = true;
-      }
-    }
-    if ($length < 300) {
-        $newString = implode (" ", $arrayWords);
-
+    if (is_string($string)) {
+        $arrayWords = explode (" ", $string);
+        $newString ='';
+        $length = 0;
+        $cut = false;
+        foreach ($arrayWords as $key => $value) {
+            $length += iconv_strlen($value);
+            $newString .= ' ' . $value;
+            if ($length >= 300) {
+                $newString = $newString . '...';
+                $cut = true;
+                break;
+            } else {
+                $newString = implode (" ", $arrayWords);
+            }
+        }
     }
 
     return [$newString, $cut];
@@ -35,7 +37,7 @@ $cards = [
     [
         "title" => "Игра престолов",
         "type" => "post-text",
-        "description" => "агрузка и успешная инициализация карты (карта реализуется сторонней библиотекой Leaflet) переводит страницу в активное состояние. В активном состоянии страница позволяет: Вносить изменения в форму и отправлять её на сервер; После загрузки данных с сервера просматривать похожие объявления на карте, фильтровать их и уточнять подробную информацию о них, показывая для каждого из объявл",
+        "description" => "Не могу дождаться начала финального сезона своего любимого сериала!",
         "userName" => "Владик",
         "avatar" => "userpic.jpg"
     ],
@@ -275,9 +277,9 @@ $cards = [
                         <cite>Неизвестный Автор</cite>
                         </blockquote>
                     <?php elseif ($value["type"] == "post-text"):
-                        list($arrayWords, $cut) = addLinkForBigText($value["description"]);?>
+                        list($newString, $cut) = addLinkForBigText($value["description"]);?>
                         <p>
-                           <?= $arrayWords; ?>
+                           <?= $newString; ?>
                         </p>
                         <?php if ($cut): ?>
                             <div class="post-text__more-link-wrapper">
