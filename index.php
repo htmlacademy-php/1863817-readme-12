@@ -36,9 +36,12 @@
             "avatar" => "userpic.jpg"
         ]
     ];
+
     $title = ['readme: популярное'];
+
     require('helpers.php');
+    include_template('layout.php', $title);
     include_template('main.php', $cards);
-    $allPage = include_template('layout.php', $title);
-    print $allPage;
+
+    print layout.php;
 ?>
