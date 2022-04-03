@@ -1,4 +1,32 @@
 <?php
+require_once 'helpers.php';
+
+function addLinkForBigText ($string, $symbols = 300) {
+    if (is_string($string)) {
+        $arrayWords = explode (" ", $string);
+        $newString ='';
+        $length = 0;
+        $cut = false;
+        foreach ($arrayWords as $key => $value) {
+            $length += iconv_strlen($value);
+            $newString .= ' ' . $value;
+            if ($length >= 300) {
+                $newString = $newString . '...';
+                $cut = true;
+                break;
+            } else {
+                $newString = implode (" ", $arrayWords);
+            }
+        }
+    }
+
+    return [$newString, $cut];
+}
+
+$is_auth = rand(0, 1);
+
+$user_name = 'Макарий';
+
 $cards = [
     [
         "title" => "Цитата",
@@ -10,7 +38,7 @@ $cards = [
     [
         "title" => "Игра престолов",
         "type" => "post-text",
-        "description" => "Не могу дождаться начала финального сезона своего любимого сериала!",
+        "description" => "Не могу дождаться начала финального сезона своего любимого сериала! ",
         "userName" => "Владик",
         "avatar" => "userpic.jpg"
     ],
@@ -37,8 +65,9 @@ $cards = [
     ]
 ];
 
-require_once 'helpers.php';
-include_template('main.php', $cards);
-$page = include_template('layout.php', $title);
-print $page;
+$page_content = include_template('main.php', ['cards' => $cards]);
+
+$layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: популярное']);
+
+print($layout_content);
 ?>
