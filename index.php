@@ -65,6 +65,46 @@ $cards = [
     ]
 ];
 
+date_default_timezone_set('Europe/Moscow');
+
+function createUnixInterval ($dataForPost) {
+
+    $dataNow = strtotime('now');
+    $dataPostInUnix = strtotime($dataForPost);
+
+    $resultInterval = $dataNow - $dataPostInUnix;
+
+    return $resultInterval;
+}
+
+function createTextForDate ($data) {
+    $resultInterval = createUnixInterval ($data);
+
+    if ($resultInterval / 60 / 60 < 1) {
+        $resultNumber = ($resultInterval / 60);
+        $rightForm = get_noun_plural_form($resultNumber, 'минута', 'минуты', 'минут');
+        $finalString = $resultNumber . ' ' . $rightForm . ' ' . 'назад';
+    } else if ($resultInterval / 60 / 60 / 24 < 1) {
+        $resultNumber = ($resultInterval / 60 / 60);
+        $rightForm = get_noun_plural_form($resultNumber, 'час', 'часа', 'часов');
+        $finalString = $resultNumber . ' ' . $rightForm . ' ' . 'назад';
+    } else if ($resultInterval / 60 / 60 / 24 >= 1 && $resultInterval / 60 / 60 / 24 < 7) {
+        $resultNumber = ($resultInterval / 60 / 60 / 24);
+        $rightForm = get_noun_plural_form($resultNumber, 'день', 'дня', 'дней');
+        $finalString = $resultNumber . ' ' . $rightForm . ' ' . 'назад';
+    } else if ($resultInterval / 60 / 60 / 24 >= 7 and $resultInterval / 60 / 60 / 24 / 7 < 5) {
+        $resultNumber = ($resultInterval / 60 / 60 / 24 / 7);
+        $rightForm = get_noun_plural_form($resultNumber, 'неделя', 'недели', 'недель');
+        $finalString = $resultNumber . ' ' . $rightForm . ' ' . 'назад';
+    } else if ($resultInterval / 60 / 60 / 24 / 7 > 5) {
+        $resultNumber = floor($resultInterval / 60 / 60 / 24 / 30);
+        $rightForm = get_noun_plural_form($resultNumber, 'месяц', 'месяца', 'месяцев');
+        $finalString = $resultNumber . ' ' . $rightForm . ' ' . 'назад';
+    }
+
+    return $finalString;
+}
+
 $page_content = include_template('main.php', ['cards' => $cards]);
 
 $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: популярное']);
