@@ -1,32 +1,3 @@
-<?php
-$is_auth = rand(0, 1);
-
-$user_name = 'Макарий';
-
-function addLinkForBigText ($string, $symbols = 300) {
-    if (is_string($string)) {
-        $arrayWords = explode (" ", $string);
-        $newString ='';
-        $length = 0;
-        $cut = false;
-        foreach ($arrayWords as $key => $value) {
-            $length += iconv_strlen($value);
-            $newString .= ' ' . $value;
-            if ($length >= 300) {
-                $newString = $newString . '...';
-                $cut = true;
-                break;
-            } else {
-                $newString = implode (" ", $arrayWords);
-            }
-        }
-    }
-
-    return [$newString, $cut];
-}
-
-$title = 'readme: популярное';
-?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -138,9 +109,7 @@ $title = 'readme: популярное';
         </div>
     </div>
 </header>
-<?php
-print main.php;
-?>
+<main class="content"><?= $content; ?></main>
 <footer class="footer">
     <div class="footer__wrapper">
         <div class="footer__container container">

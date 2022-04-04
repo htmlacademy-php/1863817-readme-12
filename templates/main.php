@@ -149,7 +149,7 @@
                             </div>
                             <div class="post__info">
                                 <b class="post__author-name"><?=$value["userName"]; ?></b>
-                                <time class="post__time" datetime="">дата</time>
+                                <time class="post__time" datetime="<?= $dataForDatatime = generate_random_date($key) ?>" title="<?= strftime("%d.%m.%Y %H:%M", strtotime($dataForDatatime)); ?>"><?= createTextForDate($dataForDatatime); ?></time>
                             </div>
                         </a>
                     </div>
