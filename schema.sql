@@ -10,10 +10,13 @@ CREATE TABLE IF NOT EXISTS users (
   PRIMARY KEY (`id_user`)
 );
 
+ALTER TABLE users ADD COLUMN login VARCHAR(64) NOT NULL;
+
 CREATE TABLE IF NOT EXISTS posts (
   id_post INT UNSIGNED AUTO_INCREMENT,
   post_date DATETIME(6) NOT NULL,
   title varchar(256),
+  user_name VARCHAR(64) NOT NULL,
   text_content TEXT,
   quote_author varchar(256) default '',
   image_link varchar(256) default '',
@@ -40,20 +43,16 @@ CREATE INDEX index_user_comment ON comments(id_user);
 CREATE INDEX index_post_comment ON comments(id_post);
 
 CREATE TABLE IF NOT EXISTS likes (
-  id_like INT UNSIGNED AUTO_INCREMENT,
   id_user INT NOT NULL,
-  id_post INT NOT NULL,
-  PRIMARY KEY (`id_like`)
+  id_post INT NOT NULL
 );
 
 CREATE INDEX index_user_like ON comments(id_user);
 CREATE INDEX index_post_like ON comments(id_post);
 
 CREATE TABLE IF NOT EXISTS subscriptions (
-  id_subscription INT UNSIGNED AUTO_INCREMENT,
   id_subscriber INT NOT NULL,
-  id_receiver_sub INT NOT NULL,
-  PRIMARY KEY (`id_subscription`)
+  id_receiver_sub INT NOT NULL
 );
 
 CREATE INDEX subscriber_index ON subscriptions(id_subscriber);
