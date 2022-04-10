@@ -1,6 +1,22 @@
 <?php
 require_once 'helpers.php';
 
+$con = mysqli_connect("localhost", "root", "","readme");
+
+mysqli_set_charset($con, "utf8");
+
+if ($con == false) {
+    print("Ошибка подключения: " . mysqli_connect_error());
+}
+
+$sql_get_types = "SELECT * FROM contentTypes";
+$result_for_types = mysqli_query($con, $sql_get_types);
+$rows_for_types = mysqli_fetch_all($result_for_types, MYSQLI_ASSOC);
+
+$sql_get_posts = "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user ORDER BY number_of_views ASC";
+$result_for_posts = mysqli_query($con, $sql_get_posts);
+$rows_for_posts = mysqli_fetch_all($result_for_posts, MYSQLI_ASSOC);
+
 function addLinkForBigText ($string, $symbols = 300) {
     if (is_string($string)) {
         $arrayWords = explode (" ", $string);
@@ -26,44 +42,6 @@ function addLinkForBigText ($string, $symbols = 300) {
 $is_auth = rand(0, 1);
 
 $user_name = 'Макарий';
-
-$cards = [
-    [
-        "title" => "Цитата",
-        "type" => "post-quote",
-        "description" => "Мы в жизни любим только раз, а после ищем лишь похожих",
-        "userName" => "Лариса",
-        "avatar" => "userpic-larisa-small.jpg"
-    ],
-    [
-        "title" => "Игра престолов",
-        "type" => "post-text",
-        "description" => "Не могу дождаться начала финального сезона своего любимого сериала!",
-        "userName" => "Владик",
-        "avatar" => "userpic.jpg"
-    ],
-    [
-        "title" => "Наконец, обработал фотки!",
-        "type" => "post-photo",
-        "description" => "rock-medium.jpg",
-        "userName" => "Виктор",
-        "avatar" => "userpic-mark.jpg",
-    ],
-    [
-        "title" => "Моя мечта",
-        "type" => "post-photo",
-        "description" => "coast-medium.jpg",
-        "userName" => "	Лариса",
-        "avatar" => "userpic-larisa-small.jpg"
-    ],
-    [
-        "title" => "Лучшие курсы",
-        "type" => "post-link",
-        "description" => "www.htmlacademy.ru",
-        "userName" => "Владик",
-        "avatar" => "userpic.jpg"
-    ]
-];
 
 date_default_timezone_set('Europe/Moscow');
 
@@ -99,7 +77,7 @@ function createTextForDate ($data)
     return false;
 }
 
-$page_content = include_template('main.php', ['cards' => $cards]);
+$page_content = include_template('main.php', ['cards' => $rows_for_posts, 'types' => $rows_for_types]);
 
 $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: популярное']);
 
