@@ -33,6 +33,7 @@
                     </li>
                 </ul>
             </div>
+            <?php if ($types && is_array($types)) ?>
             <div class="popular__filters filters">
                 <b class="popular__filters-caption filters__caption">Тип контента:</b>
                 <ul class="popular__filters-list filters__list">
@@ -41,65 +42,75 @@
                             <span>Все</span>
                         </a>
                     </li>
+                    <?php foreach ($types as $key => $type): ?>
+                    <? if ($value["content_type_title"] == "p"): ?>
                     <li class="popular__filters-item filters__item">
                         <a class="filters__button filters__button--photo button" href="#">
                             <span class="visually-hidden">Фото</span>
                             <svg class="filters__icon" width="22" height="18">
-                                <use xlink:href="#icon-filter-photo"></use>
+                                <use xlink:href="#icon-filter-<?=$type["content_class_type"]; ?>"></use>
                             </svg>
                         </a>
                     </li>
+                    <? elseif ($type["content_type_title"] == "v"): ?>
                     <li class="popular__filters-item filters__item">
                         <a class="filters__button filters__button--video button" href="#">
                             <span class="visually-hidden">Видео</span>
                             <svg class="filters__icon" width="24" height="16">
-                                <use xlink:href="#icon-filter-video"></use>
+                                <use xlink:href="#icon-filter-<?=$type["content_class_type"]; ?>"></use>
                             </svg>
                         </a>
                     </li>
+                    <? elseif ($type["content_type_title"] == "t"): ?>
                     <li class="popular__filters-item filters__item">
                         <a class="filters__button filters__button--text button" href="#">
                             <span class="visually-hidden">Текст</span>
                             <svg class="filters__icon" width="20" height="21">
-                                <use xlink:href="#icon-filter-text"></use>
+                                <use xlink:href="#icon-filter-<?=$type["content_class_type"]; ?>"></use>
                             </svg>
                         </a>
                     </li>
+                    <? elseif ($type["content_type_title"] == "q"): ?>
                     <li class="popular__filters-item filters__item">
                         <a class="filters__button filters__button--quote button" href="#">
                             <span class="visually-hidden">Цитата</span>
                             <svg class="filters__icon" width="21" height="20">
-                                <use xlink:href="#icon-filter-quote"></use>
+                                <use xlink:href="#icon-filter-<?=$type["content_class_type"]; ?>"></use>
                             </svg>
                         </a>
                     </li>
+                    <? elseif ($type["content_type_title"] == "l"): ?>
                     <li class="popular__filters-item filters__item">
                         <a class="filters__button filters__button--link button" href="#">
                             <span class="visually-hidden">Ссылка</span>
                             <svg class="filters__icon" width="21" height="18">
-                                <use xlink:href="#icon-filter-link"></use>
+                                <use xlink:href="#icon-filter-<?=$type["content_class_type"]; ?>"></use>
                             </svg>
                         </a>
                     </li>
+                    <?php endif; ?>
+                    <?php endforeach; ?>
                 </ul>
             </div>
+            <?php endif; ?>
         </div>
         <div class="popular__posts">
-            <?php foreach ($cards as $key => $value): ?>
-            <article class="popular__post post <?=$value["type"]; ?>">
+            <?php if ($cards && is_array($cards)) ?>
+            <?php foreach ($cards as $key => $card): ?>
+            <article class="popular__post post <?=$card["content_type"]; ?>">
                 <header class="post__header">
-                    <h2><?=$value["title"]; ?></h2>
+                    <h2><?=$card["title"]; ?></h2>
                 </header>
                 <div class="post__main">
-                    <?php if ($value["type"] == "post-quote"): ?>
+                    <?php if ($card["content_type"] == "post-quote"): ?>
                         <blockquote>
                             <p>
-                                <?=$value["description"]; ?>
+                                <?=$card["text_content"]; ?>
                             </p>
                         <cite>Неизвестный Автор</cite>
                         </blockquote>
-                    <?php elseif ($value["type"] == "post-text"):
-                        list($newString, $cut) = addLinkForBigText($value["description"]);?>
+                    <?php elseif ($card["content_type"] == "post-text"):
+                        list($newString, $cut) = addLinkForBigText($card["text_content"]);?>
                         <p>
                            <?= $newString; ?>
                         </p>
@@ -108,11 +119,11 @@
                                 <a class="post-text__more-link" href="#">Читать далее</a>
                             </div>
                         <?php endif; ?>
-                    <?php elseif ($value["type"] == "post-photo"): ?>
+                    <?php elseif ($card["content_type"] == "post-photo"): ?>
                         <div class="post-photo__image-wrapper">
-                          <img src="img/<?=$value["description"]; ?>" alt="Фото от пользователя" width="360" height="240">
+                          <img src="img/<?=$card["image_link"]; ?>" alt="Фото от пользователя" width="360" height="240">
                         </div>
-                    <?php elseif ($value["type"] == "post-video"): ?>
+                    <?php elseif ($card["content_type"] == "post-video"): ?>
                         <div class="post-video__block">
                             <div class="post-video__preview">
                                 <?=embed_youtube_cover(/* вставьте ссылку на видео */); ?>
@@ -125,18 +136,18 @@
                                 <span class="visually-hidden">Запустить проигрыватель</span>
                             </a>
                         </div>
-                    <?php elseif ($value["type"] == "post-link"): ?>
+                    <?php elseif ($card["content_type"] == "post-link"): ?>
                         <div class="post-link__wrapper">
-                            <a class="post-link__external" href="http://" title="Перейти по ссылке">
+                            <a class="post-link__external" href="http://<?=$card["website_link"]; ?>" title="Перейти по ссылке">
                                 <div class="post-link__info-wrapper">
                                     <div class="post-link__icon-wrapper">
                                         <img src="https://www.google.com/s2/favicons?domain=vitadental.ru" alt="Иконка">
                                     </div>
                                     <div class="post-link__info">
-                                        <h3><!--здесь заголовок--></h3>
+                                        <h3><?=$card["title"]; ?></h3>
                                     </div>
                                 </div>
-                                <span><?=$value["description"]; ?></span>
+                                <span><?=$card["website_link"]; ?></span>
                             </a>
                         </div>
                     <?php endif; ?>
@@ -145,10 +156,10 @@
                     <div class="post__author">
                         <a class="post__author-link" href="#" title="Автор">
                             <div class="post__avatar-wrapper">
-                                <img class="post__author-avatar" src="img/<?=$value["avatar"]; ?>" alt="Аватар пользователя">
+                                <img class="post__author-avatar" src="img/<?=$card["avatar_link"]; ?>" alt="Аватар пользователя" width="40" height="40">
                             </div>
                             <div class="post__info">
-                                <b class="post__author-name"><?=$value["userName"]; ?></b>
+                                <b class="post__author-name"><?=$card["login"]; ?></b>
                                 <time class="post__time" datetime="<?= $dataForDatatime = generate_random_date($key) ?>" title="<?= strftime("%d.%m.%Y %H:%M", strtotime($dataForDatatime)); ?>"><?= createTextForDate($dataForDatatime); ?></time>
                             </div>
                         </a>
@@ -177,6 +188,7 @@
                 </footer>
             </article>
             <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </div>
 </section>
