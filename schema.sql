@@ -7,16 +7,14 @@ CREATE TABLE IF NOT EXISTS users (
   password VARCHAR(64) NOT NULL,
   registration_date DATETIME(6) NOT NULL,
   avatar_link varchar(256),
+  login VARCHAR(64) NOT NULL,
   PRIMARY KEY (`id_user`)
 );
-
-ALTER TABLE users ADD COLUMN login VARCHAR(64) NOT NULL;
 
 CREATE TABLE IF NOT EXISTS posts (
   id_post INT UNSIGNED AUTO_INCREMENT,
   post_date DATETIME(6) NOT NULL,
   title varchar(256),
-  user_name VARCHAR(64) NOT NULL,
   text_content TEXT,
   quote_author varchar(256) default '',
   image_link varchar(256) default '',
@@ -24,7 +22,7 @@ CREATE TABLE IF NOT EXISTS posts (
   website_link varchar(256) default '',
   number_of_views INT,
   id_user INT,
-  content_type CHAR(1) NOT NULL,
+  content_type VARCHAR(64) NOT NULL,
   PRIMARY KEY (`id_post`)
 );
 
@@ -33,7 +31,7 @@ CREATE INDEX index_user_post ON posts(id_user);
 CREATE TABLE IF NOT EXISTS comments (
   id_comment INT UNSIGNED AUTO_INCREMENT,
   comment_date DATETIME(6) NOT NULL,
-  comment_text TEXT NOT NULL default '',
+  comment_text TEXT NOT NULL,
   id_user INT,
   id_post INT,
   PRIMARY KEY (`id_comment`)
@@ -61,7 +59,7 @@ CREATE INDEX receiver_sub_index ON subscriptions(id_receiver_sub);
 CREATE TABLE IF NOT EXISTS messages (
   id_message INT UNSIGNED AUTO_INCREMENT,
   message_date DATETIME(6) NOT NULL,
-  message_text TEXT NOT NULL default '',
+  message_text TEXT NOT NULL,
   id_who_writed INT NOT NULL,
   id_for_who_writed INT NOT NULL,
   PRIMARY KEY (`id_message`)
