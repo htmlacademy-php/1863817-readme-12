@@ -1,7 +1,12 @@
 <?php
 require_once 'helpers.php';
 
-$con = mysqli_connect("localhost", "root", "","readme");
+function connect () {
+    $con =  mysqli_connect("localhost", "root", "","readme");
+    mysqli_set_charset($con, "utf8");
+
+    return $con;
+}
 
 function doQuery ($conWithDatabase, $sql) {
     $result = mysqli_query($conWithDatabase, $sql);
@@ -10,13 +15,41 @@ function doQuery ($conWithDatabase, $sql) {
     return $rows;
 }
 
-mysqli_set_charset($con, "utf8");
-
-if ($con == false) {
+if (connect () == false) {
     print("Ошибка подключения: " . mysqli_connect_error());
 } else {
-    $rows_for_types = doQuery($con, "SELECT * FROM contentTypes");
-    $rows_for_posts = doQuery($con, "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user ORDER BY number_of_views ASC");
+    $rows_for_types = doQuery(connect (), "SELECT * FROM contentTypes");
+    $posts = doQuery(connect (), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user ORDER BY number_of_views ASC");
+}
+
+function checkQueryForType () {
+    if ($_GET['post'] === 1) {
+        $posts = doQuery(connect(), "SELECT * FROM posts WHERE content_type = 'post-quote'");
+    }
+    if ($_GET['post'] === 2) {
+        $posts = doQuery(connect(), "SELECT * FROM posts WHERE content_type = 'post-text'");
+    }
+    if ($_GET['post'] === 3) {
+        $posts = doQuery(connect(), "SELECT * FROM posts WHERE content_type = 'post-photo'");
+    }
+    if ($_GET['post'] === 4) {
+        $posts = doQuery(connect(), "SELECT * FROM posts WHERE content_type = 'post-link'");
+    }
+    if ($_GET['post'] === 5) {
+        $posts = doQuery(connect(), "SELECT * FROM posts WHERE content_type = 'post-video'");
+    }
+
+    if (!$_GET['post']) {
+        $posts = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user ORDER BY number_of_views ASC");
+    }
+
+    return $posts;
+}
+
+function addClass ($param) {
+    if ($_GET['post'] === $param) {
+        return 'filters__button--active' ;
+    }
 }
 
 function addLinkForBigText ($string, $symbols = 300) {
@@ -39,6 +72,14 @@ function addLinkForBigText ($string, $symbols = 300) {
     }
 
     return [$newString, $cut];
+}
+
+function checkQueryForPost ($id) {
+    if ($_GET['post-id'] === $id) {
+        $post = doQuery(connect (), "SELECT * FROM posts WHERE post-id = '$id'");
+    }
+
+    return $post;
 }
 
 $is_auth = rand(0, 1);
@@ -79,9 +120,27 @@ function createTextForDate ($data)
     return false;
 }
 
-$page_content = include_template('main.php', ['cards' => $rows_for_posts, 'types' => $rows_for_types]);
+// if (isset($_GET['post-id']) && )
 
-$layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: популярное']);
+if (empty($_GET)) {
+    $page_content = include_template('main.php', ['cards' => $posts, 'types' => $rows_for_types]);
+    $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: популярное']);
+}
+
+// $page_content = include_template('main.php', ['cards' => $posts, 'types' => $rows_for_types]);
+// $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: популярное']);
+
+if (empty($_GET['post']) === false) {
+    $page_content = include_template('main.php', ['cards' => checkQueryForType(), 'types' => $rows_for_types]);
+    $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: популярное']);
+}
+
+// if (isset($_GET['post-id'])) {
+//     $page_content = include_template('main.php', ['cards' => checkQueryForType()]);
+//     $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: публикация']);
+// }
+
+// $post_content = include_template('post.php', ['post' => checkQueryForPost($card["content_type"]), 'title' => 'readme: публикация']);
 
 print($layout_content);
 ?>
