@@ -33,19 +33,19 @@
                     </li>
                 </ul>
             </div>
-            <?php if ($types && is_array($types)) ?>
+            <?php if ($types && is_array($types)): ?>
             <div class="popular__filters filters">
                 <b class="popular__filters-caption filters__caption">Тип контента:</b>
                 <ul class="popular__filters-list filters__list">
                     <li class="popular__filters-item popular__filters-item--all filters__item filters__item--all">
-                        <a class="filters__button filters__button--ellipse filters__button--all filters__button--active" href="#">
+                        <a class="filters__button filters__button--ellipse filters__button--all <?= !$_GET['post'] ? 'filters__button--active': '' ?>" href="http://readme">
                             <span>Все</span>
                         </a>
                     </li>
                     <?php foreach ($types as $key => $type): ?>
-                    <? if ($value["content_type_title"] == "p"): ?>
+                    <? if ($type["content_type_title"] == "p"): ?>
                     <li class="popular__filters-item filters__item">
-                        <a class="filters__button filters__button--photo button" href="#">
+                        <a class="filters__button filters__button--photo button <?= addClass($type["id_type"]) ?>" href="/?post=<?= $type["id_type"]; ?>">
                             <span class="visually-hidden">Фото</span>
                             <svg class="filters__icon" width="22" height="18">
                                 <use xlink:href="#icon-filter-<?=$type["content_class_type"]; ?>"></use>
@@ -54,7 +54,7 @@
                     </li>
                     <? elseif ($type["content_type_title"] == "v"): ?>
                     <li class="popular__filters-item filters__item">
-                        <a class="filters__button filters__button--video button" href="#">
+                        <a class="filters__button filters__button--video button <?= addClass($type["id_type"]) ?>" href="/?post=<?= $type["id_type"]; ?>">
                             <span class="visually-hidden">Видео</span>
                             <svg class="filters__icon" width="24" height="16">
                                 <use xlink:href="#icon-filter-<?=$type["content_class_type"]; ?>"></use>
@@ -63,7 +63,7 @@
                     </li>
                     <? elseif ($type["content_type_title"] == "t"): ?>
                     <li class="popular__filters-item filters__item">
-                        <a class="filters__button filters__button--text button" href="#">
+                        <a class="filters__button filters__button--text button <?= addClass($type["id_type"]) ?>" href="/?post=<?= $type["id_type"]; ?>">
                             <span class="visually-hidden">Текст</span>
                             <svg class="filters__icon" width="20" height="21">
                                 <use xlink:href="#icon-filter-<?=$type["content_class_type"]; ?>"></use>
@@ -72,7 +72,7 @@
                     </li>
                     <? elseif ($type["content_type_title"] == "q"): ?>
                     <li class="popular__filters-item filters__item">
-                        <a class="filters__button filters__button--quote button" href="#">
+                        <a class="filters__button filters__button--quote button <?= addClass($type["id_type"]) ?>" href="/?post=<?= $type["id_type"]; ?>">
                             <span class="visually-hidden">Цитата</span>
                             <svg class="filters__icon" width="21" height="20">
                                 <use xlink:href="#icon-filter-<?=$type["content_class_type"]; ?>"></use>
@@ -81,7 +81,7 @@
                     </li>
                     <? elseif ($type["content_type_title"] == "l"): ?>
                     <li class="popular__filters-item filters__item">
-                        <a class="filters__button filters__button--link button" href="#">
+                        <a class="filters__button filters__button--link button <?= addClass($type["id_type"]) ?>" href="/?post=<?= $type["id_type"]; ?>">
                             <span class="visually-hidden">Ссылка</span>
                             <svg class="filters__icon" width="21" height="18">
                                 <use xlink:href="#icon-filter-<?=$type["content_class_type"]; ?>"></use>
@@ -95,11 +95,13 @@
             <?php endif; ?>
         </div>
         <div class="popular__posts">
-            <?php if ($cards && is_array($cards)) ?>
+            <?php if ($cards && is_array($cards)): ?>
             <?php foreach ($cards as $key => $card): ?>
             <article class="popular__post post <?=$card["content_type"]; ?>">
                 <header class="post__header">
-                    <h2><?=$card["title"]; ?></h2>
+                    <a href='http://readme/?post-id=<?= $card["id_post"]; ?>'>
+                      <h2><?=$card["title"]; ?></h2>
+                    </a>
                 </header>
                 <div class="post__main">
                     <?php if ($card["content_type"] == "post-quote"): ?>
@@ -141,7 +143,7 @@
                             <a class="post-link__external" href="http://<?=$card["website_link"]; ?>" title="Перейти по ссылке">
                                 <div class="post-link__info-wrapper">
                                     <div class="post-link__icon-wrapper">
-                                        <img src="https://www.google.com/s2/favicons?domain=vitadental.ru" alt="Иконка">
+                                        <img src="https://www.google.com/s2/favicons?domain=<?= $card["website_link"]; ?>" alt="Иконка">
                                     </div>
                                     <div class="post-link__info">
                                         <h3><?=$card["title"]; ?></h3>
