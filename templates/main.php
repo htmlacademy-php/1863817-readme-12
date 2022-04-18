@@ -95,7 +95,6 @@
             <?php endif; ?>
         </div>
         <div class="popular__posts">
-            <?= var_dump(checkQueryForType()) ?>
             <?php if ($cards && is_array($cards)): ?>
             <?php foreach ($cards as $key => $card): ?>
             <article class="popular__post post <?=$card["content_type"]; ?>">
@@ -144,7 +143,7 @@
                             <a class="post-link__external" href="http://<?=$card["website_link"]; ?>" title="Перейти по ссылке">
                                 <div class="post-link__info-wrapper">
                                     <div class="post-link__icon-wrapper">
-                                        <img src="https://www.google.com/s2/favicons?domain=vitadental.ru" alt="Иконка">
+                                        <img src="https://www.google.com/s2/favicons?domain=<?= $card["website_link"]; ?>" alt="Иконка">
                                     </div>
                                     <div class="post-link__info">
                                         <h3><?=$card["title"]; ?></h3>

@@ -262,3 +262,156 @@ function generate_random_date($index)
 
     return $dt;
 }
+
+// Устанавливает соединение с БД
+function connect () {
+    $con =  mysqli_connect("localhost", "root", "","readme");
+    mysqli_set_charset($con, "utf8");
+
+    return $con;
+}
+
+// Делает запрос к БД и преобразовывает результат в двумерный массив
+function doQuery ($conWithDatabase, $sql) {
+    $result = mysqli_query($conWithDatabase, $sql);
+    $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    return $rows;
+}
+
+// Делает запрос в зависимости от типа контента
+function doQueryForType () {
+    if ($_GET['post'] === '1') {
+        $posts = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND content_type = 'post-quote'");
+    }
+    if ($_GET['post'] === '2') {
+        $posts = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND content_type = 'post-text'");
+    }
+    if ($_GET['post'] === '3') {
+        $posts = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND content_type = 'post-photo'");
+    }
+    if ($_GET['post'] === '4') {
+        $posts = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND content_type = 'post-link'");
+    }
+    if ($_GET['post'] === '5') {
+        $posts = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND content_type = 'post-video'");
+    }
+
+    if (!$_GET['post']) {
+        $posts = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user ORDER BY number_of_views ASC");
+    }
+
+    return $posts;
+}
+
+// Добавляет класс в зависимости от типа контента
+function addClass ($param) {
+    if ($_GET['post'] === $param) {
+        return 'filters__button--active' ;
+    }
+}
+
+// Добавляет ссылку в случаи если текст поста больше 300 символов
+function addLinkForBigText ($string, $symbols = 300) {
+    if (is_string($string)) {
+        $arrayWords = explode (" ", $string);
+        $newString ='';
+        $length = 0;
+        $cut = false;
+        foreach ($arrayWords as $key => $value) {
+            $length += iconv_strlen($value);
+            $newString .= ' ' . $value;
+            if ($length >= 300) {
+                $newString = $newString . '...';
+                $cut = true;
+                break;
+            } else {
+                $newString = implode (" ", $arrayWords);
+            }
+        }
+    }
+
+    return [$newString, $cut];
+}
+
+// Делает запрос на показ конкретного поста
+function getPostById () {
+    $id = $_GET['post-id'];
+    $id *= 1;
+    $post = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND id_post = $id");
+
+    // if (empty($post)) {
+    //     return 'ERROR 404';
+    // }
+
+    return $post;
+}
+
+// Делает запрос на показ подписчиков по айди
+function getSubById () {
+    $post = getPostById();
+    $idUser = $post[0]['id_user'];
+    $subscriptions = doQuery(connect(), "SELECT * FROM subscriptions WHERE id_receiver_sub = $idUser");
+
+    return $subscriptions;
+}
+
+// Получение всех постов по айди
+function getAllPostsPostsById () {
+    $post = getPostById();
+    $idUser = $post[0]['id_user'];
+    $posts = doQuery(connect(), "SELECT * FROM posts WHERE id_user = $idUser");
+
+    return $posts;
+}
+
+// Получение лайков поста
+function getLikesForPost () {
+    $id = $_GET['post-id'];
+    $id *= 1;
+    $likes = doQuery(connect(), "SELECT * FROM likes WHERE id_post = $id");
+
+    return $likes;
+}
+
+function getCommentsForPost () {
+    $id = $_GET['post-id'];
+    $id *= 1;
+    $comments = doQuery(connect(), "SELECT * FROM comments WHERE id_post = $id");
+
+    return $comments;
+}
+
+// создает дату в формате Unix
+function createUnixInterval ($dataForPost) {
+    return strtotime('now') - strtotime($dataForPost);
+}
+
+// создает текст для даты в нужной форме
+function createTextForDate ($data)
+{
+    $resultInterval = createUnixInterval($data);
+
+    if ($resultInterval / 60 / 60 < 1) {
+        $resultNumber = ($resultInterval / 60);
+        $rightForm = get_noun_plural_form($resultNumber, 'минута', 'минуты', 'минут');
+    } else if ($resultInterval / 60 / 60 / 24 < 1) {
+        $resultNumber = ($resultInterval / 60 / 60);
+        $rightForm = get_noun_plural_form($resultNumber, 'час', 'часа', 'часов');
+    } else if ($resultInterval / 60 / 60 / 24 >= 1 && $resultInterval / 60 / 60 / 24 < 7) {
+        $resultNumber = ($resultInterval / 60 / 60 / 24);
+        $rightForm = get_noun_plural_form($resultNumber, 'день', 'дня', 'дней');
+    } else if ($resultInterval / 60 / 60 / 24 >= 7 and $resultInterval / 60 / 60 / 24 / 7 < 5) {
+        $resultNumber = ($resultInterval / 60 / 60 / 24 / 7);
+        $rightForm = get_noun_plural_form($resultNumber, 'неделя', 'недели', 'недель');
+    } else if ($resultInterval / 60 / 60 / 24 / 7 > 5) {
+        $resultNumber = floor($resultInterval / 60 / 60 / 24 / 30);
+        $rightForm = get_noun_plural_form($resultNumber, 'месяц', 'месяца', 'месяцев');
+    }
+
+    if (isset($resultNumber, $rightForm) && !empty($resultNumber) && !empty($rightForm)) {
+        return $resultNumber . ' ' . $rightForm . ' ' . 'назад';
+    }
+
+    return false;
+}
