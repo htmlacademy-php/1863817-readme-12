@@ -275,10 +275,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $inputValues['tags'] = $tags . 'tags';
     }
 
-    if (empty($errors) === false) {
+    if (!empty($errors)) {
       $errors = implode(', ', $errors);
       $inputValues = implode(', ', $inputValues);
       header("Location: /?add-post=1&filter=5&errors=$errors&inputValues=$inputValues");
+    } else {
+      $con = mysqli_connect("localhost", "root", "","readme");
+      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, video_link) VALUE (NOW(), '$heading', 'post-video', '$linkVideo')");
+
+      // if (!empty($tags)) {
+      //   &id = mysqli_query($con, "SELECT id_post FROM posts (post_date, title, content_type, video_link) VALUE (NOW(), '$heading', 'post-video', '$linkVideo')");
+      // }
     }
   }
 
@@ -315,7 +322,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (isset($_POST['quote-heading'])) {
     // quote
     $heading = test_input($_POST["quote-heading"]);
-    $textm = test_input($_POST["quote-text"]);
+    $text = test_input($_POST["quote-text"]);
     $author = test_input($_POST["quote-author"]);
     $tags = test_input($_POST["quote-tags"]);
 
@@ -347,7 +354,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $inputValues['heading'] = $heading . 'heading';
     }
 
-    if (!empty($textm)) {
+    if (!empty($text)) {
       $inputValues['text'] = $textm . 'text';
     }
 
@@ -365,7 +372,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       header("Location: /?add-post=1&filter=1&errors=$errors&inputValues=$inputValues");
     } else {
       $con = mysqli_connect("localhost", "root", "","readme");
-      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, text_content, quote_author) VALUE (NOW(), '$heading', 'post-quote', '$textm', '$author')");
+      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, text_content, quote_author) VALUE (NOW(), '$heading', 'post-quote', '$text', '$author')");
     }
   }
 
@@ -410,12 +417,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $errors = implode(', ', $errors);
       $inputValues = implode(', ', $inputValues);
       header("Location: /?add-post=1&filter=4&errors=$errors&inputValues=$inputValues");
+    } else {
+      $con = mysqli_connect("localhost", "root", "","readme");
+      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, website_link) VALUE (NOW(), '$heading', 'post-link', '$link')");
     }
   }
 }
 
 if ($_GET['add-post'] === '1') {
-  $page_content = include_template('adding-post.php', ['types' => $rows_for_types], ['errors' => $errors]);
+  print(123);
+  $page_content = include_template('adding-post.php', ['types' => $rows_for_types]);
   $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: добавление публикации']);
 }
 ?>
