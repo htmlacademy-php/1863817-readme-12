@@ -154,26 +154,26 @@ function include_template($name, array $data = [])
  *
  * @return string Ошибку если валидация не прошла
  */
-function check_youtube_url($url)
-{
-    $id = extract_youtube_id($url);
+// function check_youtube_url($url)
+// {
+//     $id = extract_youtube_id($url);
 
-    set_error_handler(function () {}, E_WARNING);
-    $headers = get_headers('https://www.youtube.com/oembed?format=json&url=http://www.youtube.com/watch?v=' . $id);
-    restore_error_handler();
+//     set_error_handler(function () {}, E_WARNING);
+//     $headers = get_headers('https://www.youtube.com/oembed?format=json&url=http://www.youtube.com/watch?v=' . $id);
+//     restore_error_handler();
 
-    if (!is_array($headers)) {
-        return "Видео по такой ссылке не найдено. Проверьте ссылку на видео";
-    }
+//     if (!is_array($headers)) {
+//       return false;
+//     }
 
-    $err_flag = strpos($headers[0], '200') ? 200 : 404;
+//     $err_flag = strpos($headers[0], '200') ? 200 : 404;
 
-    if ($err_flag !== 200) {
-        return "Видео по такой ссылке не найдено. Проверьте ссылку на видео";
-    }
+//     if ($err_flag !== 200) {
+//       return false;
+//     }
 
-    return true;
-}
+//     return true;
+// }
 
 /**
  * Возвращает код iframe для вставки youtube видео на страницу
@@ -216,25 +216,25 @@ function embed_youtube_cover(string $youtube_url = null)
  * @param string $youtube_url Ссылка на youtube видео
  * @return array
  */
-function extract_youtube_id($youtube_url)
-{
-    $id = false;
+// function extract_youtube_id($youtube_url)
+// {
+//     $id = false;
 
-    $parts = parse_url($youtube_url);
+//     $parts = parse_url($youtube_url);
 
-    if ($parts) {
-        if ($parts['path'] == '/watch') {
-            parse_str($parts['query'], $vars);
-            $id = $vars['v'] ?? null;
-        } else {
-            if ($parts['host'] == 'youtu.be') {
-                $id = substr($parts['path'], 1);
-            }
-        }
-    }
+//     if ($parts) {
+//         if ($parts['path'] == '/watch') {
+//             parse_str($parts['query'], $vars);
+//             $id = $vars['v'] ?? null;
+//         } else {
+//             if ($parts['host'] == 'youtu.be') {
+//                 $id = substr($parts['path'], 1);
+//             }
+//         }
+//     }
 
-    return $id;
-}
+//     return $id;
+// }
 
 /**
  * @param $index
@@ -305,9 +305,9 @@ function doQueryForType () {
 }
 
 // Добавляет класс в зависимости от типа контента
-function addClass ($param) {
-    if ($_GET['post'] === $param) {
-        return 'filters__button--active' ;
+function addClass ($key, $param, $class) {
+    if ($_GET[$key] === $param) {
+      return $class;
     }
 }
 
@@ -415,3 +415,11 @@ function createTextForDate ($data)
 
     return false;
 }
+
+// // уберает слэши, тэги, лишние пробелы и тд
+// function test_input($data) {
+//   $data = trim($data);
+//   $data = stripslashes($data);
+//   $data = htmlspecialchars($data);
+//   return $data;
+// }

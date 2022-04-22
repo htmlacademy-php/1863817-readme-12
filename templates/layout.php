@@ -99,9 +99,15 @@
                             </div>
                         </div>
                     </li>
+                    <? if (empty($_GET['add-post'])): ?>
                     <li>
-                        <a class="header__post-button button button--transparent" href="adding-post.html">Пост</a>
+                        <a class="header__post-button button button--transparent" href="http://readme/?add-post=1">Пост</a>
                     </li>
+                    <? else: ?>
+                      <li>
+                        <a class="header__post-button header__post-button--active button button--transparent" href="#">Закрыть</a>
+                      </li>
+                    <? endif; ?>
                 </ul>
             </nav>
         </div>

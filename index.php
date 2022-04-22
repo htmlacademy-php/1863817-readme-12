@@ -1,6 +1,5 @@
 <?php
 require 'helpers.php';
-require 'post.php';
 
 if (connect () == false) {
     print("Ошибка подключения: " . mysqli_connect_error());
@@ -20,6 +19,9 @@ if (isset($_GET['post']) && empty($_GET['post']) === false) {
     $page_content = include_template('main.php', ['cards' => doQueryForType(), 'types' => $rows_for_types]);
     $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: популярное']);
 }
+
+require 'post.php';
+require 'add.php';
 
 print($layout_content);
 ?>
