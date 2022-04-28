@@ -1,5 +1,12 @@
 <?php
 
+if ($_GET['add-post'] === '1') {
+  $page_content = include_template('adding-post.php', ['types' => $rows_for_types]);
+  $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: добавление публикации']);
+
+}
+
+
 function extract_youtube_id($youtube_url)
 {
     $id = false;
@@ -51,17 +58,12 @@ function test_input($data)
 
 function validateFileInputAndPhotoLink ($file, $link)
 {
-  if (empty($file) === false) {
-    echo('<pre>');
-    print_r($_FILES['userpic-file-photo']);
-    echo('</pre>');
-  }
   if (empty($file) && empty($link)) {
     return $textError = 'Хотя бы одно из полей с указанием фотографии должно быть заполненно';
-  } else if (empty($file) === false && empty($link) === false) {
+  } else if (!empty($file) && !empty($link)) {
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    $file_name = $_FILES['userpic-file-photo']['tmp_name'];
-    $file_size = $_FILES['userpic-file-photo']['size'];
+    $file_name = $file['tmp_name'];
+    $file_size = $file['size'];
 
     $file_type = finfo_file($finfo, $file_name);
 
@@ -76,13 +78,13 @@ function validateFileInputAndPhotoLink ($file, $link)
     } else {
       return false;
     }
-  } else if (empty($file) && empty($link) === false) {
+  } else if (empty($file) && !empty($link)) {
     $flag = filter_var($link, FILTER_VALIDATE_URL);
 
     if($flag) {
       $result = file_get_contents($flag);
       if ($result) {
-        return $link;
+        return false;
       } else {
         return $textError = 'При загрузке изображения по ссылке произошла ошибка';
       }
@@ -114,7 +116,7 @@ function validateVideo ($link)
 
 function validateTags ($string)
 {
-  if (empty($string) === false) {
+  if (!empty($string)) {
     $result = explode('#', $string);
 
     foreach($result as $key => $value) {
@@ -128,7 +130,12 @@ function validateTags ($string)
 
     $tag = strripos($string, '#');
 
+    if ($tag === 0) {
+      return false;
+    }
+
     if (!$tag) {
+      print($tag);
       return $textError = 'Тэг должен начинаться со знака "%23"';
     }
 
@@ -191,11 +198,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (isset($_POST['photo-heading'])) {
     // photo
     $heading = test_input($_POST["photo-heading"]);
-    $userpicFilePhoto = test_input($_POST["userpic-file-photo"]);
+    // $userpicFilePhoto = $_FILES["userpic-file-photo"];
     $linkPhoto = test_input($_POST["photo-link"]);
     $tags = test_input($_POST["photo-tags"]);
-
-    print($userpicFilePhoto);
 
     $resultHeading = validateHeadingTextAndAuthor($heading, 5, 20);
 
@@ -203,11 +208,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $errors[] = $resultHeading . 'heading';
     }
 
-    $resultPhoto = validateFileInputAndPhotoLink($userpicFilePhoto, $linkPhoto);
+    // $resultPhoto = validateFileInputAndPhotoLink($userpicFilePhoto, $linkPhoto);
 
-    if ($resultPhoto) {
-      $errors[] = $resultPhoto . 'photo';;
-    }
+    // if ($resultPhoto) {
+    //   $errors[] = $resultPhoto . 'photo';;
+    // }
 
     $resultTags = validateTags($tags);
 
@@ -223,18 +228,62 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $inputValues['link'] = $linkPhoto . 'link';
     }
 
-    if (!empty($userpicFilePhoto)) {
-      $inputValues['photo'] = $userpicFilePhoto . 'photo';
+    // if (isset($userpicFilePhoto)) {
+    // $file_name = $userpicFilePhoto['name'];
+    // $file_path = __DIR__ . '/uploads/';
+    // $file_url = '/uploads/' . $file_name;
+
+    // move_uploaded_file($userpicFilePhoto['tmp_name'], $file_path . $file_name);
+    // }
+
+    // clearstatcache();
+    if (!empty($_FILES)) {
+      echo('<pre>');
+      print_r($_FILES);
+      echo('</pre>');
+      print(1);
     }
+
+    // if (isset($_FILES['userpic-file-photo'])) {
+    //   $file_name = $_FILES['userpic-file-photo']['name'];
+    //   $file_path = __DIR__ . '/uploads/';
+    //   $file_url = '/uploads/' . $file_name;
+
+    //   move_uploaded_file($_FILES['userpic-file-photo']['tmp_name'], $file_path . $file_name);
+    //   echo('<pre>');
+    //   print_r($_FILES['userpic-file-photo']);
+    //   echo('</pre>');
+    // }
+
+    // if (!empty($userpicFilePhoto)) {
+    //   $inputValues['photo'] = $userpicFilePhoto . 'photo';
+    // }
 
     if (!empty($tags)) {
       $inputValues['tags'] = $tags . 'tags';
     }
 
-    // if (empty($errors) === false) {
+    // if (!empty($errors)) {
+
     //   $errors = implode(', ', $errors);
-    //   $inputValues = implode(', ', $inputValues);
-    //   header("Location: /?add-post=1&filter=3&errors=$errors&inputValues=$inputValues");
+    //   if (!empty($inputValues)) {
+    //     $inputValues = implode(', ', $inputValues);
+    //   }
+    //   // header("Location: /?add-post=1&filter=3&errors=$errors&inputValues=$inputValues");
+    // } else {
+    //   if (empty($userpicFilePhoto)) {
+    //     $photo = $linkPhoto;
+    //   } else {
+    //     $photo = $userpicFilePhoto;
+    //   }
+
+    //   $con = mysqli_connect("localhost", "root", "","readme");
+    //   $result = mysqli_query(connect(), "INSERT INTO posts (post_date, title, content_type, image_link) VALUE (NOW(), '$heading', 'post-photo', '$photo')");
+    //   $id = mysqli_insert_id($con);
+    //   if (!empty($tags)) {
+    //     $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
+    //   }
+    //   header("Location: /?post-id=$id");
     // }
 
   }
@@ -281,11 +330,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       header("Location: /?add-post=1&filter=5&errors=$errors&inputValues=$inputValues");
     } else {
       $con = mysqli_connect("localhost", "root", "","readme");
-      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, video_link) VALUE (NOW(), '$heading', 'post-video', '$linkVideo')");
-
-      // if (!empty($tags)) {
-      //   &id = mysqli_query($con, "SELECT id_post FROM posts (post_date, title, content_type, video_link) VALUE (NOW(), '$heading', 'post-video', '$linkVideo')");
-      // }
+      $result = mysqli_query(connect(), "INSERT INTO posts (post_date, title, content_type, video_link) VALUE (NOW(), '$heading', 'post-video', '$linkVideo')");
+      $id = mysqli_insert_id($con);
+      if (!empty($tags)) {
+        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
+      }
+      header("Location: /?post-id=$id");
     }
   }
 
@@ -313,9 +363,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $errors['tags'] = $resultTags . 'tags';
     }
 
+    if (!empty($heading)) {
+      $inputValues['heading'] = $heading . 'heading';
+    }
+
+    if (!empty($text)) {
+      $inputValues['text'] = $text . 'text';
+    }
+
+    if (!empty($tags)) {
+      $inputValues['tags'] = $tags . 'tags';
+    }
+
     if (empty($errors) === false) {
       $errors = implode(', ', $errors);
-      header("Location: /?add-post=1&filter=2&errors=$errors");
+      $inputValues = implode(', ', $inputValues);
+      header("Location: /?add-post=1&filter=2&errors=$errors&inputValues=$inputValues");
+    } else {
+      $con = mysqli_connect("localhost", "root", "","readme");
+      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, text_content) VALUE (NOW(), '$heading', 'post-text', '$text')");
+      $id = mysqli_insert_id($con);
+      if (!empty($tags)) {
+        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
+      }
+      header("Location: /?post-id=$id");
     }
   }
 
@@ -373,6 +444,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
       $con = mysqli_connect("localhost", "root", "","readme");
       $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, text_content, quote_author) VALUE (NOW(), '$heading', 'post-quote', '$text', '$author')");
+      $id = mysqli_insert_id($con);
+      if (!empty($tags)) {
+        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
+      }
+      header("Location: /?post-id=$id");
     }
   }
 
@@ -410,7 +486,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (!empty($tags)) {
-      $inputValues['tags'] = $tags . 'tags';
+      $inputValues['tags'] = explode('#', $tags);
+      $inputValues['tags'] = implode('.', $inputValues['tags']);
+      $inputValues['tags'] = $inputValues['tags'] . 'tags';
     }
 
     if (empty($errors) === false) {
@@ -419,14 +497,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       header("Location: /?add-post=1&filter=4&errors=$errors&inputValues=$inputValues");
     } else {
       $con = mysqli_connect("localhost", "root", "","readme");
-      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, website_link) VALUE (NOW(), '$heading', 'post-link', '$link')");
+      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, website_link, id_user) VALUE (NOW(), '$heading', 'post-link', '$link', 1)");
+      $id = mysqli_insert_id($con);
+      if (!empty($tags)) {
+        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
+      }
+      header("Location: /?post-id=$id");
     }
   }
-}
-
-if ($_GET['add-post'] === '1') {
-  print(123);
-  $page_content = include_template('adding-post.php', ['types' => $rows_for_types]);
-  $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: добавление публикации']);
 }
 ?>

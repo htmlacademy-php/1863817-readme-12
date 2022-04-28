@@ -14,13 +14,10 @@ if (isset($_GET['post-id']) && empty($_GET['post-id']) === false) {
             'subscriptions' => getSubById(),
             'posts' => getAllPostsPostsById(),
             'likes' => getLikesForPost(),
-            'comments' => getCommentsForPost()
+            'comments' => getCommentsForPost(),
+            'tags' => getTagsForPost()
         ]);
         $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: публикация']);
     }
 }
-
-// if (empty($_GET['post-id'])) {
-//     $layout_content = include_template('layout.php', ['content' => 'ERROR 404', 'title' => 'readme: публикация']);
-// }
 ?>

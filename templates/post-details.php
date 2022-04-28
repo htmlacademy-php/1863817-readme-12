@@ -84,12 +84,13 @@
                         <span class="post__view">500 просмотров</span>
                     </div>
                     <ul class="post__tags">
-                        <li><a href="#">#nature</a></li>
-                        <li><a href="#">#globe</a></li>
-                        <li><a href="#">#photooftheday</a></li>
-                        <li><a href="#">#canon</a></li>
-                        <li><a href="#">#landscape</a></li>
-                        <li><a href="#">#щикарныйвид</a></li>
+                    <?php
+                    $tags = ($tags[0]["hashtag_title"]);
+                    $tags = explode(' ', $tags);
+                    ?>
+                    <? foreach($tags as $key => $tag): ?>
+                      <li><a href="#"><?= $tag ?></a></li>
+                    <? endforeach; ?>
                     </ul>
                     <div class="comments">
                         <form class="comments__form form" action="#" method="post">

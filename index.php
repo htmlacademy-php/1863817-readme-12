@@ -1,5 +1,5 @@
 <?php
-require 'helpers.php';
+require_once 'helpers.php';
 
 if (connect () == false) {
     print("Ошибка подключения: " . mysqli_connect_error());
@@ -20,8 +20,8 @@ if (isset($_GET['post']) && empty($_GET['post']) === false) {
     $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: популярное']);
 }
 
-require 'post.php';
-require 'add.php';
+require_once 'post.php';
+require_once 'add.php';
 
 print($layout_content);
 ?>

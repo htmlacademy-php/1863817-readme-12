@@ -1,5 +1,5 @@
 <?php
-// include 'add.php';
+
 if (empty($_GET['errors']) === false) {
   $errors = $_GET['errors'];
   $errors = explode(', ', $errors);
@@ -49,6 +49,8 @@ if (empty($_GET['inputValues']) === false) {
     }
     $tags = stristr($value, 'tags', true);
     if ($tags) {
+      $tags = explode('.', $tags);
+      $tags = implode('#', $tags);
       $valuesWithKeys['tags'] = $tags;
     }
     $author = stristr($value, 'author', true);
@@ -81,11 +83,11 @@ echo('</pre>');
     <div class="adding-post container">
       <div class="adding-post__tabs-wrapper tabs">
         <div class="adding-post__tabs filters">
-          <?php foreach ($types as $key => $type): ?>
           <ul class="adding-post__tabs-list filters__list tabs__list">
+            <?php foreach ($types as $key => $type): ?>
             <? if ($type["content_type_title"] == "p"): ?>
             <li class="adding-post__tabs-item filters__item">
-              <a class="adding-post__tabs-link filters__button <?= addClass('filter', $type["id_type"], 'tabs__item--active filters__button--active') ?> filters__button--photo tabs__item button" href="/?add-post=1&filter=<?= $type["id_type"]; ?>">
+              <a class="adding-post__tabs-link filters__button filters__button--photo tabs__item button <?= addClass('filter', $type["id_type"], 'tabs__item--active filters__button--active') ?>" href="/?add-post=1&filter=<?= $type["id_type"]; ?>">
                 <svg class="filters__icon" width="22" height="18">
                   <use xlink:href="#icon-filter-<?=$type["content_class_type"]; ?>"></use>
                 </svg>
@@ -121,23 +123,23 @@ echo('</pre>');
             </li>
             <? elseif ($type["content_type_title"] == "l"): ?>
             <li class="adding-post__tabs-item filters__item">
-              <a class="adding-post__tabs-link filters__button filters__button--link tabs__item butto <?= addClass('filter', $type["id_type"], 'tabs__item--active filters__button--active') ?>" href="/?add-post=1&filter=<?= $type["id_type"]; ?>">
+              <a class="adding-post__tabs-link filters__button filters__button--link tabs__item button <?= addClass('filter', $type["id_type"], 'tabs__item--active filters__button--active') ?>" href="/?add-post=1&filter=<?= $type["id_type"]; ?>">
                 <svg class="filters__icon" width="21" height="18">
                   <use xlink:href="#icon-filter-<?=$type["content_class_type"]; ?>"></use>
                 </svg>
                 <span>Ссылка</span>
               </a>
             </li>
+            <? endif; ?>
+            <? endforeach; ?>
           </ul>
-          <? endif; ?>
-          <? endforeach; ?>
         </div>
         <div class="adding-post__tab-content">
           <!-- photo -->
           <?php if ($_GET['filter'] === '3'): ?>
           <section class="adding-post__photo tabs__content tabs__content--active">
             <h2 class="visually-hidden">Форма добавления фото</h2>
-            <form class="adding-post__form form" action="/add.php" method="post" enctype="multipart/form-data" autocomplete="off">
+            <form class="adding-post__form form dropzone" action="/add.php" method="post" enctype="multipart/form-data" autocomplete="off">
               <div class="form__text-inputs-wrapper">
                 <div class="form__text-inputs">
                 <div class="adding-post__input-wrapper form__input-wrapper <?= empty($errorsWithKeys['heading']) === false ? 'form__input-section--error' : null; ?>">
@@ -191,10 +193,11 @@ echo('</pre>');
                   </div>
                 <? endif; ?>
               </div>
+              <!-- <input class="file" id="userpic-file-photo" type="file" name="userpic-file-photo"> -->
               <div class="adding-post__input-file-container form__input-container form__input-container--file">
                 <div class="adding-post__input-file-wrapper form__input-file-wrapper">
-                  <div class="adding-post__file-zone adding-post__file-zone--photo form__file-zone dropzone">
-                    <input class="adding-post__input-file form__input-file" id="userpic-file-photo" type="file" name="userpic-file-photo" title=" ">
+                  <div class="adding-post__file-zone adding-post__file-zone--photo form__file-zone">
+                    <input class="file adding-post__input-file form__input-file" id="userpic-file-photo" type="file" name="userpic-file-photo">
                     <div class="form__file-zone-text">
                       <span>Перетащите фото сюда</span>
                     </div>
@@ -207,7 +210,6 @@ echo('</pre>');
                   </button>
                 </div>
                 <div class="adding-post__file adding-post__file--photo form__file dropzone-previews">
-
                 </div>
               </div>
               <?= file_get_contents('templates/blocks/buttons.php'); ?>
@@ -275,7 +277,7 @@ echo('</pre>');
             </form>
           </section>
           <!-- text -->
-          <?php elseif ($_GET['filter'] === '2' || (empty($_GET['add-post']) === false && empty($_GET['filter']))): ?>
+          <?php elseif ($_GET['filter'] === '2'): ?>
           <section class="adding-post__text tabs__content tabs__content--active">
             <h2 class="visually-hidden">Форма добавления текста</h2>
             <form class="adding-post__form form" action="/add.php" method="post" enctype="multipart/form-data" autocomplete="off">
@@ -284,7 +286,7 @@ echo('</pre>');
                   <div class="adding-post__input-wrapper form__input-wrapper <?= empty($errorsWithKeys['heading']) === false ? 'form__input-section--error' : null; ?>">
                     <label class="adding-post__label form__label" for="text-heading">Заголовок <span class="form__input-required">*</span></label>
                     <div class="form__input-section">
-                      <input class="adding-post__input form__input" id="text-heading" type="text" name="text-heading" value = "<?= getPostVal('text-heading'); ?>" placeholder="Введите заголовок">
+                      <input class="adding-post__input form__input" id="text-heading" value="<?= $valuesWithKeys['heading']; ?>" type="text" name="text-heading" placeholder="Введите заголовок">
                       <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                       <div class="form__error-text">
                         <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -295,7 +297,7 @@ echo('</pre>');
                   <div class="adding-post__textarea-wrapper form__textarea-wrapper <?= empty($errorsWithKeys['text']) === false ? 'form__input-section--error' : null; ?>">
                     <label class="adding-post__label form__label" for="post-text">Текст поста <span class="form__input-required">*</span></label>
                     <div class="form__input-section">
-                      <textarea class="adding-post__textarea form__textarea form__input" id="post-text" name="text-text" placeholder="Введите текст публикации"></textarea>
+                      <textarea class="adding-post__textarea form__textarea form__input" id="post-text" name = "text-text" placeholder="Введите текст публикации"><?= $valuesWithKeys['text']; ?></textarea>
                       <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                       <div class="form__error-text">
                         <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -304,9 +306,9 @@ echo('</pre>');
                     </div>
                   </div>
                   <div class="adding-post__input-wrapper form__input-wrapper <?= empty($errorsWithKeys['tags']) === false ? 'form__input-section--error' : null; ?>">
-                    <label class="adding-post__label form__label" for="post-tags">Теги</label>
+                    <label class="adding-post__label form__label" for="text-tags">Теги</label>
                     <div class="form__input-section">
-                      <input class="adding-post__input form__input" id="post-tags" type="text" name="text-tags" placeholder="Введите теги">
+                      <input class="adding-post__input form__input" id="text-tags" type="text" value="<?= $valuesWithKeys['tags']; ?>" name="text-tags" placeholder="Введите теги">
                       <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                       <div class="form__error-text">
                         <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -474,6 +476,10 @@ echo('</pre>');
           <?php endif; ?>
         </div>
       </div>
+      <!-- <script>
+        let file = document.querySelector('.file');
+        setInterval(() => console.log(file.value), 500);
+      </script> -->
     </div>
   </div>
 </div>

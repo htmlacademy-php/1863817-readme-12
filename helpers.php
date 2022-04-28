@@ -134,7 +134,8 @@ function include_template($name, array $data = [])
 {
     $name = 'templates/' . $name;
     $result = '';
-
+    // var_dump(is_readable($name));
+    // var_dump
     if (!is_readable($name)) {
         return $result;
     }
@@ -372,6 +373,15 @@ function getLikesForPost () {
     $likes = doQuery(connect(), "SELECT * FROM likes WHERE id_post = $id");
 
     return $likes;
+}
+
+// Получение тегов поста
+function getTagsForPost () {
+  $id = $_GET['post-id'];
+  $id *= 1;
+  $tags = doQuery(connect(), "SELECT * FROM hashtags WHERE id_post = $id");
+
+  return $tags;
 }
 
 function getCommentsForPost () {
