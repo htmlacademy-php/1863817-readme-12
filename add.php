@@ -259,14 +259,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $inputValues['tags'] = $inputValues['tags'] . 'tags';
     }
 
-    if (!empty($userpicFilePhoto['tmp_name'])) {
-      $file_name = $userpicFilePhoto['name'];
-      $file_path = __DIR__ . '/uploads/';
-      move_uploaded_file($userpicFilePhoto['tmp_name'], $file_path . $file_name);
-      $inputValues['photo'] = '/uploads/' . $file_name . 'photo';
-    }
-
     if (!empty($errors)) {
+      if (!empty($userpicFilePhoto['tmp_name'])) {
+        $file_name = $userpicFilePhoto['name'];
+        $file_name = explode('.', $file_name);
+        $lastElement = count($file_name) - 1;
+        $file_name = $file_name[$lastElement];
+        $file_name = 'before-query.' . $file_name;
+        print($file_name);
+        $file_path = __DIR__ . '/uploads/';
+        move_uploaded_file($userpicFilePhoto['tmp_name'], $file_path . $file_name);
+        $inputValues['photo'] = 'uploads/' . $file_name . 'photo';
+      }
+
       $errors = implode(', ', $errors);
       if (!empty($inputValues)) {
         $inputValues = implode(', ', $inputValues);
@@ -283,9 +288,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $result = file_put_contents($pathLink, file_get_contents($url));
         $photo = '/uploads/' . $endPath;
       } else if ($resultPhoto === 2) {
+        if (!empty($linkDownloadIfReload)) {
+          unlink($linkDownloadIfReload);
+        }
+        $file_name = $userpicFilePhoto['name'];
+        $file_path = __DIR__ . '/uploads/';
+        move_uploaded_file($userpicFilePhoto['tmp_name'], $file_path . $file_name);
         $photo = '/uploads/' . $userpicFilePhoto['name'];
       } else if ($resultPhoto === 4) {
-        $photo = $linkDownloadIfReload;
+        $flag = strripos($linkDownloadIfReload, 'before-query.');
+        if ($flag === false) {
+          $photo = $linkDownloadIfReload;
+        } else {
+          $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+          $randomName = substr(str_shuffle($permitted_chars), 0, 10);
+          $file_name = explode('.', $linkDownloadIfReload);
+          $lastElement = count($file_name) - 1;
+          $file_name = $file_name[$lastElement];
+          $newPath = 'uploads/' . $randomName . '.' . $file_name;
+          $result = rename($linkDownloadIfReload, $newPath);
+          $photo = $newPath;
+        }
       }
 
       $con = mysqli_connect("localhost", "root", "","readme");

@@ -11,7 +11,7 @@
                         <div class="post__main">
                             <blockquote>
                                 <p>
-                                    <?= $card[0]['text_content']; ?>
+                                  <?= $card[0]['text_content']; ?>
                                 </p>
                                 <cite><?= $card[0]['quote_author']; ?></cite>
                             </blockquote>
@@ -22,7 +22,7 @@
                     <div class="post-details__image-wrapper post-text">
                         <div class="post__main">
                             <p>
-                                <?= $card[0]['text_content']; ?>
+                              <?= $card[0]['text_content']; ?>
                             </p>
                         </div>
                     </div>

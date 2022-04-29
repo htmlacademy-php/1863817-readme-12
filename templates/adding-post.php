@@ -40,9 +40,6 @@ if (empty($_GET['errors']) === false) {
       }
     }
   }
-  echo('<pre>');
-  print_r($errorsWithKeys);
-  echo('</pre>');
 }
 if (empty($_GET['inputValues']) === false) {
   $inputValues = $_GET['inputValues'];
