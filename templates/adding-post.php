@@ -29,6 +29,16 @@ if (empty($_GET['errors']) === false) {
     if ($photo) {
       $errorsWithKeys['photo'] = $photo;
     }
+    $photolink = stristr($value, 'linkForPic', true);
+    if ($photolink) {
+      $photo = stristr($photolink, 'photo', true);
+      if ($photo) {
+        $strings = explode('photo', $photolink);
+        $errorsWithKeys['photolink'] = $strings[1];
+      } else {
+        $errorsWithKeys['photolink'] = $photolink;
+      }
+    }
   }
   echo('<pre>');
   print_r($errorsWithKeys);
@@ -66,14 +76,8 @@ if (empty($_GET['inputValues']) === false) {
       $valuesWithKeys['photo'] = $photo;
     }
   }
-  echo('<pre>');
-  print_r($valuesWithKeys);
-  echo('</pre>');
 }
 
-echo('<pre>');
-print_r($_FILES['userpic-file-photo']);
-echo('</pre>');
 ?>
 <div class="page__main page__main--adding-post">
   <div class="page__main-section">
@@ -145,7 +149,7 @@ echo('</pre>');
                 <div class="adding-post__input-wrapper form__input-wrapper <?= empty($errorsWithKeys['heading']) === false ? 'form__input-section--error' : null; ?>">
                    <label class="adding-post__label form__label" for="photo-heading">Заголовок <span class="form__input-required">*</span></label>
                    <div class="form__input-section">
-                     <input class="adding-post__input form__input" id="photo-heading" type="text" name="photo-heading" placeholder="Введите заголовок">
+                     <input class="adding-post__input form__input" id="photo-heading" type="text" name="photo-heading" value="<?= $valuesWithKeys['heading']; ?>" placeholder="Введите заголовок">
                      <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                      <div class="form__error-text">
                         <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -153,21 +157,21 @@ echo('</pre>');
                       </div>
                    </div>
                  </div>
-                  <div class="adding-post__input-wrapper form__input-wrapper <?= empty($errorsWithKeys['photo']) === false ? 'form__input-section--error' : null; ?>">
+                  <div class="adding-post__input-wrapper form__input-wrapper <?= empty($errorsWithKeys['photolink']) === false ? 'form__input-section--error' : null; ?>">
                     <label class="adding-post__label form__label" for="photo-url">Ссылка из интернета</label>
                     <div class="form__input-section">
-                      <input class="adding-post__input form__input" id="photo-url" type="text" name="photo-link" placeholder="Введите ссылку">
+                      <input class="adding-post__input form__input" id="photo-url" type="text" name="photo-link" value="<?= $valuesWithKeys['link']; ?>" placeholder="Введите ссылку">
                       <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                       <div class="form__error-text">
                         <h3 class="form__error-title">Ошибка при заполнении поля</h3>
-                        <p class="form__error-desc"><?= $errorsWithKeys['photo'] ?></p>
+                        <p class="form__error-desc"><?= $errorsWithKeys['photolink'] ?></p>
                       </div>
                     </div>
                   </div>
                   <div class="adding-post__input-wrapper form__input-wrapper <?= empty($errorsWithKeys['tags']) === false ? 'form__input-section--error' : null; ?>">
                     <label class="adding-post__label form__label" for="photo-tags">Теги</label>
                     <div class="form__input-section">
-                      <input class="adding-post__input form__input" id="photo-tags" type="text" name="photo-tags" placeholder="Введите теги">
+                      <input class="adding-post__input form__input" id="photo-tags" type="text" name="photo-tags" value="<?= $valuesWithKeys['tags']; ?>" placeholder="Введите теги">
                       <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                       <div class="form__error-text">
                         <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -184,7 +188,10 @@ echo('</pre>');
                       <li class="form__invalid-item">Заголовок. <?= $errorsWithKeys['heading'] ?></li>
                       <? endif; ?>
                       <? if (empty($errorsWithKeys['photo']) === false): ?>
-                      <li class="form__invalid-item">Ссылка на видео. <?= $errorsWithKeys['photo'] ?></li>
+                      <li class="form__invalid-item">Добавление файла. <?= $errorsWithKeys['photo'] ?></li>
+                      <? endif; ?>
+                      <? if (empty($errorsWithKeys['photolink']) === false): ?>
+                      <li class="form__invalid-item">Ссылка из интернета. <?= $errorsWithKeys['photolink'] ?></li>
                       <? endif; ?>
                       <? if (empty($errorsWithKeys['tags']) === false): ?>
                       <li class="form__invalid-item">Теги. <?= $errorsWithKeys['tags'] ?></li>
@@ -193,21 +200,26 @@ echo('</pre>');
                   </div>
                 <? endif; ?>
               </div>
-              <!-- <input class="file" id="userpic-file-photo" type="file" name="userpic-file-photo"> -->
               <div class="adding-post__input-file-container form__input-container form__input-container--file">
                 <div class="adding-post__input-file-wrapper form__input-file-wrapper">
                   <div class="adding-post__file-zone adding-post__file-zone--photo form__file-zone">
-                    <input class="file adding-post__input-file form__input-file" id="userpic-file-photo" type="file" name="userpic-file-photo">
                     <div class="form__file-zone-text">
-                      <span>Перетащите фото сюда</span>
+                      <? if (!empty($valuesWithKeys['photo'])): ?>
+                      <img class="preview__photo" src="<?= $valuesWithKeys['photo'] ?>" width="100" height="100" alt="Загруженное пользователем фото.">
+                      <? else: ?>
+                      <img class="preview__photo" src="img/drag-and-drop.svg" width="43" height="43" alt="Загруженное пользователем фото.">
+                      <? endif; ?>
+                      <span>Превью для загрузки файла</span>
                     </div>
                   </div>
-                  <button class="adding-post__input-file-button form__input-file-button form__input-file-button--photo button" type="button">
+                  <div class="adding-post__input-file-button form__input-file-button form__input-file-button--photo button">
+                    <input class='visually-hidden' id='link-download-if-reload' name='link-download-if-reload' value='<?= $valuesWithKeys['photo']; ?>' type='text'>
+                    <input class="adding-post__input-file form__input-file" id="userpic-file-photo" type="file" name="userpic-file-photo">
                     <span>Выбрать фото</span>
                     <svg class="adding-post__attach-icon form__attach-icon" width="10" height="20">
                       <use xlink:href="#icon-attach"></use>
                     </svg>
-                  </button>
+                  </div>
                 </div>
                 <div class="adding-post__file adding-post__file--photo form__file dropzone-previews">
                 </div>
@@ -476,10 +488,6 @@ echo('</pre>');
           <?php endif; ?>
         </div>
       </div>
-      <!-- <script>
-        let file = document.querySelector('.file');
-        setInterval(() => console.log(file.value), 500);
-      </script> -->
     </div>
   </div>
 </div>

@@ -46,7 +46,7 @@
                     <!-- пост-изображение -->
                     <?php elseif ($card[0]["content_type"] === "post-photo"): ?>
                     <div class="post-details__image-wrapper post-photo__image-wrapper">
-                    	<img src="img/<?= $card[0]["image_link"]; ?>" alt="Фото от пользователя" width="760" height="507">
+                    	<img src="<?= $card[0]["image_link"]; ?>" alt="Фото от пользователя" width="760" height="507">
                     </div>
                     <!-- пост-видео -->
                     <?php elseif ($card[0]["content_type"] === "post-video"): ?>

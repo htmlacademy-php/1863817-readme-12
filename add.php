@@ -6,46 +6,45 @@ if ($_GET['add-post'] === '1') {
 
 }
 
-
 function extract_youtube_id($youtube_url)
 {
-    $id = false;
+  $id = false;
 
-    $parts = parse_url($youtube_url);
+  $parts = parse_url($youtube_url);
 
-    if ($parts) {
-        if ($parts['path'] == '/watch') {
-            parse_str($parts['query'], $vars);
-            $id = $vars['v'] ?? null;
-        } else {
-            if ($parts['host'] == 'youtu.be') {
-                $id = substr($parts['path'], 1);
-            }
-        }
+  if ($parts) {
+    if ($parts['path'] == '/watch') {
+      parse_str($parts['query'], $vars);
+      $id = $vars['v'] ?? null;
+    } else {
+      if ($parts['host'] == 'youtu.be') {
+        $id = substr($parts['path'], 1);
+      }
     }
+  }
 
-    return $id;
+  return $id;
 }
 
 function check_youtube_url($url)
 {
-    $id = extract_youtube_id($url);
+  $id = extract_youtube_id($url);
 
-    set_error_handler(function () {}, E_WARNING);
-    $headers = get_headers('https://www.youtube.com/oembed?format=json&url=http://www.youtube.com/watch?v=' . $id);
-    restore_error_handler();
+  set_error_handler(function () {}, E_WARNING);
+  $headers = get_headers('https://www.youtube.com/oembed?format=json&url=http://www.youtube.com/watch?v=' . $id);
+  restore_error_handler();
 
-    if (!is_array($headers)) {
-      return false;
-    }
+  if (!is_array($headers)) {
+    return false;
+  }
 
-    $err_flag = strpos($headers[0], '200') ? 200 : 404;
+  $err_flag = strpos($headers[0], '200') ? 200 : 404;
 
-    if ($err_flag !== 200) {
-      return false;
-    }
+  if ($err_flag !== 200) {
+    return false;
+  }
 
-    return true;
+  return true;
 }
 
 function test_input($data)
@@ -58,38 +57,50 @@ function test_input($data)
 
 function validateFileInputAndPhotoLink ($file, $link)
 {
-  if (empty($file) && empty($link)) {
-    return $textError = 'Хотя бы одно из полей с указанием фотографии должно быть заполненно';
-  } else if (!empty($file) && !empty($link)) {
+  if (empty($file['tmp_name']) && empty($link)) {
+    return $textError = 'Хотя бы одно из полей с указанием фотографии должно быть заполненноphoto';
+  } else if (!empty($file['tmp_name'])) {
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $file_name = $file['tmp_name'];
     $file_size = $file['size'];
-
     $file_type = finfo_file($finfo, $file_name);
 
-    if ($file_type !== 'image/jpeg' || $file_type !== 'image/png' || $file_type !== 'image/gif') {
-      return $textError = 'Файд должен быть в одном из трех форматов jpeg/png/gif';
-    } else {
-      return false;
+    if ($file_type !== 'image/jpeg' && $file_type !== 'image/png' && $file_type !== 'image/gif' && $file_type !== 'image/jpg') {
+      if (!empty($link)) {
+        $flag = filter_var($link, FILTER_VALIDATE_URL);
+
+        if($flag) {
+          $result = file_get_contents($flag);
+          if ($result) {
+            return 3;
+          } else {
+            return $textError = 'Файл должен быть в одном из трех форматов jpeg/png/gifphoto Ссылка для загрузки ресурса также указана некорректноphotolinkForPic';
+          }
+        } else {
+          return $textError = 'Файл должен быть в одном из трех форматов jpeg/png/gifphoto Ссылка для загрузки ресурса также указана некорректноphotolinkForPic';
+        }
+      } else {
+        return $textError = 'Файл должен быть в одном из трех форматов jpeg/png/gifphoto';
+      }
     }
 
-    if ($file_size > 200000) {
-      $textError = 'Максимальный размер файла: 200Кб';
+    if ($file_size > 500000) {
+      return $textError = 'Максимальный размер файла: 500Кбphoto';
     } else {
-      return false;
+      return 2;
     }
-  } else if (empty($file) && !empty($link)) {
+  } else if (empty($file['tmp_name']) && !empty($link)) {
     $flag = filter_var($link, FILTER_VALIDATE_URL);
 
     if($flag) {
       $result = file_get_contents($flag);
       if ($result) {
-        return false;
+        return 3;
       } else {
-        return $textError = 'При загрузке изображения по ссылке произошла ошибка';
+        return $textError = 'При загрузке изображения по ссылке произошла ошибкalinkForPic';
       }
     } else {
-      return $textError = 'Введен некорректный адрес ресурса';
+      return $textError = 'Введен некорректный адрес ресурсаlinkForPic';
     }
   }
 }
@@ -197,10 +208,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   if (isset($_POST['photo-heading'])) {
     // photo
+
+    // inputs
+
     $heading = test_input($_POST["photo-heading"]);
-    // $userpicFilePhoto = $_FILES["userpic-file-photo"];
+    $userpicFilePhoto = $_FILES["userpic-file-photo"];
     $linkPhoto = test_input($_POST["photo-link"]);
+    $linkDownloadIfReload = test_input($_POST["link-download-if-reload"]);
     $tags = test_input($_POST["photo-tags"]);
+
+    // find errors
 
     $resultHeading = validateHeadingTextAndAuthor($heading, 5, 20);
 
@@ -208,17 +225,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $errors[] = $resultHeading . 'heading';
     }
 
-    // $resultPhoto = validateFileInputAndPhotoLink($userpicFilePhoto, $linkPhoto);
+    if (!empty($userpicFilePhoto['tmp_name']) || !empty($linkPhoto)) {
+      $resultPhoto = validateFileInputAndPhotoLink($userpicFilePhoto, $linkPhoto);
+    } else {
+      $resultPhoto = 4;
+    }
 
-    // if ($resultPhoto) {
-    //   $errors[] = $resultPhoto . 'photo';;
-    // }
+    $flagPhoto = gettype($resultPhoto);
+
+    if ($flagPhoto === 'string') {
+      $errors[] = $resultPhoto;
+    }
 
     $resultTags = validateTags($tags);
 
     if ($resultTags) {
-      $errors['tags'] = $resultTags . 'tags';
+      $errors[] = $resultTags . 'tags';
     }
+
+    // save value
 
     if (!empty($heading)) {
       $inputValues['heading'] = $heading . 'heading';
@@ -228,71 +253,62 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $inputValues['link'] = $linkPhoto . 'link';
     }
 
-    // if (isset($userpicFilePhoto)) {
-    // $file_name = $userpicFilePhoto['name'];
-    // $file_path = __DIR__ . '/uploads/';
-    // $file_url = '/uploads/' . $file_name;
-
-    // move_uploaded_file($userpicFilePhoto['tmp_name'], $file_path . $file_name);
-    // }
-
-    // clearstatcache();
-    if (!empty($_FILES)) {
-      echo('<pre>');
-      print_r($_FILES);
-      echo('</pre>');
-      print(1);
-    }
-
-    // if (isset($_FILES['userpic-file-photo'])) {
-    //   $file_name = $_FILES['userpic-file-photo']['name'];
-    //   $file_path = __DIR__ . '/uploads/';
-    //   $file_url = '/uploads/' . $file_name;
-
-    //   move_uploaded_file($_FILES['userpic-file-photo']['tmp_name'], $file_path . $file_name);
-    //   echo('<pre>');
-    //   print_r($_FILES['userpic-file-photo']);
-    //   echo('</pre>');
-    // }
-
-    // if (!empty($userpicFilePhoto)) {
-    //   $inputValues['photo'] = $userpicFilePhoto . 'photo';
-    // }
-
     if (!empty($tags)) {
-      $inputValues['tags'] = $tags . 'tags';
+      $inputValues['tags'] = explode('#', $tags);
+      $inputValues['tags'] = implode('.', $inputValues['tags']);
+      $inputValues['tags'] = $inputValues['tags'] . 'tags';
     }
 
-    // if (!empty($errors)) {
+    if (!empty($userpicFilePhoto['tmp_name'])) {
+      $file_name = $userpicFilePhoto['name'];
+      $file_path = __DIR__ . '/uploads/';
+      move_uploaded_file($userpicFilePhoto['tmp_name'], $file_path . $file_name);
+      $inputValues['photo'] = '/uploads/' . $file_name . 'photo';
+    }
 
-    //   $errors = implode(', ', $errors);
-    //   if (!empty($inputValues)) {
-    //     $inputValues = implode(', ', $inputValues);
-    //   }
-    //   // header("Location: /?add-post=1&filter=3&errors=$errors&inputValues=$inputValues");
-    // } else {
-    //   if (empty($userpicFilePhoto)) {
-    //     $photo = $linkPhoto;
-    //   } else {
-    //     $photo = $userpicFilePhoto;
-    //   }
+    if (!empty($errors)) {
+      $errors = implode(', ', $errors);
+      if (!empty($inputValues)) {
+        $inputValues = implode(', ', $inputValues);
+      }
+      header("Location: /?add-post=1&filter=3&errors=$errors&inputValues=$inputValues");
+    } else {
+      if ($resultPhoto === 3) {
+        $url = $linkPhoto;
+        $stringToArray = explode('/', $url);
+        $lastElement = count($stringToArray) - 1;
+        $endPath = $stringToArray[$lastElement];
+        $file_path = __DIR__ . '/uploads/';
+        $pathLink = $file_path . $endPath;
+        $result = file_put_contents($pathLink, file_get_contents($url));
+        $photo = '/uploads/' . $endPath;
+      } else if ($resultPhoto === 2) {
+        $photo = '/uploads/' . $userpicFilePhoto['name'];
+      } else if ($resultPhoto === 4) {
+        $photo = $linkDownloadIfReload;
+      }
 
-    //   $con = mysqli_connect("localhost", "root", "","readme");
-    //   $result = mysqli_query(connect(), "INSERT INTO posts (post_date, title, content_type, image_link) VALUE (NOW(), '$heading', 'post-photo', '$photo')");
-    //   $id = mysqli_insert_id($con);
-    //   if (!empty($tags)) {
-    //     $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
-    //   }
-    //   header("Location: /?post-id=$id");
-    // }
+      $con = mysqli_connect("localhost", "root", "","readme");
+      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, image_link, id_user) VALUE (NOW(), '$heading', 'post-photo', '$photo', 1)");
+      $id = mysqli_insert_id($con);
+      if (!empty($tags)) {
+        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
+      }
+      header("Location: /?post-id=$id");
+    }
 
   }
 
   if (isset($_POST['video-heading'])) {
     // video
+
+    // inputs
+
     $heading = test_input($_POST["video-heading"]);
     $linkVideo = test_input($_POST["video-link"]);
     $tags = test_input($_POST["video-tags"]);
+
+    // find errors
 
     $resultHeading = validateHeadingTextAndAuthor($heading, 5, 20);
 
@@ -309,8 +325,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $resultTags = validateTags($tags);
 
     if ($resultTags) {
-      $errors['tags'] = $resultTags . 'tags';
+      $errors[] = $resultTags . 'tags';
     }
+
+    // save value
 
     if (!empty($heading)) {
       $inputValues['heading'] = $heading . 'heading';
@@ -321,7 +339,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (!empty($tags)) {
-      $inputValues['tags'] = $tags . 'tags';
+      $inputValues['tags'] = explode('#', $tags);
+      $inputValues['tags'] = implode('.', $inputValues['tags']);
+      $inputValues['tags'] = $inputValues['tags'] . 'tags';
     }
 
     if (!empty($errors)) {
@@ -341,27 +361,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   if (isset($_POST['text-heading'])) {
     // text
+
+    // inputs
+
     $heading = test_input($_POST["text-heading"]);
     $text = test_input($_POST["text-text"]);
     $tags = test_input($_POST["text-tags"]);
 
+    // find errors
+
     $resultHeading = validateHeadingTextAndAuthor($heading, 5, 20);
 
     if ($resultHeading) {
-      $errors['heading'] = $resultHeading . 'heading';
+      $errors[] = $resultHeading . 'heading';
     }
 
     $resultText = validateHeadingTextAndAuthor($text, 30, 600);
 
     if ($resultText) {
-      $errors['text'] = $resultText . 'text';
+      $errors[] = $resultText . 'text';
     }
 
     $resultTags = validateTags($tags);
 
     if ($resultTags) {
-      $errors['tags'] = $resultTags . 'tags';
+      $errors[] = $resultTags . 'tags';
     }
+
+    // save value
 
     if (!empty($heading)) {
       $inputValues['heading'] = $heading . 'heading';
@@ -372,7 +399,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (!empty($tags)) {
-      $inputValues['tags'] = $tags . 'tags';
+      $inputValues['tags'] = explode('#', $tags);
+      $inputValues['tags'] = implode('.', $inputValues['tags']);
+      $inputValues['tags'] = $inputValues['tags'] . 'tags';
     }
 
     if (empty($errors) === false) {
@@ -392,27 +421,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   if (isset($_POST['quote-heading'])) {
     // quote
+
+    // inputs
     $heading = test_input($_POST["quote-heading"]);
     $text = test_input($_POST["quote-text"]);
     $author = test_input($_POST["quote-author"]);
     $tags = test_input($_POST["quote-tags"]);
 
+    // find errors
+
     $resultHeading = validateHeadingTextAndAuthor($heading, 5, 20);
 
     if ($resultHeading) {
-      $errors['heading'] = $resultHeading . 'heading';
+      $errors[] = $resultHeading . 'heading';
     }
 
     $resultText = validateHeadingTextAndAuthor($textm, 30, 600);
 
     if ($resultText) {
-      $errors['text'] = $resultText . 'text';
+      $errors[] = $resultText . 'text';
     }
 
     $resultTags = validateTags($tags);
 
     if ($resultTags) {
-      $errors['tags'] = $resultTags . 'tags';
+      $errors[] = $resultTags . 'tags';
     }
 
     $resultAuthor = validateHeadingTextAndAuthor($author, 5, 25);
@@ -430,7 +463,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (!empty($tags)) {
-      $inputValues['tags'] = $tags . 'tags';
+      $inputValues['tags'] = explode('#', $tags);
+      $inputValues['tags'] = implode('.', $inputValues['tags']);
+      $inputValues['tags'] = $inputValues['tags'] . 'tags';
     }
 
     if (!empty($author)) {
@@ -454,9 +489,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   if (isset($_POST['link-heading'])) {
     // link
+
+    //inputs
     $heading = test_input($_POST["link-heading"]);
     $link = test_input($_POST["link-link"]);
     $tags = test_input($_POST["link-tags"]);
+
+    //find errors
 
     $resultHeading = validateHeadingTextAndAuthor($heading, 5, 20);
 
@@ -473,8 +512,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $resultTags = validateTags($tags);
 
     if ($resultTags) {
-      $errors['tags'] = $resultTags . 'tags';
+      $errors[] = $resultTags . 'tags';
     }
+
+    // save value
 
     if (!empty($heading)) {
       print($heading);

@@ -169,9 +169,10 @@
     </div>
 </footer>
 <? if ($_GET['filter'] === '3'): ?>
-<script src="libs/dropzone.js"></script>
+<!-- <script src="libs/dropzone.js"></script> -->
 <!-- <script src="js/dropzone-settings.js"></script> -->
-<script src="js/main.js"></script>
+<!-- <script src="js/main.js"></script> -->
+<script src="js/preview.js"></script>
 <? else: ?>
 <script src="libs/dropzone.js"></script>
 <script src="js/dropzone-settings.js"></script>
