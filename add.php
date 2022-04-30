@@ -209,6 +209,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (isset($_POST['photo-heading'])) {
     // photo
 
+    $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+
     // inputs
 
     $heading = test_input($_POST["photo-heading"]);
@@ -265,7 +267,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $file_name = explode('.', $file_name);
         $lastElement = count($file_name) - 1;
         $file_name = $file_name[$lastElement];
-        $file_name = 'before-query.' . $file_name;
+        $randomName = substr(str_shuffle($permitted_chars), 0, 10);
+        $file_name = $randomName . '.' . $file_name;
         print($file_name);
         $file_path = __DIR__ . '/uploads/';
         move_uploaded_file($userpicFilePhoto['tmp_name'], $file_path . $file_name);
@@ -300,7 +303,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($flag === false) {
           $photo = $linkDownloadIfReload;
         } else {
-          $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
           $randomName = substr(str_shuffle($permitted_chars), 0, 10);
           $file_name = explode('.', $linkDownloadIfReload);
           $lastElement = count($file_name) - 1;
