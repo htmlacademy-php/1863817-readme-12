@@ -11,7 +11,7 @@
                         <div class="post__main">
                             <blockquote>
                                 <p>
-                                    <?= $card[0]['text_content']; ?>
+                                  <?= $card[0]['text_content']; ?>
                                 </p>
                                 <cite><?= $card[0]['quote_author']; ?></cite>
                             </blockquote>
@@ -22,7 +22,7 @@
                     <div class="post-details__image-wrapper post-text">
                         <div class="post__main">
                             <p>
-                                <?= $card[0]['text_content']; ?>
+                              <?= $card[0]['text_content']; ?>
                             </p>
                         </div>
                     </div>
@@ -46,7 +46,7 @@
                     <!-- пост-изображение -->
                     <?php elseif ($card[0]["content_type"] === "post-photo"): ?>
                     <div class="post-details__image-wrapper post-photo__image-wrapper">
-                    	<img src="img/<?= $card[0]["image_link"]; ?>" alt="Фото от пользователя" width="760" height="507">
+                    	<img src="<?= $card[0]["image_link"]; ?>" alt="Фото от пользователя" width="760" height="507">
                     </div>
                     <!-- пост-видео -->
                     <?php elseif ($card[0]["content_type"] === "post-video"): ?>
@@ -84,12 +84,13 @@
                         <span class="post__view">500 просмотров</span>
                     </div>
                     <ul class="post__tags">
-                        <li><a href="#">#nature</a></li>
-                        <li><a href="#">#globe</a></li>
-                        <li><a href="#">#photooftheday</a></li>
-                        <li><a href="#">#canon</a></li>
-                        <li><a href="#">#landscape</a></li>
-                        <li><a href="#">#щикарныйвид</a></li>
+                    <?php
+                    $tags = ($tags[0]["hashtag_title"]);
+                    $tags = explode(' ', $tags);
+                    ?>
+                    <? foreach($tags as $key => $tag): ?>
+                      <li><a href="#"><?= $tag ?></a></li>
+                    <? endforeach; ?>
                     </ul>
                     <div class="comments">
                         <form class="comments__form form" action="#" method="post">
