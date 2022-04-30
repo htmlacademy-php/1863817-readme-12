@@ -14,7 +14,7 @@ INSERT INTO users (email, password, registration_date, login, avatar_link) VALUE
 INSERT INTO comments (comment_date, comment_text, id_user, id_post) VALUE (NOW(), 'НУ И ЧТО ЭТО ТАКОЕ', 1, 2);
 INSERT INTO comments (comment_date, comment_text, id_user, id_post) VALUE (NOW(), 'ОЧЕНЬ КЛАССНО, МНЕ НРАВИТСЯ', 2, 1);
 
--- существующий список постов.
+-- существующий список остов.
 INSERT INTO posts (post_date, title, number_of_views, content_type, text_content, id_user)
 VALUE (NOW(), 'Цитата', 56, 'post-quote', 'Мы в жизни любим только раз, а после ищем лишь похожих', 1);
 INSERT INTO posts (post_date, title, number_of_views, content_type, text_content, id_user)

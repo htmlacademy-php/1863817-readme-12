@@ -69,9 +69,8 @@ CREATE INDEX sender_index ON messages(id_who_writed);
 CREATE INDEX receiver_index ON messages(id_for_who_writed);
 
 CREATE TABLE IF NOT EXISTS hashtags (
-  id_hashtag INT UNSIGNED AUTO_INCREMENT,
-  hashtag_title varchar(256) NOT NULL,
-  PRIMARY KEY (`id_hashtag`)
+  id_post INT NOT NULL,
+  hashtag_title varchar(64) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS contentTypes (

@@ -99,9 +99,15 @@
                             </div>
                         </div>
                     </li>
+                    <? if (empty($_GET['add-post'])): ?>
                     <li>
-                        <a class="header__post-button button button--transparent" href="adding-post.html">Пост</a>
+                        <a class="header__post-button button button--transparent" href="http://readme/?add-post=1&filter=2">Пост</a>
                     </li>
+                    <? else: ?>
+                      <li>
+                        <a class="header__post-button header__post-button--active button button--transparent" href="#">Закрыть</a>
+                      </li>
+                    <? endif; ?>
                 </ul>
             </nav>
         </div>
@@ -162,8 +168,15 @@
         </div>
     </div>
 </footer>
+<? if ($_GET['filter'] === '3'): ?>
+<!-- <script src="libs/dropzone.js"></script> -->
+<!-- <script src="js/dropzone-settings.js"></script> -->
+<!-- <script src="js/main.js"></script> -->
+<script src="js/preview.js"></script>
+<? else: ?>
 <script src="libs/dropzone.js"></script>
 <script src="js/dropzone-settings.js"></script>
 <script src="js/main.js"></script>
+<? endif; ?>
 </body>
 </html>

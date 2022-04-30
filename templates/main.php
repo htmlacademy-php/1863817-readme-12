@@ -45,7 +45,7 @@
                     <?php foreach ($types as $key => $type): ?>
                     <? if ($type["content_type_title"] == "p"): ?>
                     <li class="popular__filters-item filters__item">
-                        <a class="filters__button filters__button--photo button <?= addClass($type["id_type"]) ?>" href="/?post=<?= $type["id_type"]; ?>">
+                        <a class="filters__button filters__button--photo button <?= addClass('post', $type["id_type"], 'filters__button--active') ?>" href="/?post=<?= $type["id_type"]; ?>">
                             <span class="visually-hidden">Фото</span>
                             <svg class="filters__icon" width="22" height="18">
                                 <use xlink:href="#icon-filter-<?=$type["content_class_type"]; ?>"></use>
@@ -54,7 +54,7 @@
                     </li>
                     <? elseif ($type["content_type_title"] == "v"): ?>
                     <li class="popular__filters-item filters__item">
-                        <a class="filters__button filters__button--video button <?= addClass($type["id_type"]) ?>" href="/?post=<?= $type["id_type"]; ?>">
+                        <a class="filters__button filters__button--video button <?= addClass('post', $type["id_type"], 'filters__button--active') ?>" href="/?post=<?= $type["id_type"]; ?>">
                             <span class="visually-hidden">Видео</span>
                             <svg class="filters__icon" width="24" height="16">
                                 <use xlink:href="#icon-filter-<?=$type["content_class_type"]; ?>"></use>
@@ -63,7 +63,7 @@
                     </li>
                     <? elseif ($type["content_type_title"] == "t"): ?>
                     <li class="popular__filters-item filters__item">
-                        <a class="filters__button filters__button--text button <?= addClass($type["id_type"]) ?>" href="/?post=<?= $type["id_type"]; ?>">
+                        <a class="filters__button filters__button--text button <?= addClass('post', $type["id_type"], 'filters__button--active') ?>" href="/?post=<?= $type["id_type"]; ?>">
                             <span class="visually-hidden">Текст</span>
                             <svg class="filters__icon" width="20" height="21">
                                 <use xlink:href="#icon-filter-<?=$type["content_class_type"]; ?>"></use>
@@ -72,7 +72,7 @@
                     </li>
                     <? elseif ($type["content_type_title"] == "q"): ?>
                     <li class="popular__filters-item filters__item">
-                        <a class="filters__button filters__button--quote button <?= addClass($type["id_type"]) ?>" href="/?post=<?= $type["id_type"]; ?>">
+                        <a class="filters__button filters__button--quote button <?= addClass('post', $type["id_type"], 'filters__button--active') ?>" href="/?post=<?= $type["id_type"]; ?>">
                             <span class="visually-hidden">Цитата</span>
                             <svg class="filters__icon" width="21" height="20">
                                 <use xlink:href="#icon-filter-<?=$type["content_class_type"]; ?>"></use>
@@ -81,7 +81,7 @@
                     </li>
                     <? elseif ($type["content_type_title"] == "l"): ?>
                     <li class="popular__filters-item filters__item">
-                        <a class="filters__button filters__button--link button <?= addClass($type["id_type"]) ?>" href="/?post=<?= $type["id_type"]; ?>">
+                        <a class="filters__button filters__button--link button <?= addClass('post', $type["id_type"], 'filters__button--active') ?>" href="/?post=<?= $type["id_type"]; ?>">
                             <span class="visually-hidden">Ссылка</span>
                             <svg class="filters__icon" width="21" height="18">
                                 <use xlink:href="#icon-filter-<?=$type["content_class_type"]; ?>"></use>
