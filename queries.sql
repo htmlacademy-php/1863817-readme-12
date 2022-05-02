@@ -20,9 +20,9 @@ VALUE (NOW(), 'Цитата', 56, 'post-quote', 'Мы в жизни любим �
 INSERT INTO posts (post_date, title, number_of_views, content_type, text_content, id_user)
 VALUE (NOW(), 'Игра престолов', 98, 'post-text', 'Не могу дождаться начала финального сезона своего любимого сериала!', 2);
 INSERT INTO posts (post_date, title, number_of_views, content_type, image_link, id_user)
-VALUE (NOW(), 'Наконец, обработал фотки!', 54, 'post-photo', 'rock-medium.jpg', 2);
+VALUE (NOW(), 'Наконец, обработал фотки!', 54, 'post-photo', 'img/rock-medium.jpg', 2);
 INSERT INTO posts (post_date, title, number_of_views, content_type, image_link, id_user)
-VALUE (NOW(), 'Моя мечта', 3, 'post-photo', 'coast-medium.jpg', 1);
+VALUE (NOW(), 'Моя мечта', 3, 'post-photo', 'img/coast-medium.jpg', 1);
 INSERT INTO posts (post_date, title, number_of_views, content_type, website_link, id_user)
 VALUE (NOW(), 'Лучшие курсы', 15, 'post-link', 'www.htmlacademy.ru', 3);
 

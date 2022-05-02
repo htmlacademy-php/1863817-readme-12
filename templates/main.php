@@ -99,7 +99,7 @@
             <?php foreach ($cards as $key => $card): ?>
             <article class="popular__post post <?=$card["content_type"]; ?>">
                 <header class="post__header">
-                    <a href='http://readme/?post-id=<?= $card["id_post"]; ?>'>
+                    <a href='/post.php?post-id=<?= $card["id_post"]; ?>'>
                       <h2><?=$card["title"]; ?></h2>
                     </a>
                 </header>
@@ -123,7 +123,7 @@
                         <?php endif; ?>
                     <?php elseif ($card["content_type"] == "post-photo"): ?>
                         <div class="post-photo__image-wrapper">
-                          <img src="img/<?=$card["image_link"]; ?>" alt="Фото от пользователя" width="360" height="240">
+                          <img src="<?=$card["image_link"]; ?>" alt="Фото от пользователя" width="360" height="240">
                         </div>
                     <?php elseif ($card["content_type"] == "post-video"): ?>
                         <div class="post-video__block">
@@ -161,7 +161,7 @@
                                 <img class="post__author-avatar" src="img/<?=$card["avatar_link"]; ?>" alt="Аватар пользователя" width="40" height="40">
                             </div>
                             <div class="post__info">
-                                <b class="post__author-name"><?=$card["login"]; ?></b>
+                                <b class="post__author-name"><?=$card["user_login"]; ?></b>
                                 <time class="post__time" datetime="<?= $dataForDatatime = generate_random_date($key) ?>" title="<?= strftime("%d.%m.%Y %H:%M", strtotime($dataForDatatime)); ?>"><?= createTextForDate($dataForDatatime); ?></time>
                             </div>
                         </a>

@@ -22,6 +22,7 @@
                 micro blogging
             </p>
         </div>
+        <? if (empty($_GET['registration'])): ?>
         <form class="header__search-form form" action="#" method="get">
             <div class="header__search">
                 <label class="visually-hidden">Поиск</label>
@@ -99,9 +100,9 @@
                             </div>
                         </div>
                     </li>
-                    <? if (empty($_GET['add-post'])): ?>
+                    <? if (empty($_GET['filter'])): ?>
                     <li>
-                        <a class="header__post-button button button--transparent" href="http://readme/?add-post=1&filter=2">Пост</a>
+                        <a class="header__post-button button button--transparent" href="/add.php?filter=2">Пост</a>
                     </li>
                     <? else: ?>
                       <li>
@@ -111,6 +112,17 @@
                 </ul>
             </nav>
         </div>
+        <? endif; ?>
+        <? if (!empty($_GET['registration'])): ?>
+        <ul class="header__user-nav">
+          <li class="header__authorization">
+            <a class="header__user-button header__authorization-button button" href="login.html">Вход</a>
+          </li>
+          <li>
+            <a class="header__user-button header__user-button--active header__register-button button">Регистрация</a>
+          </li>
+        </ul>
+        <? endif; ?>
     </div>
 </header>
 <main class="content"><?= $content; ?></main>
@@ -168,7 +180,7 @@
         </div>
     </div>
 </footer>
-<? if ($_GET['filter'] === '3'): ?>
+<? if ($_GET['filter'] === '3' || $_GET['registration'] === '1'): ?>
 <!-- <script src="libs/dropzone.js"></script> -->
 <!-- <script src="js/dropzone-settings.js"></script> -->
 <!-- <script src="js/main.js"></script> -->

@@ -163,7 +163,7 @@
                         </div>
                         <div class="post-details__name-wrapper user__name-wrapper">
                             <a class="post-details__name user__name" href="#">
-                                <span><?= $card[0]["login"]; ?></span>
+                                <span><?= $card[0]["user_login"]; ?></span>
                             </a>
                             <time class="post-details__time user__time" datetime="2014-03-20">5 лет на сайте</time>
                         </div>
