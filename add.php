@@ -11,30 +11,8 @@ if ($con == false) {
   $rows_for_types = doQuery($con, "SELECT * FROM contentTypes");
 }
 
-function getEndPath ($fullpath, $symbol)
-{
-  $url = $fullpath;
-  $stringToArray = explode($symbol, $url);
-  $lastElement = count($stringToArray) - 1;
-  return $endPath = $stringToArray[$lastElement];
-}
-
-function downloadPhotoFromWebLink ($link)
-{
-  $endPath = getEndPath($link, '/');
-  $file_path = __DIR__ . '/uploads/';
-  $pathLink = $file_path . $endPath;
-  file_put_contents($pathLink, file_get_contents($link));
-}
-
-function generateRandomFileName ()
-{
-  $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-  return $randomName = substr(str_shuffle($permitted_chars), 0, 10);
-}
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $location = 'Location: /add.php?filter=';
+  $location = "Location: /add.php?filter=";
 
   if (isset($_POST['photo-heading'])) {
     // photo
@@ -51,16 +29,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $errors = $resultHeading . 'heading, ';
     }
 
-    if (!empty($userpicFilePhoto['tmp_name']) || !empty($linkPhoto)) {
-      $resultPhoto = validateFileInputAndPhotoLink($userpicFilePhoto, $linkPhoto);
-    } else {
-      $resultPhoto = 4;
-    }
-
+    $resultPhoto = validateFileInputAndPhotoLink($userpicFilePhoto, $linkPhoto);
     $flagPhoto = gettype($resultPhoto);
 
-    if ($flagPhoto === 'string') {
-      $errors .= $resultPhoto;
+    if ($flagPhoto === 'string' || $resultPhoto = 3) {
+      if (!empty($photoPathForPageReload)) {
+        $resultPhoto = 4;
+      } else {
+        $errors .= $resultPhoto;
+      }
     }
 
     $resultTags = validateTags($tags);
@@ -70,25 +47,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (!empty($errors)) {
-
-      print_r($errors);
-
-      $location .= '3&errors=$errors';
+      $location .= "3&errors=$errors";
 
       if (!empty($heading)) {
         $heading = urlencode($heading);
         print_r($heading);
-        $location .= '&heading=$heading';
+        $location .= "&heading=$heading";
       }
 
       if (!empty($linkPhoto)) {
         $link = urlencode($linkPhoto);
-        $location .= '&link=$link';
+        $location .= "&link=$link";
       }
 
       if (!empty($tags)) {
         $tags = urlencode($tags);
-        $location .= '&tags=$tags';
+        $location .= "&tags=$tags";
       }
 
       if (!empty($userpicFilePhoto['tmp_name'])) {
@@ -98,10 +72,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $file_path = __DIR__ . '/uploads/';
         move_uploaded_file($userpicFilePhoto['tmp_name'], $file_path . $file_name);
         $photo = urlencode('uploads/' . $file_name);
-        $location .= '&photo=$photo';
+        $location .= "&photo=$photo";
+      } else {
+        if (!empty($photoPathForPageReload)) {
+          $photo = $photoPathForPageReload;
+          $location .= "&photo=$photo";
+        }
       }
 
-      // header($location);
+      header($location);
 
     } else {
       if ($resultPhoto === 3) {
@@ -155,21 +134,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!empty($errors)) {
 
-      $location .= '5&errors=$errors';
+      $location .= "5&errors=$errors";
 
       if (!empty($heading)) {
         $heading = urlencode($heading);
-        $location .= '&heading=$heading';
+        $location .= "&heading=$heading";
       }
 
       if (!empty($link)) {
         $link = urlencode($link);
-        $location .= '&link=$link';
+        $location .= "&link=$link";
       }
 
       if (!empty($tags)) {
         $tags = urlencode($tags);
-        $location .= '&tags=$tags';
+        $location .= "&tags=$tags";
       }
 
       header($location);
@@ -211,21 +190,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!empty($errors)) {
 
-      $location .= '2&errors=$errors';
+      $location .= "2&errors=$errors";
 
       if (!empty($heading)) {
         $heading = urlencode($heading);
-        $location .= '&heading=$heading';
+        $location .= "&heading=$heading";
       }
 
       if (!empty($text)) {
         $text = urlencode($text);
-        $location .= '&text=$text';
+        $location .= "&text=$text";
       }
 
       if (!empty($tags)) {
         $tags = urlencode($tags);
-        $location .= '&tags=$tags';
+        $location .= "&tags=$tags";
       }
 
       header($location);
@@ -274,26 +253,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!empty($errors)) {
 
-      $location .= '1&errors=$errors';
+      $location .= "1&errors=$errors";
 
       if (!empty($heading)) {
         $heading = urlencode($heading);
-        $location .= '&heading=$heading';
+        $location .= "&heading=$heading";
       }
 
       if (!empty($text)) {
         $text = urlencode($text);
-        $location .= '&text=$text';
+        $location .= "&text=$text";
       }
 
       if (!empty($tags)) {
         $tags = urlencode($tags);
-        $location .= '&tags=$tags';
+        $location .= "&tags=$tags";
       }
 
       if (!empty($author)) {
         $author = urlencode($author);
-        $location .= '&author=$author';
+        $location .= "&author=$author";
       }
 
       header($location);
@@ -335,21 +314,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!empty($errors)) {
 
-      $location .= '4&errors=$errors';
+      $location .= "4&errors=$errors";
 
       if (!empty($heading)) {
         $heading = urlencode($heading);
-        $location .= '&heading=$heading';
+        $location .= "&heading=$heading";
       }
 
       if (!empty($link)) {
         $link = urlencode($link);
-        $location .= '&link=$link';
+        $location .= "&link=$link";
       }
 
       if (!empty($tags)) {
         $tags = urlencode($tags);
-        $location .= '&tags=$tags';
+        $location .= "&tags=$tags";
       }
 
       header($location);

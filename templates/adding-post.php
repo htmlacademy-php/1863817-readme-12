@@ -2,8 +2,6 @@
 
 if (!empty($_GET['errors'])) {
   $errors = $_GET['errors'];
-  print_r($errors);
-  print_r(gettype($errors));
   $errors = explode(', ', $errors);
 
   foreach($errors as $key => $value) {
@@ -68,9 +66,9 @@ if (!empty($_GET['photo'])) {
   $photoValue = urldecode($_GET['photo']);
 }
 
-echo('<pre>');
-print_r($errors);
-echo('</pre>');
+// echo('<pre>');
+// print_r($errors);
+// echo('</pre>');
 
 ?>
 <div class="page__main page__main--adding-post">

@@ -63,23 +63,23 @@ function validatePassword ($value)
   $length = strlen($value);
 
   if ($length < 9 || $length > 20) {
-    $textError = "Значение должно быть от 9 до 20 символовseparator ";
+    $textError = 'Значение должно быть от 9 до 20 символовseparator';
   }
 
   if (!preg_match("#[A-Z]+#", $value)) {
-    $textError .= " Пароль должен содержать хотя бы одну заглавную буквуseparator ";
+    $textError .= 'Пароль должен содержать хотя бы одну заглавную буквуseparator ';
   }
 
   if (!preg_match("#[a-z]+#", $value)) {
-    $textError .= " Пароль должен содержать хотя бы одну маленькую буквуseparator ";
+    $textError .= 'Пароль должен содержать хотя бы одну маленькую буквуseparator';
   }
 
   if (!preg_match("#[0-9]+#", $value)) {
-    $textError .= " Пароль должен содержать хотя бы одну цифруseparator ";
+    $textError .= 'Пароль должен содержать хотя бы одну цифруseparator ';
   }
 
   if (!preg_match("/^[a-zA-Z0-9]+$/", $value)) {
-    $textError .= ' Пароль должен содержать только цифры и буквы латинского алфавита, без использования спецсимволов или пробеловseparator';
+    $textError .= 'Пароль должен содержать только цифры и буквы латинского алфавита, без использования спецсимволов или пробеловseparator';
   }
 
   if (!empty($textError)) {
@@ -231,6 +231,7 @@ function validateTags ($string)
     } else {
       return false;
     }
+
   } else {
     return false;
   }

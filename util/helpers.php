@@ -271,3 +271,25 @@ function createTextForDate ($data)
 
   return false;
 }
+
+function getEndPath ($fullpath, $symbol)
+{
+  $url = $fullpath;
+  $stringToArray = explode($symbol, $url);
+  $lastElement = count($stringToArray) - 1;
+  return $endPath = $stringToArray[$lastElement];
+}
+
+function downloadPhotoFromWebLink ($link)
+{
+  $endPath = getEndPath($link, '/');
+  $file_path = __DIR__ . '/uploads/';
+  $pathLink = $file_path . $endPath;
+  file_put_contents($pathLink, file_get_contents($link));
+}
+
+function generateRandomFileName ()
+{
+  $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+  return $randomName = substr(str_shuffle($permitted_chars), 0, 10);
+}

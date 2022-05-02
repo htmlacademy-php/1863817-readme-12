@@ -2,7 +2,6 @@
 
 if (empty($_GET['errors']) === false) {
   $errors = $_GET['errors'];
-  $errors = urldecode($errors);
   $errors = explode('join', $errors);
 
   foreach($errors as $key => $value) {
@@ -29,34 +28,28 @@ if (empty($_GET['errors']) === false) {
   }
 }
 
-if (empty($_GET['inputValues']) === false) {
-  $inputValues = $_GET['inputValues'];
-  $inputValues = urldecode($inputValues);
-  $inputValues = explode('join', $inputValues);
+echo('<pre>');
+print_r($errors);
+echo('</pre>');
 
-  foreach($inputValues as $key => $value) {
-    $email = stristr($value, 'address', true);
-    if ($email) {
-      $valuesWithKeys['email'] = $email;
-    }
-    $login = stristr($value, 'login', true);
-    if ($login) {
-      $valuesWithKeys['login'] = $login;
-    }
-    $password = stristr($value, 'password', true);
-    if ($password) {
-      print_r($password);
-      $valuesWithKeys['password'] = $password;
-    }
-    $passwordRepeat = stristr($value, 'repeat', true);
-    if ($passwordRepeat) {
-      $valuesWithKeys['passwordRepeat'] = $passwordRepeat;
-    }
-    $photo = stristr($value, 'photo', true);
-    if ($photo) {
-      $valuesWithKeys['photo'] = $photo;
-    }
-  }
+if (!empty($_GET['email'])) {
+  $emailValue = urldecode($_GET['email']);
+}
+
+if (!empty($_GET['login'])) {
+  $loginValue = urldecode($_GET['login']);
+}
+
+if (!empty($_GET['password'])) {
+  $passwordValue = urldecode($_GET['password']);
+}
+
+if (!empty($_GET['passwordRepeat'])) {
+  $passwordRepeatValue = urldecode($_GET['passwordRepeat']);
+}
+
+if (!empty($_GET['photo'])) {
+  $photoValue = urldecode($_GET['photo']);
 }
 
 ?>
@@ -72,7 +65,7 @@ if (empty($_GET['inputValues']) === false) {
           <div class="registration__input-wrapper form__input-wrapper <?= !empty($errorsWithKeys['email']) ? 'form__input-section--error' : null; ?>">
             <label class="registration__label form__label" for="registration-email">Электронная почта <span class="form__input-required">*</span></label>
             <div class="form__input-section">
-              <input class="registration__input form__input" id="registration-email" type="email" name="email" value="<?= $valuesWithKeys['email']; ?>" placeholder="Укажите эл.почту">
+              <input class="registration__input form__input" id="registration-email" type="email" name="email" value="<?= $emailValue; ?>" placeholder="Укажите эл.почту">
               <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
               <div class="form__error-text">
                 <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -83,7 +76,7 @@ if (empty($_GET['inputValues']) === false) {
           <div class="registration__input-wrapper form__input-wrapper <?= !empty($errorsWithKeys['login']) ? 'form__input-section--error' : null; ?>">
             <label class="registration__label form__label" for="registration-login">Логин <span class="form__input-required">*</span></label>
             <div class="form__input-section">
-              <input class="registration__input form__input" id="registration-login" type="text" name="login" value="<?= $valuesWithKeys['login']; ?>" placeholder="Укажите логин">
+              <input class="registration__input form__input" id="registration-login" type="text" name="login" value="<?= $loginValue; ?>" placeholder="Укажите логин">
               <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
               <div class="form__error-text">
                 <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -94,7 +87,7 @@ if (empty($_GET['inputValues']) === false) {
           <div class="registration__input-wrapper form__input-wrapper <?= !empty($passwordErrorsArray) ? 'form__input-section--error' : null; ?>">
             <label class="registration__label form__label" for="registration-password">Пароль<span class="form__input-required">*</span></label>
             <div class="form__input-section">
-              <input class="registration__input form__input" id="registration-password" type="password" name="password" value="<?= $valuesWithKeys['password']; ?>" placeholder="Придумайте пароль">
+              <input class="registration__input form__input" id="registration-password" type="password" name="password" value="<?= $passwordValue; ?>" placeholder="Придумайте пароль">
               <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
               <div class="form__error-text">
                 <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -105,7 +98,7 @@ if (empty($_GET['inputValues']) === false) {
           <div class="registration__input-wrapper form__input-wrapper <?= !empty($errorsWithKeys['passwordRepeat']) ? 'form__input-section--error' : null; ?>">
             <label class="registration__label form__label" for="registration-password-repeat">Повтор пароля<span class="form__input-required">*</span></label>
             <div class="form__input-section">
-              <input class="registration__input form__input" id="registration-password-repeat" type="password" value="<?= $valuesWithKeys['passwordRepeat']; ?>" name="password-repeat" placeholder="Повторите пароль">
+              <input class="registration__input form__input" id="registration-password-repeat" type="password" value="<?= $passwordRepeatValue; ?>" name="password-repeat" placeholder="Повторите пароль">
               <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
               <div class="form__error-text">
                 <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -151,8 +144,8 @@ if (empty($_GET['inputValues']) === false) {
         <div class="adding-post__input-file-wrapper form__input-file-wrapper">
           <div class="adding-post__file-zone adding-post__file-zone--photo form__file-zone">
             <div class="form__file-zone-text">
-              <? if (!empty($valuesWithKeys['photo'])): ?>
-              <img class="preview__photo" src="<?= $valuesWithKeys['photo'] ?>" width="100" height="100" alt="Загруженное пользователем фото.">
+              <? if (!empty($photoValue)): ?>
+              <img class="preview__photo" src="<?= $photoValue; ?>" width="100" height="100" alt="Загруженное пользователем фото.">
               <? else: ?>
               <img class="preview__photo" src="img/drag-and-drop.svg" width="43" height="43" alt="Загруженное пользователем фото.">
               <? endif; ?>
@@ -160,7 +153,7 @@ if (empty($_GET['inputValues']) === false) {
             </div>
           </div>
           <div class="adding-post__input-file-button form__input-file-button form__input-file-button--photo button">
-            <input class='visually-hidden' id='link-download-if-reload' name='link-download-if-reload' value='<?= $valuesWithKeys['photo']; ?>' type='text'>
+            <input class='visually-hidden' id='link-download-if-reload' name='link-download-if-reload' value='<?= $photoValue; ?>' type='text'>
             <input class="adding-post__input-file form__input-file" id="userpic-file-photo" type="file" name="userpic-file-photo">
             <span>Выбрать фото</span>
             <svg class="adding-post__attach-icon form__attach-icon" width="10" height="20">
