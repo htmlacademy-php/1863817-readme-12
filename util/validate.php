@@ -208,28 +208,29 @@ function validateTags ($string)
 
     $tag = strripos($string, '#');
 
-    if ($tag === 0) {
-      return false;
-    }
-
-    if (!$tag) {
+    if (!$tag && $tag !== 0) {
       print($tag);
-      return $textError = 'Тэг должен начинаться со знака "%23"';
+      $textError = 'Тег должен начинаться со знака "%23"';
     }
 
     if ($result === $string) {
       $flag = true;
-      print(1);
     } else {
       $flag = false;
-      print(2);
     }
 
     if ($flag === false) {
-      print(3);
-      return $textError = 'Тэги должны быть отделены пробелами';
+      $textError = 'Теги должны быть отделены пробелами';
+    }
+
+    if (!preg_match("/^[a-zA-Z0-9#]+$/", $string)) {
+      $textError .= 'Тег не должен содержать спецсимволов, помимо знака "%23"';
     } else {
       return false;
+    }
+
+    if (!empty($textError)) {
+      return $textError;
     }
 
   } else {

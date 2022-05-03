@@ -51,7 +51,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
       if (!empty($heading)) {
         $heading = urlencode($heading);
-        print_r($heading);
         $location .= "&heading=$heading";
       }
 
@@ -207,7 +206,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $location .= "&tags=$tags";
       }
 
-      header($location);
+      echo('<pre>');
+      print_r($errors);
+      echo('</pre>');
+
+      // header($location);
 
     } else {
       $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, text_content) VALUE (NOW(), '$heading', 'post-text', '$text')");
