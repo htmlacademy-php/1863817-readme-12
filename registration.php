@@ -74,13 +74,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $file_path = __DIR__ . '/uploads/';
       move_uploaded_file($userpicFilePhoto['tmp_name'], $file_path . $file_name);
       $photo = urlencode('uploads/' . $file_name);
-      $location .= "&photo=$photo";
-    } else {
-      if (!empty($photoPathForPageReload)) {
-        $photo = $photoPathForPageReload;
-        $location .= "&photo=$photo";
-      }
     }
+
+    if (!empty($photoPathForPageReload)) {
+      $photo = $photoPathForPageReload;
+    }
+
+    if (!empty($photoPathForPageReload) || !empty($userpicFilePhoto['tmp_name'])) {
+      $location .= "&photo=$photo";
+    }
+
 
     header($location);
   } else {

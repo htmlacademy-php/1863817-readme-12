@@ -8,7 +8,7 @@ function test_input($data)
   return $data;
 }
 
-function validateEmail ($value)
+function validateEmail($value)
 {
   if (empty($value)) {
     return $textError = 'Поле обязательно для заполнения';
@@ -20,7 +20,7 @@ function validateEmail ($value)
     return $textError = 'Введен некорректный адрес электронной почты';
   }
 
-  $con = mysqli_connect("localhost", "root", "","readme");
+  $con = mysqli_connect("localhost", "root", "", "readme");
   $sameEmail = mysqli_query($con, "SELECT * FROM users WHERE email='$value'");
   $result = mysqli_num_rows($sameEmail);
 
@@ -31,7 +31,7 @@ function validateEmail ($value)
   return false;
 }
 
-function validateLogin ($value)
+function validateLogin($value)
 {
   if (empty($value)) {
     return $textError = 'Поле обязательно для заполнения';
@@ -43,7 +43,7 @@ function validateLogin ($value)
     return $textError = "Значение должно быть от 3 до 20 символов";
   }
 
-  $con = mysqli_connect("localhost", "root", "","readme");
+  $con = mysqli_connect("localhost", "root", "", "readme");
   $sameLogin = mysqli_query($con, "SELECT * FROM users WHERE user_login ='$value'");
   $result = mysqli_num_rows($sameLogin);
 
@@ -54,7 +54,7 @@ function validateLogin ($value)
   return false;
 }
 
-function validatePassword ($value)
+function validatePassword($value)
 {
   if (empty($value)) {
     return $textError = 'Поле обязательно для заполнения';
@@ -89,7 +89,7 @@ function validatePassword ($value)
   return false;
 }
 
-function validateRepeatPassword ($firstPassword, $secondPassword)
+function validateRepeatPassword($firstPassword, $secondPassword)
 {
   if (empty($secondPassword)) {
     return $textError = 'Поле обязательно для заполнения';
@@ -100,7 +100,7 @@ function validateRepeatPassword ($firstPassword, $secondPassword)
   }
 }
 
-function validatePhotoForRegistration ($file)
+function validatePhotoForRegistration($file)
 {
   if (empty($file['tmp_name'])) {
     return false;
@@ -122,57 +122,47 @@ function validatePhotoForRegistration ($file)
   }
 }
 
-function validateFileInputAndPhotoLink ($file, $link)
+function validatePhotoLink($link)
 {
-  if (empty($file['tmp_name']) && empty($link)) {
-    return $textError = 'Хотя бы одно из полей с указанием фотографии должно быть заполненноphoto, ';
-  } else if (!empty($file['tmp_name'])) {
+  if (!empty($link)) {
+    $flag = filter_var($link, FILTER_VALIDATE_URL);
+
+    if ($flag) {
+      $result = file_get_contents($flag);
+      if (!$result) {
+        return $textError = 'При загрузке изображения по ссылке произошла ошибкa';
+      } else {
+        return false;
+      }
+    } else {
+      return $textError = 'Введен некорректный адрес ресурса';
+    }
+  } else {
+    return false;
+  }
+}
+
+function validatePhotoFile($file)
+{
+  if (!empty($file['tmp_name'])) {
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $file_name = $file['tmp_name'];
     $file_size = $file['size'];
     $file_type = finfo_file($finfo, $file_name);
 
     if ($file_type !== 'image/jpeg' && $file_type !== 'image/png' && $file_type !== 'image/gif' && $file_type !== 'image/jpg') {
-      if (!empty($link)) {
-        $flag = filter_var($link, FILTER_VALIDATE_URL);
-
-        if($flag) {
-          $result = file_get_contents($flag);
-          if ($result) {
-            return 3;
-          } else {
-            return $textError = 'Файл должен быть в одном из трех форматов jpeg/png/gifphoto Ссылка для загрузки ресурса также указана некорректноphotolinkForPic, ';
-          }
-        } else {
-          return $textError = 'Файл должен быть в одном из трех форматов jpeg/png/gifphoto Ссылка для загрузки ресурса также указана некорректноphotolinkForPic, ';
-        }
-      } else {
-        return $textError = 'Файл должен быть в одном из трех форматов jpeg/png/gifphoto, ';
-      }
+      return $textError = 'Файл должен быть в одном из трех форматов jpeg/png/gifphoto Ссылка для загрузки ресурса также указана некорректноphotolinkForPic';
     }
 
     if ($file_size > 500000) {
       return $textError = 'Максимальный размер файла: 500Кбphoto, ';
-    } else {
-      return 2;
     }
-  } else if (empty($file['tmp_name']) && !empty($link)) {
-    $flag = filter_var($link, FILTER_VALIDATE_URL);
-
-    if($flag) {
-      $result = file_get_contents($flag);
-      if ($result) {
-        return 3;
-      } else {
-        return $textError = 'При загрузке изображения по ссылке произошла ошибкalinkForPic, ';
-      }
-    } else {
-      return $textError = 'Введен некорректный адрес ресурсаlinkForPic, ';
-    }
+  } else {
+    return false;
   }
 }
 
-function validateVideo ($link)
+function validateVideo($link)
 {
   if (empty($link)) {
     return $textError = 'Это поле должно быть заполнено.';
@@ -192,24 +182,23 @@ function validateVideo ($link)
   }
 }
 
-function validateTags ($string)
+function validateTags($string)
 {
   if (!empty($string)) {
     $result = explode('#', $string);
 
-    foreach($result as $key => $value) {
+    foreach ($result as $key => $value) {
       $value = trim($value);
       $result2[] = $value;
     }
 
     $result = implode(' #', $result2);
+    print($result);
     $result = trim($result);
-    $allElementInString = str_split($string);
 
     $tag = strripos($string, '#');
 
     if (!$tag && $tag !== 0) {
-      print($tag);
       $textError = 'Тег должен начинаться со знака "%23"';
     }
 
@@ -225,40 +214,39 @@ function validateTags ($string)
 
     if (!preg_match("/^[a-zA-Z0-9#]+$/", $string)) {
       $textError .= 'Тег не должен содержать спецсимволов, помимо знака "%23"';
-    } else {
-      return false;
     }
 
     if (!empty($textError)) {
       return $textError;
+    } else {
+      return false;
     }
-
   } else {
     return false;
   }
 }
 
-function validateWebLink ($link)
+function validateWebLink($link)
 {
   if (empty($link)) {
     return $textError = 'Это поле должно быть заполнено';
   } else {
     $flag = filter_var($link, FILTER_VALIDATE_URL);
 
-    if($flag) {
+    if ($flag) {
       $result = file_get_contents($link);
       if ($result === false) {
         return $textError = 'Введен некорректный адрес ресурса';
       } else {
         return false;
       }
-      } else {
+    } else {
       return $textError = 'Введен некорректный адрес ресурса';
     }
   }
 }
 
-function validateHeadingTextAndAuthor ($name, $min, $max)
+function validateHeadingTextAndAuthor($name, $min, $max)
 {
   if (empty($name)) {
     return $textError = 'Это поле должно быть заполнено';
@@ -272,4 +260,3 @@ function validateHeadingTextAndAuthor ($name, $min, $max)
     return false;
   }
 }
-?>
