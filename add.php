@@ -14,7 +14,7 @@ if ($con == false) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   if (isset($_POST['photo-heading'])) {
-    // video
+    // photo
     $location = "Location: /add.php?filter=3";
 
     foreach ($_POST as $key => $value) {
@@ -41,14 +41,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $location .= "&resultLink=$textError";
     }
 
-    if ($errors['resultLink'] && !$errors['resultFile'] && empty($_POST["link-download-if-reload"])) {
+    if ($errors['resultLink'] && empty($_FILES["userpic-file-photo"]['tmp_name']) && !$errors['resultFile'] && empty($_POST["link-download-if-reload"])) {
       $value = $errors['resultLink'];
       $location .= "&resultLink=$value";
     }
 
-    if ($errors['resultFile'] && !$errors['resultLink']) {
+    if ($errors['resultFile']) {
       $value = $errors['resultFile'];
       $location .= "&resultFile=$value";
+    }
+
+    if ($errors['resultFile'] && $errors['resultLink']) {
+      $textError = ', Адрес ресурса также введен некорректно';
+      $value = $errors['resultFile'] . $textError;
+      $location .= "&resultLink=$value";
     }
 
 
@@ -58,20 +64,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($error) {
       foreach ($_POST as $key => $value) {
+        $value = urlencode($value);
         $location .= "&$key=$value";
       }
 
-      if (!empty($_FILES["userpic-file-photo"]['tmp_name'])) {
+      if (!empty($_FILES["userpic-file-photo"]['tmp_name']) && !$errors['resultFile']) {
         $file_name = getEndPath($_FILES["userpic-file-photo"]['name'], '.');
         $randomName = generateRandomFileName();
         $file_name = $randomName . '.' . $file_name;
         $file_path = __DIR__ . '/uploads/';
         move_uploaded_file($_FILES["userpic-file-photo"]['tmp_name'], $file_path . $file_name);
         $photo = urlencode('uploads/' . $file_name);
-      }
-
-      if (!empty($_POST["link-download-if-reload"])) {
-        $photo = $photoPathForPageReload;
+      } else if (!empty($_POST["link-download-if-reload"])) {
+        $photo = $_POST["link-download-if-reload"];
       }
 
       if (!empty($_POST["link-download-if-reload"]) || !empty($_FILES["userpic-file-photo"]['tmp_name'])) {
@@ -80,105 +85,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
       header($location);
     } else {
-      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, video_link) VALUE (NOW(), '$heading', 'post-video', '$linkVideo')");
+
+      if ($_POST["photo-link"] && empty($_FILES["userpic-file-photo"]['tmp_name']) && empty($_POST["link-download-if-reload"])) {
+        downloadPhotoFromWebLink($_POST["photo-link"]);
+        $photo = '/uploads/' . getEndPath($_POST["photo-link"], '/');
+      } else if ($_FILES["userpic-file-photo"]['tmp_name']) {
+        if (!empty($_POST["link-download-if-reload"])) {
+          unlink($_POST["link-download-if-reload"]);
+        }
+        $file_name = $_FILES["userpic-file-photo"]['name'];
+        $file_path = __DIR__ . '/uploads/';
+        move_uploaded_file($_FILES["userpic-file-photo"]['tmp_name'], $file_path . $file_name);
+        $photo = '/uploads/' . $_FILES["userpic-file-photo"]['name'];
+      } else {
+        $photo = $_POST["link-download-if-reload"];
+      }
+
+      $heading = $_POST["photo-heading"];
+      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, image_link, id_user) VALUE (NOW(), '$heading', 'post-photo', '$photo', 1)");
       $id = mysqli_insert_id($con);
-      if (!empty($tags)) {
-        $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, image_link, id_user) VALUE (NOW(), '$heading', 'post-photo', '$photo', 1)");
+      if (!empty($_POST["photo-tags"])) {
+        $tags = $_POST["photo-tags"];
+        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
       }
       header("Location: /post.php?post-id=$id");
     }
   }
-
-  // if (isset($_POST['photo-heading'])) {
-  //   // photo
-
-  //   $heading = test_input($_POST["photo-heading"]);
-  //   $userpicFilePhoto = $_FILES["userpic-file-photo"];
-  //   $linkPhoto = test_input($_POST["photo-link"]);
-  //   $photoPathForPageReload = test_input($_POST["link-download-if-reload"]);
-  //   $tags = test_input($_POST["photo-tags"]);
-
-  //   $resultHeading = validateHeadingTextAndAuthor($heading, 5, 20);
-
-  //   if ($resultHeading) {
-  //     $errors = $resultHeading . 'heading, ';
-  //   }
-
-  //   $resultPhoto = validateFileInputAndPhotoLink($userpicFilePhoto, $linkPhoto);
-  //   $flagPhoto = gettype($resultPhoto);
-
-  //   if ($flagPhoto === 'string' || $resultPhoto = 3) {
-  //     if (!empty($photoPathForPageReload)) {
-  //       $resultPhoto = 4;
-  //     } else {
-  //       $errors .= $resultPhoto;
-  //     }
-  //   }
-
-  //   $resultTags = validateTags($tags);
-
-  //   if ($resultTags) {
-  //     $errors .= $resultTags . 'tags';
-  //   }
-
-  //   if (!empty($errors)) {
-  //     $location .= "3&errors=$errors";
-
-  //     if (!empty($heading)) {
-  //       $heading = urlencode($heading);
-  //       $location .= "&heading=$heading";
-  //     }
-
-  //     if (!empty($linkPhoto)) {
-  //       $link = urlencode($linkPhoto);
-  //       $location .= "&link=$link";
-  //     }
-
-  //     if (!empty($tags)) {
-  //       $tags = urlencode($tags);
-  //       $location .= "&tags=$tags";
-  //     }
-
-  //     if (!empty($userpicFilePhoto['tmp_name'])) {
-  //       $file_name = getEndPath($userpicFilePhoto['name'], '.');
-  //       $randomName = generateRandomFileName();
-  //       $file_name = $randomName . '.' . $file_name;
-  //       $file_path = __DIR__ . '/uploads/';
-  //       move_uploaded_file($userpicFilePhoto['tmp_name'], $file_path . $file_name);
-  //       $photo = urlencode('uploads/' . $file_name);
-  //       $location .= "&photo=$photo";
-  //     } else {
-  //       if (!empty($photoPathForPageReload)) {
-  //         $photo = $photoPathForPageReload;
-  //         $location .= "&photo=$photo";
-  //       }
-  //     }
-
-  //     header($location);
-  //   } else {
-  //     if ($resultPhoto === 3) {
-  //       downloadPhotoFromWebLink($linkPhoto);
-  //       $photo = '/uploads/' . getEndPath($linkPhoto, '/');
-  //     } else if ($resultPhoto === 2) {
-  //       if (!empty($photoPathForPageReload)) {
-  //         unlink($photoPathForPageReload);
-  //       }
-  //       $file_name = $userpicFilePhoto['name'];
-  //       $file_path = __DIR__ . '/uploads/';
-  //       move_uploaded_file($userpicFilePhoto['tmp_name'], $file_path . $file_name);
-  //       $photo = '/uploads/' . $userpicFilePhoto['name'];
-  //     } else if ($resultPhoto === 4) {
-  //       $photo = $photoPathForPageReload;
-  //     }
-
-  //     $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, image_link, id_user) VALUE (NOW(), '$heading', 'post-photo', '$photo', 1)");
-  //     $id = mysqli_insert_id($con);
-  //     if (!empty($tags)) {
-  //       $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
-  //     }
-  //     header("Location: /post.php?post-id=$id");
-  //   }
-  // }
 
   if (isset($_POST['video-heading'])) {
     // video
@@ -189,7 +121,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $errors['resultHeading'] = validateHeadingTextAndAuthor($_POST["video-heading"], 5, 20);
-    $errors['resultLink'] = validateVideo($_POST["video-link"], 30, 600);
+    $errors['resultLink'] = validateVideo($_POST["video-link"]);
     $errors['resultTags'] = validateTags($_POST["video-tags"]);
 
     foreach ($errors as $key => $value) {
@@ -201,14 +133,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($error) {
       foreach ($_POST as $key => $value) {
+        $value = urlencode($value);
         $location .= "&$key=$value";
       }
 
       header($location);
     } else {
-      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, video_link) VALUE (NOW(), '$heading', 'post-video', '$linkVideo')");
+      $linkVideo = $_POST["video-link"];
+      $heading = $_POST["video-heading"];
+      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, video_link, id_user) VALUE (NOW(), '$heading', 'post-video', '$linkVideo', 1)");
       $id = mysqli_insert_id($con);
-      if (!empty($tags)) {
+      if (!empty($_POST["video-tags"])) {
+        $tags = $_POST['video-tags'];
         $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
       }
       header("Location: /post.php?post-id=$id");
@@ -236,14 +172,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($error) {
       foreach ($_POST as $key => $value) {
+        $value = urlencode($value);
         $location .= "&$key=$value";
       }
 
       header($location);
     } else {
+      $heading = $_POST["text-heading"];
+      $text = $_POST["text-text"];
       $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, text_content, id_user) VALUE (NOW(), '$heading', 'post-text', '$text', 1)");
       $id = mysqli_insert_id($con);
-      if (!empty($tags)) {
+      if (!empty($_POST["text-tags"])) {
+        $tags = $_POST["text-tags"];
         $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
       }
       header("Location: /post.php?post-id=$id");
@@ -251,7 +191,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
 
   if (isset($_POST['quote-heading'])) {
-    // text
+    // quote
     $location = "Location: /add.php?filter=1";
 
     foreach ($_POST as $key => $value) {
@@ -259,7 +199,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $errors['resultHeading'] = validateHeadingTextAndAuthor($_POST["quote-heading"], 5, 20);
-    $errors['resultText'] = validateHeadingTextAndAuthor($_POST["quote-text"], 30, 600);
+    $errors['resultText'] = validateHeadingTextAndAuthor($_POST["quote-text"], 30, 100);
     $errors['resultAuthor'] = validateHeadingTextAndAuthor($_POST["quote-author"], 5, 20);
     $errors['resultTags'] = validateTags($_POST["quote-tags"]);
 
@@ -272,14 +212,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($error) {
       foreach ($_POST as $key => $value) {
+        $value = urlencode($value);
         $location .= "&$key=$value";
       }
 
       header($location);
     } else {
+      $heading = $_POST["quote-heading"];
+      $text = $_POST["quote-text"];
+      $author = $_POST["quote-author"];
       $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, text_content, quote_author, id_user) VALUE (NOW(), '$heading', 'post-quote', '$text', '$author', 1)");
       $id = mysqli_insert_id($con);
-      if (!empty($tags)) {
+      if (!empty($_POST["quote-tags"])) {
+        $tags = $_POST["quote-tags"];
         $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
       }
       header("Location: /post.php?post-id=$id");
@@ -307,14 +252,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($error) {
       foreach ($_POST as $key => $value) {
+        $value = urlencode($value);
         $location .= "&$key=$value";
       }
 
       header($location);
     } else {
+      $link = $_POST["link-link"];
+      $heading = $_POST["link-heading"];
       $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, website_link, id_user) VALUE (NOW(), '$heading', 'post-link', '$link', 1)");
       $id = mysqli_insert_id($con);
-      if (!empty($tags)) {
+      if (!empty($_POST["link-tags"])) {
+        $tags = $_POST["link-tags"];
         $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
       }
       header("Location: /post.php?post-id=$id");

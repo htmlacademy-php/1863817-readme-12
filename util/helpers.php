@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Проверяет переданную дату на соответствие формату 'ГГГГ-ММ-ДД'
  *
@@ -64,7 +65,7 @@ function get_noun_plural_form(int $number, string $one, string $two, string $man
 
     default:
       return $many;
-    }
+  }
 }
 
 /**
@@ -99,23 +100,24 @@ function include_template($name, array $data = [])
  */
 function check_youtube_url($url)
 {
-    $id = extract_youtube_id($url);
+  $id = extract_youtube_id($url);
 
-    set_error_handler(function () {}, E_WARNING);
-    $headers = get_headers('https://www.youtube.com/oembed?format=json&url=http://www.youtube.com/watch?v=' . $id);
-    restore_error_handler();
+  set_error_handler(function () {
+  }, E_WARNING);
+  $headers = get_headers('https://www.youtube.com/oembed?format=json&url=http://www.youtube.com/watch?v=' . $id);
+  restore_error_handler();
 
-    if (!is_array($headers)) {
-      return false;
-    }
+  if (!is_array($headers)) {
+    return false;
+  }
 
-    $err_flag = strpos($headers[0], '200') ? 200 : 404;
+  $err_flag = strpos($headers[0], '200') ? 200 : 404;
 
-    if ($err_flag !== 200) {
-      return false;
-    }
+  if ($err_flag !== 200) {
+    return false;
+  }
 
-    return true;
+  return true;
 }
 
 /**
@@ -147,8 +149,8 @@ function embed_youtube_cover(string $youtube_url = null)
   $id = extract_youtube_id($youtube_url);
 
   if ($id) {
-      $src = sprintf("https://img.youtube.com/vi/%s/mqdefault.jpg", $id);
-      $res = '<img alt="youtube cover" width="320" height="120" src="' . $src . '" />';
+    $src = sprintf("https://img.youtube.com/vi/%s/mqdefault.jpg", $id);
+    $res = '<img alt="youtube cover" width="320" height="120" src="' . $src . '" />';
   }
 
   return $res;
@@ -161,22 +163,22 @@ function embed_youtube_cover(string $youtube_url = null)
  */
 function extract_youtube_id($youtube_url)
 {
-    $id = false;
+  $id = false;
 
-    $parts = parse_url($youtube_url);
+  $parts = parse_url($youtube_url);
 
-    if ($parts) {
-        if ($parts['path'] == '/watch') {
-            parse_str($parts['query'], $vars);
-            $id = $vars['v'] ?? null;
-        } else {
-            if ($parts['host'] == 'youtu.be') {
-                $id = substr($parts['path'], 1);
-            }
-        }
+  if ($parts) {
+    if ($parts['path'] == '/watch') {
+      parse_str($parts['query'], $vars);
+      $id = $vars['v'] ?? null;
+    } else {
+      if ($parts['host'] == 'youtu.be') {
+        $id = substr($parts['path'], 1);
+      }
     }
+  }
 
-    return $id;
+  return $id;
 }
 
 /**
@@ -207,7 +209,7 @@ function generate_random_date($index)
 }
 
 // Добавляет класс в зависимости от типа контента
-function addClass ($key, $param, $class)
+function addClass($key, $param, $class)
 {
   if ($_GET[$key] === $param) {
     return $class;
@@ -215,11 +217,11 @@ function addClass ($key, $param, $class)
 }
 
 // Добавляет ссылку в случаи если текст поста больше 300 символов
-function addLinkForBigText ($string, $symbols = 300)
+function addLinkForBigText($string, $symbols = 300)
 {
   if (is_string($string)) {
-    $arrayWords = explode (" ", $string);
-    $newString ='';
+    $arrayWords = explode(" ", $string);
+    $newString = '';
     $length = 0;
     $cut = false;
     foreach ($arrayWords as $key => $value) {
@@ -230,7 +232,7 @@ function addLinkForBigText ($string, $symbols = 300)
         $cut = true;
         break;
       } else {
-        $newString = implode (" ", $arrayWords);
+        $newString = implode(" ", $arrayWords);
       }
     }
   }
@@ -239,13 +241,13 @@ function addLinkForBigText ($string, $symbols = 300)
 }
 
 // создает дату в формате Unix
-function createUnixInterval ($dataForPost)
+function createUnixInterval($dataForPost)
 {
   return strtotime('now') - strtotime($dataForPost);
 }
 
 // создает текст для даты в нужной форме
-function createTextForDate ($data)
+function createTextForDate($data)
 {
   $resultInterval = createUnixInterval($data);
 
@@ -272,7 +274,7 @@ function createTextForDate ($data)
   return false;
 }
 
-function getEndPath ($fullpath, $symbol)
+function getEndPath($fullpath, $symbol)
 {
   $url = $fullpath;
   $stringToArray = explode($symbol, $url);
@@ -280,15 +282,15 @@ function getEndPath ($fullpath, $symbol)
   return $endPath = $stringToArray[$lastElement];
 }
 
-function downloadPhotoFromWebLink ($link)
+function downloadPhotoFromWebLink($link)
 {
   $endPath = getEndPath($link, '/');
-  $file_path = __DIR__ . '/uploads/';
+  $file_path = '../readme/uploads/';
   $pathLink = $file_path . $endPath;
   file_put_contents($pathLink, file_get_contents($link));
 }
 
-function generateRandomFileName ()
+function generateRandomFileName()
 {
   $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
   return $randomName = substr(str_shuffle($permitted_chars), 0, 10);

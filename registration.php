@@ -4,100 +4,66 @@ require 'util/mysql.php';
 require 'util/validate.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
   $location = "Location: /registration.php?registration=1";
 
-  $email = test_input($_POST["email"]);
-  $login = test_input($_POST["login"]);
-  $password = test_input($_POST["password"]);
-  $passwordRepeat = test_input($_POST["password-repeat"]);
-  $userpicFilePhoto = $_FILES["userpic-file-photo"];
-  $photoPathForPageReload = test_input($_POST["link-download-if-reload"]);
-
-  $resultEmail = validateEmail($email);
-
-  if ($resultEmail) {
-    $errors = $resultEmail . 'email join';
+  foreach ($_POST as $key => $value) {
+    test_input($value);
   }
 
-  $resultLogin = validateLogin($login);
+  $errors['resultEmail'] = validateEmail($_POST["email"]);
+  $errors['resultLogin'] = validateLogin($_POST["login"]);
+  $errors['resultPassword'] = validatePassword($_POST["password"]);
+  $errors['resultRepeatPassword'] = validateRepeatPassword($_POST["password"], $_POST["password-repeat"]);
+  $errors['resultFile'] = validatePhotoFile($_FILES["userpic-file-photo"]);
 
-  if ($resultLogin) {
-    $errors .= $resultLogin . 'login join';
+  foreach ($errors as $key => $value) {
+    if ($value) {
+      $value = urlencode($value);
+      $location .= "&$key=$value";
+      $error = true;
+    }
   }
 
-  $resultPassword = validatePassword($password);
+  if ($error) {
 
-  if ($resultPassword) {
-    $errors .= $resultPassword . 'password join';
-  }
-
-  $resultRepeatPassword = validateRepeatPassword($password, $passwordRepeat);
-
-  if ($resultRepeatPassword) {
-    $errors .= $resultRepeatPassword . 'repeat join';
-  }
-
-  $resultPhoto = validatePhotoForRegistration($userpicFilePhoto);
-
-  if ($resultPhoto) {
-    $errors .= $resultPhoto . 'photo join';
-  }
-
-  if (!empty($errors)) {
-
-    $location .= "&errors=$errors";
-
-    if (!empty($email)) {
-      $email = urlencode($email);
-      $location .= "&email=$email";
+    foreach ($_POST as $key => $value) {
+      $value = urlencode($value);
+      $location .= "&$key=$value";
     }
 
-    if (!empty($login)) {
-      $login = urlencode($login);
-      $location .= "&login=$login";
-    }
-
-    if (!empty($password)) {
-      $password = urlencode($password);
-      $location .= "&password=$password";
-    }
-
-    if (!empty($passwordRepeat)) {
-      $passwordRepeat = urlencode($passwordRepeat);
-      $location .= "&passwordRepeat=$passwordRepeat";
-    }
-
-    if (!empty($userpicFilePhoto['tmp_name'])) {
-      $file_name = getEndPath($userpicFilePhoto['name'], '.');
+    if (!empty($_FILES["userpic-file-photo"]['tmp_name']) && !$errors['resultFile']) {
+      $file_name = getEndPath($_FILES["userpic-file-photo"]['name'], '.');
       $randomName = generateRandomFileName();
       $file_name = $randomName . '.' . $file_name;
       $file_path = __DIR__ . '/uploads/';
-      move_uploaded_file($userpicFilePhoto['tmp_name'], $file_path . $file_name);
+      move_uploaded_file($_FILES["userpic-file-photo"]['tmp_name'], $file_path . $file_name);
       $photo = urlencode('uploads/' . $file_name);
+    } else if (!empty($_POST["link-download-if-reload"])) {
+      $photo = $_POST["link-download-if-reload"];
     }
 
-    if (!empty($photoPathForPageReload)) {
-      $photo = $photoPathForPageReload;
-    }
-
-    if (!empty($photoPathForPageReload) || !empty($userpicFilePhoto['tmp_name'])) {
+    if (!empty($_POST["link-download-if-reload"]) || !empty($_FILES["userpic-file-photo"]['tmp_name'])) {
       $location .= "&photo=$photo";
     }
 
-
     header($location);
   } else {
-    if (!empty($userpicFilePhoto['tmp_name'])) {
-      if (!empty($photoPathForPageReload)) {
-        unlink($photoPathForPageReload);
+    if (!empty($_FILES["userpic-file-photo"]['tmp_name'])) {
+      if (!empty($_POST["link-download-if-reload"])) {
+        unlink($_POST["link-download-if-reload"]);
       }
-      $file_name = $userpicFilePhoto['name'];
+      $file_name = $_FILES["userpic-file-photo"]['name'];
       $file_path = __DIR__ . '/uploads/';
-      move_uploaded_file($userpicFilePhoto['tmp_name'], $file_path . $file_name);
-      $photo = '/uploads/' . $userpicFilePhoto['name'];
+      move_uploaded_file($_FILES["userpic-file-photo"]['tmp_name'], $file_path . $file_name);
+      $photo = '/uploads/' . $_FILES["userpic-file-photo"]['name'];
+    } else if (!empty($_POST["link-download-if-reload"])) {
+      $photo = $_POST["link-download-if-reload"];
     }
 
     $password = password_hash($password, PASSWORD_DEFAULT);
+    $email = $_POST["email"];
+    $login = $_POST["login"];
     $result = mysqli_query(connect(), "INSERT INTO users (registration_date, email, password, avatar_link, user_login) VALUE (NOW(), '$email', '$password', '$photo', '$login')");
     header("Location: /main.html");
   }
@@ -111,5 +77,3 @@ if ($_GET['registration'] === '1') {
 if (isset($layout_content) && !empty($layout_content)) {
   print($layout_content);
 }
-?>
-

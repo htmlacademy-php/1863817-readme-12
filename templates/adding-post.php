@@ -1,52 +1,3 @@
-<?php
-
-if (!empty($_GET['errors'])) {
-  $errors = $_GET['errors'];
-  $errors = explode(', ', $errors);
-
-  foreach ($errors as $key => $value) {
-    $heading = stristr($value, 'heading', true);
-    if ($heading) {
-      $errorsWithKeys['heading'] = $heading;
-    }
-    $text = stristr($value, 'text', true);
-    if ($text) {
-      $errorsWithKeys['text'] = $text;
-    }
-    $tags = stristr($value, 'tags', true);
-    if ($tags) {
-      $errorsWithKeys['tags'] = $tags;
-    }
-    $author = stristr($value, 'author', true);
-    if ($author) {
-      $errorsWithKeys['author'] = $author;
-    }
-    $link = stristr($value, 'link', true);
-    if ($link) {
-      $errorsWithKeys['link'] = $link;
-    }
-    $photo = stristr($value, 'photo', true);
-    if ($photo) {
-      $errorsWithKeys['photo'] = $photo;
-    }
-    $photolink = stristr($value, 'linkForPic', true);
-    if ($photolink) {
-      $photo = stristr($photolink, 'photo', true);
-      if ($photo) {
-        $strings = explode('photo', $photolink);
-        $errorsWithKeys['photolink'] = $strings[1];
-      } else {
-        $errorsWithKeys['photolink'] = $photolink;
-      }
-    }
-  }
-}
-
-echo ('<pre>');
-print_r($_GET);
-echo ('</pre>');
-
-?>
 <div class="page__main page__main--adding-post">
   <div class="page__main-section">
     <div class="container">
@@ -202,7 +153,7 @@ echo ('</pre>');
               <form class="adding-post__form form" action="/add.php" method="post" enctype="multipart/form-data" autocomplete="off">
                 <div class="form__text-inputs-wrapper">
                   <div class="form__text-inputs">
-                    <div class="adding-post__input-wrapper form__input-wrapper <?= empty($_GET['resultHeading']) === false ? 'form__input-section--error' : null; ?>">
+                    <div class="adding-post__input-wrapper form__input-wrapper <?= !empty($_GET['resultHeading']) ? 'form__input-section--error' : null; ?>">
                       <label class="adding-post__label form__label" for="video-heading">Заголовок <span class="form__input-required">*</span></label>
                       <div class="form__input-section">
                         <input class="adding-post__input form__input" id="video-heading" type="text" value="<?= $_GET['video-heading']; ?>" name="video-heading" placeholder="Введите заголовок">
@@ -213,18 +164,18 @@ echo ('</pre>');
                         </div>
                       </div>
                     </div>
-                    <div class="adding-post__input-wrapper form__input-wrapper <?= empty($_GET['resultVideo']) === false ? 'form__input-section--error' : null; ?>">
+                    <div class="adding-post__input-wrapper form__input-wrapper <?= !empty($_GET['resultLink']) ? 'form__input-section--error' : null; ?>">
                       <label class="adding-post__label form__label" for="video-url">Ссылка youtube <span class="form__input-required">*</span></label>
                       <div class="form__input-section">
                         <input class="adding-post__input form__input" id="video-url" type="text" value="<?= $_GET['video-link']; ?>" name="video-link" placeholder="Введите ссылку">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                           <h3 class="form__error-title">Ошибка при заполнении поля</h3>
-                          <p class="form__error-desc"><?= $_GET['resultVideo'] ?></p>
+                          <p class="form__error-desc"><?= $_GET['resultLink'] ?></p>
                         </div>
                       </div>
                     </div>
-                    <div class="adding-post__input-wrapper form__input-wrapper <?= empty($_GET['resultTags']) === false ? 'form__input-section--error' : null; ?>">
+                    <div class="adding-post__input-wrapper form__input-wrapper <?= !empty($_GET['resultTags']) ? 'form__input-section--error' : null; ?>">
                       <label class="adding-post__label form__label" for="video-tags">Теги</label>
                       <div class="form__input-section">
                         <input class="adding-post__input form__input" id="video-tags" type="text" value="<?= $_GET['video-tags']; ?>" name="video-tags" placeholder="Введите теги">
@@ -243,8 +194,8 @@ echo ('</pre>');
                         <? if (!empty($_GET['resultHeading'])) : ?>
                           <li class="form__invalid-item">Заголовок. <?= $_GET['resultHeading'] ?></li>
                         <? endif; ?>
-                        <? if (!empty($_GET['resultVideo'])) : ?>
-                          <li class="form__invalid-item">Ссылка на видео. <?= $_GET['resultVideo'] ?></li>
+                        <? if (!empty($_GET['resultLink'])) : ?>
+                          <li class="form__invalid-item">Ссылка на видео. <?= $_GET['resultLink'] ?></li>
                         <? endif; ?>
                         <? if (!empty($_GET['resultTags'])) : ?>
                           <li class="form__invalid-item">Теги. <?= $_GET['resultTags'] ?></li>

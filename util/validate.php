@@ -57,33 +57,38 @@ function validateLogin($value)
 function validatePassword($value)
 {
   if (empty($value)) {
-    return $textError = 'Поле обязательно для заполнения';
+    return $textErrors = 'Поле обязательно для заполнения';
   }
 
   $length = strlen($value);
 
   if ($length < 9 || $length > 20) {
-    $textError = 'Значение должно быть от 9 до 20 символовseparator';
+    $textErrors[] = 'Значение должно быть от 9 до 20 символов';
   }
 
   if (!preg_match("#[A-Z]+#", $value)) {
-    $textError .= 'Пароль должен содержать хотя бы одну заглавную буквуseparator ';
+    $textErrors[] = 'Пароль должен содержать хотя бы одну заглавную букву';
   }
 
   if (!preg_match("#[a-z]+#", $value)) {
-    $textError .= 'Пароль должен содержать хотя бы одну маленькую буквуseparator';
+    $textErrors[] = 'Пароль должен содержать хотя бы одну маленькую букву';
   }
 
   if (!preg_match("#[0-9]+#", $value)) {
-    $textError .= 'Пароль должен содержать хотя бы одну цифруseparator ';
+    $textErrors[] = 'Пароль должен содержать хотя бы одну цифру';
   }
 
   if (!preg_match("/^[a-zA-Z0-9]+$/", $value)) {
-    $textError .= 'Пароль должен содержать только цифры и буквы латинского алфавита, без использования спецсимволов или пробеловseparator';
+    $textErrors[] = 'Пароль должен содержать только цифры и буквы латинского алфавита, без использования спецсимволов или пробелов';
   }
 
-  if (!empty($textError)) {
-    return $textError;
+  if (count($textErrors) > 1) {
+    $textErrors = implode('<br>', $textErrors);
+  }
+
+
+  if (!empty($textErrors)) {
+    return $textErrors;
   }
 
   return false;
@@ -97,28 +102,6 @@ function validateRepeatPassword($firstPassword, $secondPassword)
 
   if ($firstPassword !== $secondPassword) {
     return $textError = 'Пароли не совпадают';
-  }
-}
-
-function validatePhotoForRegistration($file)
-{
-  if (empty($file['tmp_name'])) {
-    return false;
-  }
-
-  $finfo = finfo_open(FILEINFO_MIME_TYPE);
-  $file_name = $file['tmp_name'];
-  $file_size = $file['size'];
-  $file_type = finfo_file($finfo, $file_name);
-
-  if ($file_type !== 'image/jpeg' && $file_type !== 'image/png' && $file_type !== 'image/gif' && $file_type !== 'image/jpg') {
-    return $textError = 'Файл должен быть в одном из трех форматов jpeg/png/gif';
-  } else {
-    if ($file_size > 500000) {
-      return $textError = 'Максимальный размер файла: 500Кбphoto';
-    }
-
-    return false;
   }
 }
 
@@ -151,11 +134,11 @@ function validatePhotoFile($file)
     $file_type = finfo_file($finfo, $file_name);
 
     if ($file_type !== 'image/jpeg' && $file_type !== 'image/png' && $file_type !== 'image/gif' && $file_type !== 'image/jpg') {
-      return $textError = 'Файл должен быть в одном из трех форматов jpeg/png/gifphoto Ссылка для загрузки ресурса также указана некорректноphotolinkForPic';
+      return $textError = 'Файл должен быть в одном из трех форматов jpeg/png/gif';
     }
 
     if ($file_size > 500000) {
-      return $textError = 'Максимальный размер файла: 500Кбphoto, ';
+      return $textError = 'Максимальный размер файла: 500Кб';
     }
   } else {
     return false;
@@ -212,7 +195,7 @@ function validateTags($string)
       $textError = 'Теги должны быть отделены пробелами';
     }
 
-    if (!preg_match("/^[a-zA-Z0-9#]+$/", $string)) {
+    if (!preg_match("/^[a-zA-Z0-9#\s]+$/", $string)) {
       $textError .= 'Тег не должен содержать спецсимволов, помимо знака "%23"';
     }
 
@@ -255,7 +238,7 @@ function validateHeadingTextAndAuthor($name, $min, $max)
   $len = strlen($name);
 
   if ($len > $max || $len < $min) {
-    return $textError = "Значение должно быть от $min до $max символов";
+    return $textError = "Значение должно быть от $min до $max символов" . $len;
   } else {
     return false;
   }
