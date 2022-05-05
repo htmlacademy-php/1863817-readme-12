@@ -1,575 +1,281 @@
 <?php
+require 'util/helpers.php';
+require 'util/mysql.php';
+require 'util/validate.php';
 
-if ($_GET['add-post'] === '1') {
-  $page_content = include_template('adding-post.php', ['types' => $rows_for_types]);
-  $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: добавление публикации']);
+$con =  connect();
 
-}
-
-function extract_youtube_id($youtube_url)
-{
-  $id = false;
-
-  $parts = parse_url($youtube_url);
-
-  if ($parts) {
-    if ($parts['path'] == '/watch') {
-      parse_str($parts['query'], $vars);
-      $id = $vars['v'] ?? null;
-    } else {
-      if ($parts['host'] == 'youtu.be') {
-        $id = substr($parts['path'], 1);
-      }
-    }
-  }
-
-  return $id;
-}
-
-function check_youtube_url($url)
-{
-  $id = extract_youtube_id($url);
-
-  set_error_handler(function () {}, E_WARNING);
-  $headers = get_headers('https://www.youtube.com/oembed?format=json&url=http://www.youtube.com/watch?v=' . $id);
-  restore_error_handler();
-
-  if (!is_array($headers)) {
-    return false;
-  }
-
-  $err_flag = strpos($headers[0], '200') ? 200 : 404;
-
-  if ($err_flag !== 200) {
-    return false;
-  }
-
-  return true;
-}
-
-function test_input($data)
-{
-  $data = trim($data);
-  $data = stripslashes($data);
-  $data = htmlspecialchars($data);
-  return $data;
-}
-
-function validateFileInputAndPhotoLink ($file, $link)
-{
-  if (empty($file['tmp_name']) && empty($link)) {
-    return $textError = 'Хотя бы одно из полей с указанием фотографии должно быть заполненноphoto';
-  } else if (!empty($file['tmp_name'])) {
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    $file_name = $file['tmp_name'];
-    $file_size = $file['size'];
-    $file_type = finfo_file($finfo, $file_name);
-
-    if ($file_type !== 'image/jpeg' && $file_type !== 'image/png' && $file_type !== 'image/gif' && $file_type !== 'image/jpg') {
-      if (!empty($link)) {
-        $flag = filter_var($link, FILTER_VALIDATE_URL);
-
-        if($flag) {
-          $result = file_get_contents($flag);
-          if ($result) {
-            return 3;
-          } else {
-            return $textError = 'Файл должен быть в одном из трех форматов jpeg/png/gifphoto Ссылка для загрузки ресурса также указана некорректноphotolinkForPic';
-          }
-        } else {
-          return $textError = 'Файл должен быть в одном из трех форматов jpeg/png/gifphoto Ссылка для загрузки ресурса также указана некорректноphotolinkForPic';
-        }
-      } else {
-        return $textError = 'Файл должен быть в одном из трех форматов jpeg/png/gifphoto';
-      }
-    }
-
-    if ($file_size > 500000) {
-      return $textError = 'Максимальный размер файла: 500Кбphoto';
-    } else {
-      return 2;
-    }
-  } else if (empty($file['tmp_name']) && !empty($link)) {
-    $flag = filter_var($link, FILTER_VALIDATE_URL);
-
-    if($flag) {
-      $result = file_get_contents($flag);
-      if ($result) {
-        return 3;
-      } else {
-        return $textError = 'При загрузке изображения по ссылке произошла ошибкalinkForPic';
-      }
-    } else {
-      return $textError = 'Введен некорректный адрес ресурсаlinkForPic';
-    }
-  }
-}
-
-function validateVideo ($link)
-{
-  if (empty($link)) {
-    return $textError = 'Это поле должно быть заполнено.';
-  } else {
-    $flag = filter_var($link, FILTER_VALIDATE_URL);
-
-    if ($flag) {
-      $result = check_youtube_url($link);
-      if ($result) {
-        return false;
-      } else {
-        return $textError = 'Видео по такой ссылке не найдено. Проверьте ссылку на видео';
-      }
-    } else {
-      return $textError = 'Введен некорректный адрес ресурса';
-    }
-  }
-}
-
-function validateTags ($string)
-{
-  if (!empty($string)) {
-    $result = explode('#', $string);
-
-    foreach($result as $key => $value) {
-      $value = trim($value);
-      $result2[] = $value;
-    }
-
-    $result = implode(' #', $result2);
-    $result = trim($result);
-    $allElementInString = str_split($string);
-
-    $tag = strripos($string, '#');
-
-    if ($tag === 0) {
-      return false;
-    }
-
-    if (!$tag) {
-      print($tag);
-      return $textError = 'Тэг должен начинаться со знака "%23"';
-    }
-
-    if ($result === $string) {
-      $flag = true;
-      print(1);
-    } else {
-      $flag = false;
-      print(2);
-    }
-
-    if ($flag === false) {
-      print(3);
-      return $textError = 'Тэги должны быть отделены пробелами';
-    } else {
-      return false;
-    }
-  } else {
-    return false;
-  }
-}
-
-function validateWebLink ($link)
-{
-  if (empty($link)) {
-    return $textError = 'Это поле должно быть заполнено.';
-  } else {
-    $flag = filter_var($link, FILTER_VALIDATE_URL);
-
-    if($flag) {
-      $result = file_get_contents($link);
-      if ($result === false) {
-        return $textError = 'Введен некорректный адрес ресурса';
-      } else {
-        return false;
-      }
-      } else {
-      return $textError = 'Введен некорректный адрес ресурса';
-    }
-  }
-}
-
-function validateHeadingTextAndAuthor ($name, $min, $max)
-{
-  if (empty($name)) {
-    return $textError = 'Это поле должно быть заполнено';
-  }
-
-  $len = strlen($name);
-
-  if ($len > $max || $len < $min) {
-    return $textError = "Значение должно быть от $min до $max символов";
-  } else {
-    return false;
-  }
+if ($con == false) {
+  print("Ошибка подключения: " . mysqli_connect_error());
+} else {
+  $rows_for_types = doQuery($con, "SELECT * FROM contentTypes");
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   if (isset($_POST['photo-heading'])) {
     // photo
+    $location = "Location: /add.php?filter=3";
 
-    $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-
-    // inputs
-
-    $heading = test_input($_POST["photo-heading"]);
-    $userpicFilePhoto = $_FILES["userpic-file-photo"];
-    $linkPhoto = test_input($_POST["photo-link"]);
-    $linkDownloadIfReload = test_input($_POST["link-download-if-reload"]);
-    $tags = test_input($_POST["photo-tags"]);
-
-    // find errors
-
-    $resultHeading = validateHeadingTextAndAuthor($heading, 5, 20);
-
-    if ($resultHeading) {
-      $errors[] = $resultHeading . 'heading';
+    foreach ($_POST as $key => $value) {
+      test_input($value);
     }
 
-    if (!empty($userpicFilePhoto['tmp_name']) || !empty($linkPhoto)) {
-      $resultPhoto = validateFileInputAndPhotoLink($userpicFilePhoto, $linkPhoto);
-    } else {
-      $resultPhoto = 4;
+    $errors['resultHeading'] = validateHeadingTextAndAuthor($_POST["photo-heading"], 5, 20);
+    $errors['resultFile'] = validatePhotoFile($_FILES["userpic-file-photo"]);
+    $errors['resultLink'] = validatePhotoLink($_POST["photo-link"]);
+    $errors['resultTags'] = validateTags($_POST["photo-tags"]);
+
+    if ($errors['resultHeading']) {
+      $value = $errors['resultHeading'];
+      $location .= "&resultHeading=$value";
     }
 
-    $flagPhoto = gettype($resultPhoto);
-
-    if ($flagPhoto === 'string') {
-      $errors[] = $resultPhoto;
+    if ($errors['resultTags']) {
+      $value = $errors['resultTags'];
+      $location .= "&resultTags=$value";
     }
 
-    $resultTags = validateTags($tags);
-
-    if ($resultTags) {
-      $errors[] = $resultTags . 'tags';
+    if (empty($_FILES["userpic-file-photo"]['tmp_name']) && empty($_POST["photo-link"]) && empty($_POST["link-download-if-reload"])) {
+      $textError = 'Хотя бы одно из полей с указанием фотографии должно быть заполненно';
+      $location .= "&resultLink=$textError";
     }
 
-    // save value
-
-    if (!empty($heading)) {
-      $inputValues['heading'] = $heading . 'heading';
+    if ($errors['resultLink'] && empty($_FILES["userpic-file-photo"]['tmp_name']) && !$errors['resultFile'] && empty($_POST["link-download-if-reload"])) {
+      $value = $errors['resultLink'];
+      $location .= "&resultLink=$value";
     }
 
-    if (!empty($linkPhoto)) {
-      $inputValues['link'] = $linkPhoto . 'link';
+    if ($errors['resultFile']) {
+      $value = $errors['resultFile'];
+      $location .= "&resultFile=$value";
     }
 
-    if (!empty($tags)) {
-      $inputValues['tags'] = explode('#', $tags);
-      $inputValues['tags'] = implode('.', $inputValues['tags']);
-      $inputValues['tags'] = $inputValues['tags'] . 'tags';
+    if ($errors['resultFile'] && $errors['resultLink']) {
+      $textError = ', Адрес ресурса также введен некорректно';
+      $value = $errors['resultFile'] . $textError;
+      $location .= "&resultLink=$value";
     }
 
-    if (!empty($errors)) {
-      if (!empty($userpicFilePhoto['tmp_name'])) {
-        $file_name = $userpicFilePhoto['name'];
-        $file_name = explode('.', $file_name);
-        $lastElement = count($file_name) - 1;
-        $file_name = $file_name[$lastElement];
-        $randomName = substr(str_shuffle($permitted_chars), 0, 10);
+
+    if (strlen($location) > 27) {
+      $error = true;
+    }
+
+    if ($error) {
+      foreach ($_POST as $key => $value) {
+        $value = urlencode($value);
+        $location .= "&$key=$value";
+      }
+
+      if (!empty($_FILES["userpic-file-photo"]['tmp_name']) && !$errors['resultFile']) {
+        $file_name = getEndPath($_FILES["userpic-file-photo"]['name'], '.');
+        $randomName = generateRandomFileName();
         $file_name = $randomName . '.' . $file_name;
-        print($file_name);
         $file_path = __DIR__ . '/uploads/';
-        move_uploaded_file($userpicFilePhoto['tmp_name'], $file_path . $file_name);
-        $inputValues['photo'] = 'uploads/' . $file_name . 'photo';
+        move_uploaded_file($_FILES["userpic-file-photo"]['tmp_name'], $file_path . $file_name);
+        $photo = urlencode('uploads/' . $file_name);
+      } else if (!empty($_POST["link-download-if-reload"])) {
+        $photo = $_POST["link-download-if-reload"];
       }
 
-      $errors = implode(', ', $errors);
-      if (!empty($inputValues)) {
-        $inputValues = implode(', ', $inputValues);
+      if (!empty($_POST["link-download-if-reload"]) || !empty($_FILES["userpic-file-photo"]['tmp_name'])) {
+        $location .= "&photo=$photo";
       }
-      header("Location: /?add-post=1&filter=3&errors=$errors&inputValues=$inputValues");
+
+      header($location);
     } else {
-      if ($resultPhoto === 3) {
-        $url = $linkPhoto;
-        $stringToArray = explode('/', $url);
-        $lastElement = count($stringToArray) - 1;
-        $endPath = $stringToArray[$lastElement];
-        $file_path = __DIR__ . '/uploads/';
-        $pathLink = $file_path . $endPath;
-        $result = file_put_contents($pathLink, file_get_contents($url));
-        $photo = '/uploads/' . $endPath;
-      } else if ($resultPhoto === 2) {
-        if (!empty($linkDownloadIfReload)) {
-          unlink($linkDownloadIfReload);
+
+      if ($_POST["photo-link"] && empty($_FILES["userpic-file-photo"]['tmp_name']) && empty($_POST["link-download-if-reload"])) {
+        downloadPhotoFromWebLink($_POST["photo-link"]);
+        $photo = '/uploads/' . getEndPath($_POST["photo-link"], '/');
+      } else if ($_FILES["userpic-file-photo"]['tmp_name']) {
+        if (!empty($_POST["link-download-if-reload"])) {
+          unlink($_POST["link-download-if-reload"]);
         }
-        $file_name = $userpicFilePhoto['name'];
+        $file_name = $_FILES["userpic-file-photo"]['name'];
         $file_path = __DIR__ . '/uploads/';
-        move_uploaded_file($userpicFilePhoto['tmp_name'], $file_path . $file_name);
-        $photo = '/uploads/' . $userpicFilePhoto['name'];
-      } else if ($resultPhoto === 4) {
-        $flag = strripos($linkDownloadIfReload, 'before-query.');
-        if ($flag === false) {
-          $photo = $linkDownloadIfReload;
-        } else {
-          $randomName = substr(str_shuffle($permitted_chars), 0, 10);
-          $file_name = explode('.', $linkDownloadIfReload);
-          $lastElement = count($file_name) - 1;
-          $file_name = $file_name[$lastElement];
-          $newPath = 'uploads/' . $randomName . '.' . $file_name;
-          $result = rename($linkDownloadIfReload, $newPath);
-          $photo = $newPath;
-        }
+        move_uploaded_file($_FILES["userpic-file-photo"]['tmp_name'], $file_path . $file_name);
+        $photo = '/uploads/' . $_FILES["userpic-file-photo"]['name'];
+      } else {
+        $photo = $_POST["link-download-if-reload"];
       }
 
-      $con = mysqli_connect("localhost", "root", "","readme");
+      $heading = $_POST["photo-heading"];
       $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, image_link, id_user) VALUE (NOW(), '$heading', 'post-photo', '$photo', 1)");
       $id = mysqli_insert_id($con);
-      if (!empty($tags)) {
+      if (!empty($_POST["photo-tags"])) {
+        $tags = $_POST["photo-tags"];
         $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
       }
-      header("Location: /?post-id=$id");
+      header("Location: /post.php?post-id=$id");
     }
-
   }
 
   if (isset($_POST['video-heading'])) {
     // video
+    $location = "Location: /add.php?filter=5";
 
-    // inputs
-
-    $heading = test_input($_POST["video-heading"]);
-    $linkVideo = test_input($_POST["video-link"]);
-    $tags = test_input($_POST["video-tags"]);
-
-    // find errors
-
-    $resultHeading = validateHeadingTextAndAuthor($heading, 5, 20);
-
-    if ($resultHeading) {
-      $errors[] = $resultHeading . 'heading';
+    foreach ($_POST as $key => $value) {
+      test_input($value);
     }
 
-    $resultVideo = validateVideo($linkVideo);
+    $errors['resultHeading'] = validateHeadingTextAndAuthor($_POST["video-heading"], 5, 20);
+    $errors['resultLink'] = validateVideo($_POST["video-link"]);
+    $errors['resultTags'] = validateTags($_POST["video-tags"]);
 
-    if ($resultVideo) {
-      $errors[] = $resultVideo . 'link';
+    foreach ($errors as $key => $value) {
+      if ($value) {
+        $location .= "&$key=$value";
+        $error = true;
+      }
     }
 
-    $resultTags = validateTags($tags);
+    if ($error) {
+      foreach ($_POST as $key => $value) {
+        $value = urlencode($value);
+        $location .= "&$key=$value";
+      }
 
-    if ($resultTags) {
-      $errors[] = $resultTags . 'tags';
-    }
-
-    // save value
-
-    if (!empty($heading)) {
-      $inputValues['heading'] = $heading . 'heading';
-    }
-
-    if (!empty($linkVideo)) {
-      $inputValues['link'] = $linkVideo . 'link';
-    }
-
-    if (!empty($tags)) {
-      $inputValues['tags'] = explode('#', $tags);
-      $inputValues['tags'] = implode('.', $inputValues['tags']);
-      $inputValues['tags'] = $inputValues['tags'] . 'tags';
-    }
-
-    if (!empty($errors)) {
-      $errors = implode(', ', $errors);
-      $inputValues = implode(', ', $inputValues);
-      header("Location: /?add-post=1&filter=5&errors=$errors&inputValues=$inputValues");
+      header($location);
     } else {
-      $con = mysqli_connect("localhost", "root", "","readme");
-      $result = mysqli_query(connect(), "INSERT INTO posts (post_date, title, content_type, video_link) VALUE (NOW(), '$heading', 'post-video', '$linkVideo')");
+      $linkVideo = $_POST["video-link"];
+      $heading = $_POST["video-heading"];
+      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, video_link, id_user) VALUE (NOW(), '$heading', 'post-video', '$linkVideo', 1)");
       $id = mysqli_insert_id($con);
-      if (!empty($tags)) {
+      if (!empty($_POST["video-tags"])) {
+        $tags = $_POST['video-tags'];
         $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
       }
-      header("Location: /?post-id=$id");
+      header("Location: /post.php?post-id=$id");
     }
   }
 
   if (isset($_POST['text-heading'])) {
     // text
+    $location = "Location: /add.php?filter=2";
 
-    // inputs
-
-    $heading = test_input($_POST["text-heading"]);
-    $text = test_input($_POST["text-text"]);
-    $tags = test_input($_POST["text-tags"]);
-
-    // find errors
-
-    $resultHeading = validateHeadingTextAndAuthor($heading, 5, 20);
-
-    if ($resultHeading) {
-      $errors[] = $resultHeading . 'heading';
+    foreach ($_POST as $key => $value) {
+      test_input($value);
     }
 
-    $resultText = validateHeadingTextAndAuthor($text, 30, 600);
+    $errors['resultHeading'] = validateHeadingTextAndAuthor($_POST["text-heading"], 5, 20);
+    $errors['resultText'] = validateHeadingTextAndAuthor($_POST["text-text"], 30, 600);
+    $errors['resultTags'] = validateTags($_POST["text-tags"]);
 
-    if ($resultText) {
-      $errors[] = $resultText . 'text';
+    foreach ($errors as $key => $value) {
+      if ($value) {
+        $location .= "&$key=$value";
+        $error = true;
+      }
     }
 
-    $resultTags = validateTags($tags);
+    if ($error) {
+      foreach ($_POST as $key => $value) {
+        $value = urlencode($value);
+        $location .= "&$key=$value";
+      }
 
-    if ($resultTags) {
-      $errors[] = $resultTags . 'tags';
-    }
-
-    // save value
-
-    if (!empty($heading)) {
-      $inputValues['heading'] = $heading . 'heading';
-    }
-
-    if (!empty($text)) {
-      $inputValues['text'] = $text . 'text';
-    }
-
-    if (!empty($tags)) {
-      $inputValues['tags'] = explode('#', $tags);
-      $inputValues['tags'] = implode('.', $inputValues['tags']);
-      $inputValues['tags'] = $inputValues['tags'] . 'tags';
-    }
-
-    if (empty($errors) === false) {
-      $errors = implode(', ', $errors);
-      $inputValues = implode(', ', $inputValues);
-      header("Location: /?add-post=1&filter=2&errors=$errors&inputValues=$inputValues");
+      header($location);
     } else {
-      $con = mysqli_connect("localhost", "root", "","readme");
-      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, text_content) VALUE (NOW(), '$heading', 'post-text', '$text')");
+      $heading = $_POST["text-heading"];
+      $text = $_POST["text-text"];
+      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, text_content, id_user) VALUE (NOW(), '$heading', 'post-text', '$text', 1)");
       $id = mysqli_insert_id($con);
-      if (!empty($tags)) {
+      if (!empty($_POST["text-tags"])) {
+        $tags = $_POST["text-tags"];
         $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
       }
-      header("Location: /?post-id=$id");
+      header("Location: /post.php?post-id=$id");
     }
   }
 
   if (isset($_POST['quote-heading'])) {
     // quote
+    $location = "Location: /add.php?filter=1";
 
-    // inputs
-    $heading = test_input($_POST["quote-heading"]);
-    $text = test_input($_POST["quote-text"]);
-    $author = test_input($_POST["quote-author"]);
-    $tags = test_input($_POST["quote-tags"]);
-
-    // find errors
-
-    $resultHeading = validateHeadingTextAndAuthor($heading, 5, 20);
-
-    if ($resultHeading) {
-      $errors[] = $resultHeading . 'heading';
+    foreach ($_POST as $key => $value) {
+      test_input($value);
     }
 
-    $resultText = validateHeadingTextAndAuthor($textm, 30, 600);
+    $errors['resultHeading'] = validateHeadingTextAndAuthor($_POST["quote-heading"], 5, 20);
+    $errors['resultText'] = validateHeadingTextAndAuthor($_POST["quote-text"], 30, 100);
+    $errors['resultAuthor'] = validateHeadingTextAndAuthor($_POST["quote-author"], 5, 20);
+    $errors['resultTags'] = validateTags($_POST["quote-tags"]);
 
-    if ($resultText) {
-      $errors[] = $resultText . 'text';
+    foreach ($errors as $key => $value) {
+      if ($value) {
+        $location .= "&$key=$value";
+        $error = true;
+      }
     }
 
-    $resultTags = validateTags($tags);
+    if ($error) {
+      foreach ($_POST as $key => $value) {
+        $value = urlencode($value);
+        $location .= "&$key=$value";
+      }
 
-    if ($resultTags) {
-      $errors[] = $resultTags . 'tags';
-    }
-
-    $resultAuthor = validateHeadingTextAndAuthor($author, 5, 25);
-
-    if ($resultAuthor) {
-      $errors[] = $resultAuthor . 'author';
-    }
-
-    if (!empty($heading)) {
-      $inputValues['heading'] = $heading . 'heading';
-    }
-
-    if (!empty($text)) {
-      $inputValues['text'] = $textm . 'text';
-    }
-
-    if (!empty($tags)) {
-      $inputValues['tags'] = explode('#', $tags);
-      $inputValues['tags'] = implode('.', $inputValues['tags']);
-      $inputValues['tags'] = $inputValues['tags'] . 'tags';
-    }
-
-    if (!empty($author)) {
-      $inputValues['author'] = $author . 'author';
-    }
-
-    if (!empty($errors)) {
-      $errors = implode(', ', $errors);
-      $inputValues = implode(', ', $inputValues);
-      header("Location: /?add-post=1&filter=1&errors=$errors&inputValues=$inputValues");
+      header($location);
     } else {
-      $con = mysqli_connect("localhost", "root", "","readme");
-      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, text_content, quote_author) VALUE (NOW(), '$heading', 'post-quote', '$text', '$author')");
+      $heading = $_POST["quote-heading"];
+      $text = $_POST["quote-text"];
+      $author = $_POST["quote-author"];
+      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, text_content, quote_author, id_user) VALUE (NOW(), '$heading', 'post-quote', '$text', '$author', 1)");
       $id = mysqli_insert_id($con);
-      if (!empty($tags)) {
+      if (!empty($_POST["quote-tags"])) {
+        $tags = $_POST["quote-tags"];
         $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
       }
-      header("Location: /?post-id=$id");
+      header("Location: /post.php?post-id=$id");
     }
   }
 
   if (isset($_POST['link-heading'])) {
     // link
+    $location = "Location: /add.php?filter=4";
 
-    //inputs
-    $heading = test_input($_POST["link-heading"]);
-    $link = test_input($_POST["link-link"]);
-    $tags = test_input($_POST["link-tags"]);
-
-    //find errors
-
-    $resultHeading = validateHeadingTextAndAuthor($heading, 5, 20);
-
-    if ($resultHeading) {
-      $errors[] = $resultHeading . 'heading';
+    foreach ($_POST as $key => $value) {
+      test_input($value);
     }
 
-    $resultLink = validateWebLink($link);
+    $errors['resultHeading'] = validateHeadingTextAndAuthor($_POST["link-heading"], 5, 20);
+    $errors['resultText'] = validateWebLink($_POST["link-link"], 30, 600);
+    $errors['resultTags'] = validateTags($_POST["link-tags"]);
 
-    if ($resultLink) {
-      $errors[] = $resultLink . 'link';
+    foreach ($errors as $key => $value) {
+      if ($value) {
+        $location .= "&$key=$value";
+        $error = true;
+      }
     }
 
-    $resultTags = validateTags($tags);
+    if ($error) {
+      foreach ($_POST as $key => $value) {
+        $value = urlencode($value);
+        $location .= "&$key=$value";
+      }
 
-    if ($resultTags) {
-      $errors[] = $resultTags . 'tags';
-    }
-
-    // save value
-
-    if (!empty($heading)) {
-      print($heading);
-      $inputValues['heading'] = $heading . 'heading';
-    }
-
-    if (!empty($link)) {
-      $inputValues['link'] = $link . 'link';
-    }
-
-    if (!empty($tags)) {
-      $inputValues['tags'] = explode('#', $tags);
-      $inputValues['tags'] = implode('.', $inputValues['tags']);
-      $inputValues['tags'] = $inputValues['tags'] . 'tags';
-    }
-
-    if (empty($errors) === false) {
-      $errors = implode(', ', $errors);
-      $inputValues = implode(', ', $inputValues);
-      header("Location: /?add-post=1&filter=4&errors=$errors&inputValues=$inputValues");
+      header($location);
     } else {
-      $con = mysqli_connect("localhost", "root", "","readme");
+      $link = $_POST["link-link"];
+      $heading = $_POST["link-heading"];
       $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, website_link, id_user) VALUE (NOW(), '$heading', 'post-link', '$link', 1)");
       $id = mysqli_insert_id($con);
-      if (!empty($tags)) {
+      if (!empty($_POST["link-tags"])) {
+        $tags = $_POST["link-tags"];
         $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
       }
-      header("Location: /?post-id=$id");
+      header("Location: /post.php?post-id=$id");
     }
   }
 }
-?>
+
+if (!empty($_GET['filter'])) {
+  $page_content = include_template('adding-post.php', ['types' => $rows_for_types]);
+  $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: добавление публикации']);
+}
+
+if (isset($layout_content) && !empty($layout_content)) {
+  print($layout_content);
+}
