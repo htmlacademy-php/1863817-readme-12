@@ -3,6 +3,11 @@ require 'util/helpers.php';
 require 'util/mysql.php';
 require 'util/validate.php';
 
+session_start();
+
+if (!isset($_SESSION['username'])) {
+  header('Location: /login.php');
+}
 $con =  connect();
 
 if ($con == false) {
@@ -273,7 +278,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 if (!empty($_GET['filter'])) {
   $page_content = include_template('adding-post.php', ['types' => $rows_for_types]);
-  $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: добавление публикации']);
+  $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: добавление публикации', 'avatar' => getAvatarForUser()]);
 }
 
 if (isset($layout_content) && !empty($layout_content)) {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Создает подготовленное выражение на основе готового SQL запроса и переданных данных
  *
@@ -57,82 +58,65 @@ function db_get_prepare_stmt($link, $sql, $data = [])
 }
 
 // Устанавливает соединение с БД
-function connect () {
-  $con =  mysqli_connect("localhost", "root", "","readme");
+function connect()
+{
+  $con =  mysqli_connect("localhost", "root", "", "readme");
   mysqli_set_charset($con, "utf8");
 
   return $con;
 }
 
 // Делает запрос к БД и преобразовывает результат в двумерный массив
-function doQuery ($conWithDatabase, $sql) {
+function doQuery($conWithDatabase, $sql)
+{
   $result = mysqli_query($conWithDatabase, $sql);
   $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
   return $rows;
 }
 
-// Получение лайков поста
-function getLikesForPost ()
-{
-  $id = $_GET['post-id'];
-  $id *= 1;
-  $likes = doQuery(connect(), "SELECT * FROM likes WHERE id_post = $id");
+// Получение аватара пользователя
 
-  return $likes;
+function getAvatarForUser()
+{
+  $login = $_SESSION['username'];
+  return $result = doQuery(connect(), "SELECT avatar_link FROM users WHERE user_login = '$login'");
 }
 
-// Получение тегов поста
-function getTagsForPost ()
+// Получение сущности для поста
+function getEssenceForPost($essence)
 {
   $id = $_GET['post-id'];
   $id *= 1;
-  $tags = doQuery(connect(), "SELECT * FROM hashtags WHERE id_post = $id");
-
-  return $tags;
-}
-
-// Получение комментариев поста
-function getCommentsForPost ()
-{
-  $id = $_GET['post-id'];
-  $id *= 1;
-  $comments = doQuery(connect(), "SELECT * FROM comments WHERE id_post = $id");
-
-  return $comments;
+  return $result = doQuery(connect(), "SELECT * FROM $essence WHERE id_post = $id");
 }
 
 // Делает запрос на показ конкретного поста
-function getPostById () {
+function getPostById()
+{
   $id = $_GET['post-id'];
   $id *= 1;
-  $post = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND id_post = $id");
-
-  return $post;
+  return $post = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND id_post = $id");
 }
 
 // Делает запрос на показ подписчиков по айди
-function getSubById ()
+function getSubById()
 {
   $post = getPostById();
   $idUser = $post[0]['id_user'];
-  $subscriptions = doQuery(connect(), "SELECT * FROM subscriptions WHERE id_receiver_sub = $idUser");
-
-  return $subscriptions;
+  return $subscriptions = doQuery(connect(), "SELECT * FROM subscriptions WHERE id_receiver_sub = $idUser");
 }
 
 // Получение всех постов по айди
-function getAllPostsPostsById ()
+function getAllPostsPostsById()
 {
   $post = getPostById();
   $idUser = $post[0]['id_user'];
-  $posts = doQuery(connect(), "SELECT * FROM posts WHERE id_user = $idUser");
-
-  return $posts;
+  return $posts = doQuery(connect(), "SELECT * FROM posts WHERE id_user = $idUser");
 }
 
 // Делает запрос в зависимости от типа контента
-function doQueryForType ()
+function doQueryForType()
 {
   if ($_GET['post'] === '1') {
     $posts = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND content_type = 'post-quote'");
@@ -155,4 +139,3 @@ function doQueryForType ()
 
   return $posts;
 }
-?>
