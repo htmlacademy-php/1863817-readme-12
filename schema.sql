@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
   id_user INT AUTO_INCREMENT,
   user_login VARCHAR(64) NOT NULL,
   email VARCHAR(128) UNIQUE NOT NULL,
-  password VARCHAR(64) NOT NULL,
+  password VARCHAR(128) NOT NULL,
   registration_date DATETIME(6) NOT NULL,
   avatar_link varchar(256),
   login VARCHAR(64) NOT NULL,
