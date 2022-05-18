@@ -89,7 +89,7 @@
             $tags = explode(' ', $tags);
             ?>
             <? foreach ($tags as $key => $tag) : ?>
-              <li><a href="#"><?= $tag ?></a></li>
+              <li><a href="/search.php?search=<?= $tag; ?>">#<?= $tag ?></a></li>
             <? endforeach; ?>
           </ul>
           <div class="comments">

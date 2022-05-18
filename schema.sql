@@ -80,3 +80,5 @@ CREATE TABLE IF NOT EXISTS contentTypes (
   content_class_type VARCHAR(64) NOT NULL,
   PRIMARY KEY (`id_type`)
 );
+
+CREATE FULLTEXT INDEX searche_post on posts(title, text_content, quote_author);

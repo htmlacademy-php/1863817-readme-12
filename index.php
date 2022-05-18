@@ -1,6 +1,10 @@
 <?php
 require 'util/helpers.php';
 require 'util/mysql.php';
+require 'util/validate.php';
+
+test_input($_POST['login']);
+test_input($_POST['password']);
 
 $con = connect();
 $valueEmail = $_POST['login'];

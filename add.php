@@ -110,8 +110,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, image_link, id_user) VALUE (NOW(), '$heading', 'post-photo', '$photo', 1)");
       $id = mysqli_insert_id($con);
       if (!empty($_POST["photo-tags"])) {
-        $tags = $_POST["photo-tags"];
-        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
+        $tags = explode(' ', $_POST["photo-tags"]);
+        foreach ($tags as $key => $value) {
+          $tagsWithoutHash .= ' ' . trim($value, '#');
+        }
+        $tagsWithoutHash = trim($tagsWithoutHash);
+        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tagsWithoutHash')");
       }
       header("Location: /post.php?post-id=$id");
     }
@@ -149,8 +153,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, video_link, id_user) VALUE (NOW(), '$heading', 'post-video', '$linkVideo', 1)");
       $id = mysqli_insert_id($con);
       if (!empty($_POST["video-tags"])) {
-        $tags = $_POST['video-tags'];
-        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
+        $tags = explode(' ', $_POST["video-tags"]);
+        foreach ($tags as $key => $value) {
+          $tagsWithoutHash .= ' ' . trim($value, '#');
+        }
+        $tagsWithoutHash = trim($tagsWithoutHash);
+        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tagsWithoutHash')");
       }
       header("Location: /post.php?post-id=$id");
     }
@@ -188,8 +196,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, text_content, id_user) VALUE (NOW(), '$heading', 'post-text', '$text', 1)");
       $id = mysqli_insert_id($con);
       if (!empty($_POST["text-tags"])) {
-        $tags = $_POST["text-tags"];
-        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
+        $tags = explode(' ', $_POST["text-tags"]);
+        foreach ($tags as $key => $value) {
+          $tagsWithoutHash .= ' ' . trim($value, '#');
+        }
+        $tagsWithoutHash = trim($tagsWithoutHash);
+        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tagsWithoutHash')");
       }
       header("Location: /post.php?post-id=$id");
     }
@@ -229,8 +241,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, text_content, quote_author, id_user) VALUE (NOW(), '$heading', 'post-quote', '$text', '$author', 1)");
       $id = mysqli_insert_id($con);
       if (!empty($_POST["quote-tags"])) {
-        $tags = $_POST["quote-tags"];
-        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
+        $tags = explode(' ', $_POST["quote-tags"]);
+        foreach ($tags as $key => $value) {
+          $tagsWithoutHash .= ' ' . trim($value, '#');
+        }
+        $tagsWithoutHash = trim($tagsWithoutHash);
+        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tagsWithoutHash')");
       }
       header("Location: /post.php?post-id=$id");
     }
@@ -268,8 +284,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, website_link, id_user) VALUE (NOW(), '$heading', 'post-link', '$link', 1)");
       $id = mysqli_insert_id($con);
       if (!empty($_POST["link-tags"])) {
-        $tags = $_POST["link-tags"];
-        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
+        $tags = explode(' ', $_POST["link-tags"]);
+        foreach ($tags as $key => $value) {
+          $tagsWithoutHash .= ' ' . trim($value, '#');
+        }
+        $tagsWithoutHash = trim($tagsWithoutHash);
+        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tagsWithoutHash')");
       }
       header("Location: /post.php?post-id=$id");
     }
