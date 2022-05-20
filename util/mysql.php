@@ -60,7 +60,7 @@ function db_get_prepare_stmt($link, $sql, $data = [])
 // Устанавливает соединение с БД
 function connect()
 {
-  $con =  mysqli_connect("localhost", "root", "", "readme");
+  $con =  mysqli_connect("127.0.0.1", "root", "", "readme");
   mysqli_set_charset($con, "utf8");
 
   return $con;
@@ -70,9 +70,13 @@ function connect()
 function doQuery($conWithDatabase, $sql)
 {
   $result = mysqli_query($conWithDatabase, $sql);
-  $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-  return $rows;
+  if ($result) {
+    $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    return $rows;
+  } else {
+    return false;
+  }
 }
 
 // Получение аватара пользователя

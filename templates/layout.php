@@ -91,10 +91,10 @@
         </p>
       </div>
       <? if (empty($_GET['registration'])) : ?>
-        <form class="header__search-form form" action="#" method="get">
+        <form class="header__search-form form" action="/search.php" method="get" autocomplete="off">
           <div class="header__search">
             <label class="visually-hidden">Поиск</label>
-            <input class="header__search-input form__input" type="search">
+            <input class="header__search-input form__input" type="search" value="<?= substr($query, 0, 1) !== '#' ? $query : ''; ?>" name='search'>
             <button class="header__search-button button" type="submit">
               <svg class="header__search-icon" width="18" height="18">
                 <use xlink:href="#icon-search"></use>
@@ -107,12 +107,12 @@
           <nav class="header__nav">
             <ul class="header__my-nav">
               <li class="header__my-page header__my-page--popular">
-                <a class="header__page-link header__page-link--active" title="Популярный контент">
+                <a class="header__page-link <?= $_SERVER['SCRIPT_NAME'] === '/popular.php' ? 'header__page-link--active' : ''; ?>" href="/popular.php" title="Популярный контент">
                   <span class="visually-hidden">Популярный контент</span>
                 </a>
               </li>
               <li class="header__my-page header__my-page--feed">
-                <a class="header__page-link" href="feed.html" title="Моя лента">
+                <a class="header__page-link <?= $_SERVER['SCRIPT_NAME'] === '/feed.php' ? 'header__page-link--active' : ''; ?>" href="/feed.php" title="Моя лента">
                   <span class="visually-hidden">Моя лента</span>
                 </a>
               </li>
