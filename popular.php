@@ -7,6 +7,7 @@ session_start();
 if (!isset($_SESSION['username'])) {
   header('Location: /login.php');
 }
+
 if (connect() == false) {
   print("Ошибка подключения: " . mysqli_connect_error());
 } else {

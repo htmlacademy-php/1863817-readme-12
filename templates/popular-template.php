@@ -45,7 +45,7 @@
             <?php foreach ($types as $key => $type) : ?>
               <? if ($type["content_type_title"] == "p") : ?>
                 <li class="popular__filters-item filters__item">
-                  <a class="filters__button filters__button--photo button <?= addClass('post', $type["id_type"], 'filters__button--active') ?>" href="/?post=<?= $type["id_type"]; ?>">
+                  <a class="filters__button filters__button--photo button <?= addClass('post', $type["id_type"], 'filters__button--active') ?>" href="/popular.php/?post=<?= $type["id_type"]; ?>">
                     <span class="visually-hidden">Фото</span>
                     <svg class="filters__icon" width="22" height="18">
                       <use xlink:href="#icon-filter-<?= $type["content_class_type"]; ?>"></use>
@@ -159,7 +159,7 @@
               <div class="post__author">
                 <a class="post__author-link" href="#" title="Автор">
                   <div class="post__avatar-wrapper">
-                    <img class="post__author-avatar" src="img/<?= $card["avatar_link"]; ?>" alt="Аватар пользователя" width="40" height="40">
+                    <img class="post__author-avatar" src="/<?= $card["avatar_link"]; ?>" alt="Аватар пользователя" width="40" height="40">
                   </div>
                   <div class="post__info">
                     <b class="post__author-name"><?= $card["user_login"]; ?></b>

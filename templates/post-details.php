@@ -63,14 +63,14 @@
                 <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
                   <use xlink:href="#icon-heart-active"></use>
                 </svg>
-                <span><?= count($likes) ?></span>
+                <span><?= count($likes); ?></span>
                 <span class="visually-hidden">количество лайков</span>
               </a>
               <a class="post__indicator post__indicator--comments button" href="#" title="Комментарии">
                 <svg class="post__indicator-icon" width="19" height="17">
                   <use xlink:href="#icon-comment"></use>
                 </svg>
-                <span><?= count($comments) ?></span>
+                <span><?= count($comments); ?></span>
                 <span class="visually-hidden">количество комментариев</span>
               </a>
               <a class="post__indicator post__indicator--repost button" href="#" title="Репост">
@@ -89,7 +89,7 @@
             $tags = explode(' ', $tags);
             ?>
             <? foreach ($tags as $key => $tag) : ?>
-              <li><a href="/search.php?search=<?= $tag; ?>">#<?= $tag ?></a></li>
+              <li><a href="/search.php?search=<?= urlencode($tag); ?>"><?= $tag ?></a></li>
             <? endforeach; ?>
           </ul>
           <div class="comments">
@@ -158,7 +158,7 @@
           <div class="post-details__user-info user__info">
             <div class="post-details__avatar user__avatar">
               <a class="post-details__avatar-link user__avatar-link" href="#">
-                <img class="post-details__picture user__picture" src="img/<?= $card[0]["avatar_link"]; ?>" alt="Аватар пользователя" width="60" height="60">
+                <img class="post-details__picture user__picture" src="/<?= $card[0]["avatar_link"]; ?>" alt="Аватар пользователя" width="60" height="60">
               </a>
             </div>
             <div class="post-details__name-wrapper user__name-wrapper">

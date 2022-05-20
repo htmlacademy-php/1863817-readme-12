@@ -13,22 +13,32 @@
         <div class="search__content">
           <?php if ($cards && is_array($cards)) : ?>
             <?php foreach ($cards as $key => $card) : ?>
-              <article class="popular__post post <?= $card["content_type"]; ?>">
-                <header class="post__header">
-                  <a href='/post.php?post-id=<?= $card["id_post"]; ?>'>
-                    <h2><?= $card["title"]; ?></h2>
+              <article class="search__post post <?= $card["content_type"]; ?>">
+                <header class="post__header post__author">
+                  <a class="post__author-link" href='/post.php?post-id=<?= $card["id_post"]; ?>' title="Автор">
+                    <div class="post__avatar-wrapper">
+                      <img class="post__author-avatar" src="/<?= $card["avatar_link"]; ?>" alt="Аватар пользователя" width="60" height="60">
+                    </div>
+                    <div class="post__info">
+                      <b class="post__author-name"><?= $card["user_login"]; ?></b>
+                      <span class="post__time">5 часов назад</span>
+                    </div>
                   </a>
                 </header>
                 <div class="post__main">
                   <?php if ($card["content_type"] == "post-quote") : ?>
+                    <h2><a href="/post.php?post-id=<?= $card["id_post"]; ?>"><?= $card["title"]; ?></a></h2>
                     <blockquote>
                       <p>
                         <?= $card["text_content"]; ?>
                       </p>
-                      <cite>Неизвестный Автор</cite>
+                      <cite>
+                        <?= $card["quote_author"]; ?>
+                      </cite>
                     </blockquote>
                   <?php elseif ($card["content_type"] == "post-text") :
                     list($newString, $cut) = addLinkForBigText($card["text_content"]); ?>
+                    <h2><a href="/post.php?post-id=<?= $card["id_post"]; ?>"><?= $card["title"]; ?></a></h2>
                     <p>
                       <?= $newString; ?>
                     </p>
@@ -38,73 +48,74 @@
                       </div>
                     <?php endif; ?>
                   <?php elseif ($card["content_type"] == "post-photo") : ?>
+                    <h2><a href="/post.php?post-id=<?= $card["id_post"]; ?>"><?= $card["title"]; ?></a></h2>
                     <div class="post-photo__image-wrapper">
                       <img src="<?= $card["image_link"]; ?>" alt="Фото от пользователя" width="360" height="240">
                     </div>
                   <?php elseif ($card["content_type"] == "post-video") : ?>
-                    <div class="post-video__block">
-                      <div class="post-video__preview">
-                        <a href='<?= $card["video_link"]; ?>'>
-                          <?= embed_youtube_cover($card["video_link"]); ?>
+                    <h2><a href="/post.php?post-id=<?= $card["id_post"]; ?>"><?= $card["title"]; ?></a></h2>
+                    <div class="post__main">
+                      <div class="post-video__block video_search">
+                        <div class="post-video__preview">
+                          <a href='<?= $card["video_link"]; ?>'>
+                            <?= embed_youtube_cover($card["video_link"]); ?>
+                          </a>
+                        </div>
+                        <div class="post-video__control">
+                          <button class="post-video__play post-video__play--paused button button--video" type="button"><span class="visually-hidden">Запустить видео</span></button>
+                          <div class="post-video__scale-wrapper">
+                            <div class="post-video__scale">
+                              <div class="post-video__bar">
+                                <div class="post-video__toggle"></div>
+                              </div>
+                            </div>
+                          </div>
+                          <button class="post-video__fullscreen post-video__fullscreen--inactive button button--video" type="button"><span class="visually-hidden">Полноэкранный режим</span></button>
+                        </div>
+                        <button class="post-video__play-big button" type="button">
+                          <svg class="post-video__play-big-icon" width="27" height="28">
+                            <use xlink:href="#icon-video-play-big"></use>
+                          </svg>
+                          <span class="visually-hidden">Запустить проигрыватель</span>
+                        </button>
+                      </div>
+                    <?php elseif ($card["content_type"] == "post-link") : ?>
+                      <div class="post-link__wrapper">
+                        <a class="post-link__external" href="http://<?= $card["website_link"]; ?>" title="Перейти по ссылке">
+                          <div class="post-link__info-wrapper">
+                            <div class="post-link__icon-wrapper">
+                              <img src="https://www.google.com/s2/favicons?domain=<?= $card["website_link"]; ?>" alt="Иконка">
+                            </div>
+                            <div class="post-link__info">
+                              <h3><?= $card["title"]; ?></h3>
+                            </div>
+                          </div>
+                          <span><?= $card["website_link"]; ?></span>
                         </a>
                       </div>
-                      <a href="post-details.html" class="post-video__play-big button">
-                        <svg class="post-video__play-big-icon" width="14" height="14">
-                          <use xlink:href="#icon-video-play-big"></use>
-                        </svg>
-                        <span class="visually-hidden">Запустить проигрыватель</span>
-                      </a>
+                    <?php endif; ?>
                     </div>
-                  <?php elseif ($card["content_type"] == "post-link") : ?>
-                    <div class="post-link__wrapper">
-                      <a class="post-link__external" href="http://<?= $card["website_link"]; ?>" title="Перейти по ссылке">
-                        <div class="post-link__info-wrapper">
-                          <div class="post-link__icon-wrapper">
-                            <img src="https://www.google.com/s2/favicons?domain=<?= $card["website_link"]; ?>" alt="Иконка">
-                          </div>
-                          <div class="post-link__info">
-                            <h3><?= $card["title"]; ?></h3>
-                          </div>
-                        </div>
-                        <span><?= $card["website_link"]; ?></span>
-                      </a>
-                    </div>
-                  <?php endif; ?>
-                </div>
-                <footer class="post__footer">
-                  <div class="post__author">
-                    <a class="post__author-link" href="#" title="Автор">
-                      <div class="post__avatar-wrapper">
-                        <img class="post__author-avatar" src="img/<?= $card["avatar_link"]; ?>" alt="Аватар пользователя" width="40" height="40">
+                    <footer class="post__footer post__indicators">
+                      <div class="post__buttons">
+                        <a class="post__indicator post__indicator--likes button" href="#" title="Лайк">
+                          <svg class="post__indicator-icon" width="20" height="17">
+                            <use xlink:href="#icon-heart"></use>
+                          </svg>
+                          <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
+                            <use xlink:href="#icon-heart-active"></use>
+                          </svg>
+                          <span><?= $card["likes"]; ?></span>
+                          <span class="visually-hidden">количество лайков</span>
+                        </a>
+                        <a class="post__indicator post__indicator--comments button" href="#" title="Комментарии">
+                          <svg class="post__indicator-icon" width="19" height="17">
+                            <use xlink:href="#icon-comment"></use>
+                          </svg>
+                          <span><?= $card["comments"]; ?></span>
+                          <span class="visually-hidden">количество комментариев</span>
+                        </a>
                       </div>
-                      <div class="post__info">
-                        <b class="post__author-name"><?= $card["user_login"]; ?></b>
-                        <time class="post__time" datetime="<?= $dataForDatatime = generate_random_date($key) ?>" title="<?= strftime("%d.%m.%Y %H:%M", strtotime($dataForDatatime)); ?>"><?= createTextForDate($dataForDatatime); ?></time>
-                      </div>
-                    </a>
-                  </div>
-                  <div class="post__indicators">
-                    <div class="post__buttons">
-                      <a class="post__indicator post__indicator--likes button" href="#" title="Лайк">
-                        <svg class="post__indicator-icon" width="20" height="17">
-                          <use xlink:href="#icon-heart"></use>
-                        </svg>
-                        <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
-                          <use xlink:href="#icon-heart-active"></use>
-                        </svg>
-                        <span>0</span>
-                        <span class="visually-hidden">количество лайков</span>
-                      </a>
-                      <a class="post__indicator post__indicator--comments button" href="#" title="Комментарии">
-                        <svg class="post__indicator-icon" width="19" height="17">
-                          <use xlink:href="#icon-comment"></use>
-                        </svg>
-                        <span>0</span>
-                        <span class="visually-hidden">количество комментариев</span>
-                      </a>
-                    </div>
-                  </div>
-                </footer>
+                    </footer>
               </article>
             <?php endforeach; ?>
           <?php endif; ?>

@@ -82,3 +82,4 @@ CREATE TABLE IF NOT EXISTS contentTypes (
 );
 
 CREATE FULLTEXT INDEX searche_post on posts(title, text_content, quote_author);
+CREATE FULLTEXT INDEX searche_post_by_tag on hashtags(hashtag_title);
