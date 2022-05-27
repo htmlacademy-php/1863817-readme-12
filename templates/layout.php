@@ -107,12 +107,12 @@
           <nav class="header__nav">
             <ul class="header__my-nav">
               <li class="header__my-page header__my-page--popular">
-                <a class="header__page-link <?= $_SERVER['SCRIPT_NAME'] === '/popular.php' ? 'header__page-link--active' : ''; ?>" href="/popular.php" title="Популярный контент">
+                <a class="header__page-link <?= $_SERVER['SCRIPT_NAME'] === '/popular.php' ? 'header__page-link--active' : ''; ?>" href="/popular.php?page=1" title="Популярный контент">
                   <span class="visually-hidden">Популярный контент</span>
                 </a>
               </li>
               <li class="header__my-page header__my-page--feed">
-                <a class="header__page-link <?= $_SERVER['SCRIPT_NAME'] === '/feed.php' ? 'header__page-link--active' : ''; ?>" href="/feed.php" title="Моя лента">
+                <a class="header__page-link <?= $_SERVER['SCRIPT_NAME'] === '/feed.php' ? 'header__page-link--active' : ''; ?>" href="/feed.php?filter=all" title="Моя лента">
                   <span class="visually-hidden">Моя лента</span>
                 </a>
               </li>
@@ -146,7 +146,7 @@
                   <div class="header__profile-tooltip">
                     <ul class="header__profile-nav">
                       <li class="header__profile-nav-item">
-                        <a class="header__profile-nav-link" href="#">
+                        <a class="header__profile-nav-link" href="/profile.php?id=<?= $_SESSION['userId']; ?>&active=posts">
                           <span class="header__profile-nav-text">
                             Мой профиль
                           </span>

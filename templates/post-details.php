@@ -56,8 +56,8 @@
           <?php endif; ?>
           <div class="post__indicators">
             <div class="post__buttons">
-              <a class="post__indicator post__indicator--likes button" href="#" title="Лайк">
-                <svg class="post__indicator-icon" width="20" height="17">
+              <a class="post__indicator post__indicator--likes button" href="/likes.php?postId=<?= $card[0]["id_post"]; ?>&amilike=<?= $card[0]['amILikeThisPost'] ? 'yes' : 'no'; ?>" title="Лайк">
+                <svg class="post__indicator-icon <?= $card[0]['amILikeThisPost'] ? 'my-like' : ''; ?>" width="20" height="17">
                   <use xlink:href="#icon-heart"></use>
                 </svg>
                 <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
@@ -81,7 +81,7 @@
                 <span class="visually-hidden">количество репостов</span>
               </a>
             </div>
-            <span class="post__view">500 просмотров</span>
+            <span class="post__view"><?= $card[0]["number_of_views"]; ?></span>
           </div>
           <ul class="post__tags">
             <?php
@@ -93,79 +93,71 @@
             <? endforeach; ?>
           </ul>
           <div class="comments">
-            <form class="comments__form form" action="#" method="post">
+            <form class="comments__form form" action="/comment.php" method="post">
               <div class="comments__my-avatar">
                 <img class="comments__picture" src="img/userpic-medium.jpg" alt="Аватар пользователя">
               </div>
-              <div class="form__input-section form__input-section--error">
-                <textarea class="comments__textarea form__textarea form__input" placeholder="Ваш комментарий"></textarea>
+              <div class="form__input-section <?= isset($_GET['error']) ? 'form__input-section--error' : ''; ?>">
+                <textarea class="comments__textarea form__textarea form__input" name="comment" placeholder="Ваш комментарий"><?= isset($_GET['value']) ? $_GET['value'] : ''; ?></textarea>
+                <input class="visually-hidden" name="id" value="<?= $_GET['post-id']; ?>">
                 <label class="visually-hidden">Ваш комментарий</label>
-                <button class="form__error-button button" type="button">!</button>
-                <div class="form__error-text">
-                  <h3 class="form__error-title">Ошибка валидации</h3>
-                  <p class="form__error-desc">Это поле обязательно к заполнению</p>
-                </div>
+
+                <? if (isset($_GET['error'])) : ?>
+                  <button class="form__error-button button" type="button">!</button>
+                  <div class="form__error-text">
+                    <h3 class="form__error-title">Ошибка валидации</h3>
+                    <p class="form__error-desc"><?= $_GET['error']; ?></p>
+                  </div>
+                <? endif; ?>
               </div>
               <button class="comments__submit button button--green" type="submit">Отправить</button>
             </form>
             <div class="comments__list-wrapper">
               <ul class="comments__list">
-                <li class="comments__item user">
-                  <div class="comments__avatar">
-                    <a class="user__avatar-link" href="#">
-                      <img class="comments__picture" src="img/userpic-larisa.jpg" alt="Аватар пользователя">
-                    </a>
-                  </div>
-                  <div class="comments__info">
-                    <div class="comments__name-wrapper">
-                      <a class="comments__user-name" href="#">
-                        <span>Лариса Роговая</span>
-                      </a>
-                      <time class="comments__time" datetime="2019-03-20">1 ч назад</time>
-                    </div>
-                    <p class="comments__text">
-                      Красота!!!1!
-                    </p>
-                  </div>
-                </li>
-                <li class="comments__item user">
-                  <div class="comments__avatar">
-                    <a class="user__avatar-link" href="#">
-                      <img class="comments__picture" src="img/userpic-larisa.jpg" alt="Аватар пользователя">
-                    </a>
-                  </div>
-                  <div class="comments__info">
-                    <div class="comments__name-wrapper">
-                      <a class="comments__user-name" href="#">
-                        <span>Лариса Роговая</span>
-                      </a>
-                      <time class="comments__time" datetime="2019-03-18">2 дня назад</time>
-                    </div>
-                    <p class="comments__text">
-                      Озеро Байкал – огромное древнее озеро в горах Сибири к северу от монгольской границы. Байкал считается самым глубоким озером в мире. Он окружен сетью пешеходных маршрутов, называемых Большой байкальской тропой. Деревня Листвянка, расположенная на западном берегу озера, – популярная отправная точка для летних экскурсий. Зимой здесь можно кататься на коньках и собачьих упряжках.
-                    </p>
-                  </div>
-                </li>
+                <? if (isset($comments)) : ?>
+                  <? foreach ($comments as $key => $comment) : ?>
+                    <li class="comments__item user">
+                      <div class="comments__avatar">
+                        <a class="user__avatar-link" href="/profile.php?id=<?= $comment["id_user"]; ?>&active=posts">
+                          <img class="comments__picture" src="<?= $comment['avatar_link']; ?>" alt="Аватар пользователя" width="40" height="40">
+                        </a>
+                      </div>
+                      <div class="comments__info">
+                        <div class="comments__name-wrapper">
+                          <a class="comments__user-name" href="#">
+                            <span><?= $comment['user_login']; ?></span>
+                          </a>
+                          <time class="post__time" datetime="<?= $dataForDatatime = date('Y-m-d H:i:s', strtotime($comment["comment_date"])); ?>" title="<?= date('%d.%m.%Y %H:%M', strtotime($comment["comment_date"])); ?>"><?= createTextForDate($dataForDatatime); ?> назад</time>
+                        </div>
+                        <p class="comments__text">
+                          <?= $comment['comment_text']; ?>
+                        </p>
+                      </div>
+                    </li>
+                  <? endforeach; ?>
+                <? endif; ?>
               </ul>
-              <a class="comments__more-link" href="#">
-                <span>Показать все комментарии</span>
-                <sup class="comments__amount">45</sup>
-              </a>
+              <? if ($moreCommentsExist) : ?>
+                <a class="comments__more-link" href="<?= $_SERVER['REQUEST_URI'] . '&comments=all'; ?>">
+                  <span>Показать все комментарии</span>
+                  <sup class="comments__amount"><?= $moreCommentsExist; ?></sup>
+                </a>
+              <? endif; ?>
             </div>
           </div>
         </div>
         <div class="post-details__user user">
           <div class="post-details__user-info user__info">
             <div class="post-details__avatar user__avatar">
-              <a class="post-details__avatar-link user__avatar-link" href="#">
+              <a class="post-details__avatar-link user__avatar-link" href="/profile.php?id=<?= $card[0]["id_user"]; ?>&active=posts">
                 <img class="post-details__picture user__picture" src="/<?= $card[0]["avatar_link"]; ?>" alt="Аватар пользователя" width="60" height="60">
               </a>
             </div>
             <div class="post-details__name-wrapper user__name-wrapper">
-              <a class="post-details__name user__name" href="#">
+              <a class="post-details__name user__name" href="/profile.php?id=<?= $card[0]["id_user"]; ?>&active=posts">
                 <span><?= $card[0]["user_login"]; ?></span>
               </a>
-              <time class="post-details__time user__time" datetime="2014-03-20">5 лет на сайте</time>
+              <time class="post__time" datetime="<?= $dataForDatatime = date('Y-m-d H:i:s', strtotime($registrationDate)); ?>" title="<?= date('%d.%m.%Y %H:%M', strtotime($registrationDate)); ?>"><?= createTextForDate($dataForDatatime); ?> на сайте</time>
             </div>
           </div>
           <div class="post-details__rating user__rating">
@@ -179,7 +171,11 @@
             </p>
           </div>
           <div class="post-details__user-buttons user__buttons">
-            <button class="user__button user__button--subscription button button--main" type="button">Подписаться</button>
+            <? if ($amISubOnMainProfile === 0) : ?>
+              <a class="user__button user__button--subscription button button--main" href="/sub.php?sub=sub&id=<?= $card[0]["id_user"]; ?>">Подписаться</a>
+            <? else : ?>
+              <a class="user__button user__button--subscription button button--main button--quartz" href="/sub.php?sub=onsub&id=<?= $card[0]["id_user"]; ?>">Отписаться</a>
+            <? endif; ?>
             <a class="user__button user__button--writing button button--green" href="#">Сообщение</a>
           </div>
         </div>

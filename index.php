@@ -40,9 +40,13 @@ if ($_POST) {
     $location .= "&passError=Введите пароль";
   }
 
+  $id = doQuery($con, "SELECT id_user FROM users WHERE user_login = '$valueLogin'");
+  $id = $id[0]['id_user'];
+
   if ($resultLogin && $resultPassword) {
     session_start();
     $_SESSION['username'] = $valueLogin;
+    $_SESSION['userId'] = $id;
     // echo ('<pre>');
     // print_r($_SESSION);
     // echo ('</pre>');
@@ -53,7 +57,7 @@ if ($_POST) {
 
 
 if (isset($_SESSION)) {
-  header('Location: /feed.php');
+  header('Location: /feed.php?filter=all');
 } else {
   header('Location: /login.php');
 }

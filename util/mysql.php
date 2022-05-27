@@ -81,9 +81,8 @@ function doQuery($conWithDatabase, $sql)
 
 // Получение аватара пользователя
 
-function getAvatarForUser()
+function getAvatarForUser($login)
 {
-  $login = $_SESSION['username'];
   return $result = doQuery(connect(), "SELECT avatar_link FROM users WHERE user_login = '$login'");
 }
 
@@ -122,6 +121,9 @@ function getAllPostsPostsById()
 // Делает запрос в зависимости от типа контента
 function doQueryForType()
 {
+  if ($_GET['post'] === 'all' || !isset($_GET['post'])) {
+    $posts = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user");
+  }
   if ($_GET['post'] === '1') {
     $posts = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND content_type = 'post-quote'");
   }
@@ -136,9 +138,6 @@ function doQueryForType()
   }
   if ($_GET['post'] === '5') {
     $posts = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND content_type = 'post-video'");
-  }
-  if (!$_GET['post']) {
-    $posts = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user ORDER BY number_of_views ASC");
   }
 
   return $posts;

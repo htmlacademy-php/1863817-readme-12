@@ -43,7 +43,8 @@ CREATE INDEX index_post_comment ON comments(id_post);
 
 CREATE TABLE IF NOT EXISTS likes (
   id_user INT NOT NULL,
-  id_post INT NOT NULL
+  id_post INT NOT NULL,
+  likes_date DATETIME(6) NOT NULL
 );
 
 CREATE INDEX index_user_like ON comments(id_user);

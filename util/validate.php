@@ -229,7 +229,7 @@ function validateWebLink($link)
   }
 }
 
-function validateHeadingTextAndAuthor($name, $min, $max)
+function validateLength($name, $min, $max)
 {
   if (empty($name)) {
     return $textError = 'Это поле должно быть заполнено';
@@ -238,7 +238,7 @@ function validateHeadingTextAndAuthor($name, $min, $max)
   $len = strlen($name);
 
   if ($len > $max || $len < $min) {
-    return $textError = "Значение должно быть от $min до $max символов" . $len;
+    return $textError = "Значение должно быть от $min до $max символов";
   } else {
     return false;
   }

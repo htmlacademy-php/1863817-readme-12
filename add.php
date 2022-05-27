@@ -4,11 +4,15 @@ require 'util/mysql.php';
 require 'util/validate.php';
 
 session_start();
+$con =  connect();
 
 if (!isset($_SESSION['username'])) {
   header('Location: /login.php');
+} else {
+  $login = $_SESSION['username'];
+  $userId = doQuery($con, "SELECT id_user FROM users WHERE user_login = '$login'");
+  $userId = $userId[0]['id_user'];
 }
-$con =  connect();
 
 if ($con == false) {
   print("Ошибка подключения: " . mysqli_connect_error());
@@ -26,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       test_input($value);
     }
 
-    $errors['resultHeading'] = validateHeadingTextAndAuthor($_POST["photo-heading"], 5, 20);
+    $errors['resultHeading'] = validateLength($_POST["photo-heading"], 5, 20);
     $errors['resultFile'] = validatePhotoFile($_FILES["userpic-file-photo"]);
     $errors['resultLink'] = validatePhotoLink($_POST["photo-link"]);
     $errors['resultTags'] = validateTags($_POST["photo-tags"]);
@@ -107,7 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       }
 
       $heading = $_POST["photo-heading"];
-      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, image_link, id_user) VALUE (NOW(), '$heading', 'post-photo', '$photo', 1)");
+      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, image_link, id_user) VALUE (NOW(), '$heading', 'post-photo', '$photo', $userId)");
       $id = mysqli_insert_id($con);
       if (!empty($_POST["photo-tags"])) {
         $tags = $_POST["photo-tags"];
@@ -125,7 +129,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       test_input($value);
     }
 
-    $errors['resultHeading'] = validateHeadingTextAndAuthor($_POST["video-heading"], 5, 20);
+    $errors['resultHeading'] = validateLength($_POST["video-heading"], 5, 20);
     $errors['resultLink'] = validateVideo($_POST["video-link"]);
     $errors['resultTags'] = validateTags($_POST["video-tags"]);
 
@@ -146,7 +150,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
       $linkVideo = $_POST["video-link"];
       $heading = $_POST["video-heading"];
-      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, video_link, id_user) VALUE (NOW(), '$heading', 'post-video', '$linkVideo', 1)");
+      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, video_link, id_user) VALUE (NOW(), '$heading', 'post-video', '$linkVideo', $userId)");
       $id = mysqli_insert_id($con);
       if (!empty($_POST["video-tags"])) {
         $tags = $_POST['video-tags'];
@@ -164,8 +168,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       test_input($value);
     }
 
-    $errors['resultHeading'] = validateHeadingTextAndAuthor($_POST["text-heading"], 5, 20);
-    $errors['resultText'] = validateHeadingTextAndAuthor($_POST["text-text"], 30, 600);
+    $errors['resultHeading'] = validateLength($_POST["text-heading"], 5, 20);
+    $errors['resultText'] = validateLength($_POST["text-text"], 30, 600);
     $errors['resultTags'] = validateTags($_POST["text-tags"]);
 
     foreach ($errors as $key => $value) {
@@ -185,7 +189,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
       $heading = $_POST["text-heading"];
       $text = $_POST["text-text"];
-      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, text_content, id_user) VALUE (NOW(), '$heading', 'post-text', '$text', 1)");
+      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, text_content, id_user) VALUE (NOW(), '$heading', 'post-text', '$text', $userId)");
       $id = mysqli_insert_id($con);
       if (!empty($_POST["text-tags"])) {
         $tags = $_POST["text-tags"];
@@ -203,9 +207,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       test_input($value);
     }
 
-    $errors['resultHeading'] = validateHeadingTextAndAuthor($_POST["quote-heading"], 5, 20);
-    $errors['resultText'] = validateHeadingTextAndAuthor($_POST["quote-text"], 30, 100);
-    $errors['resultAuthor'] = validateHeadingTextAndAuthor($_POST["quote-author"], 5, 20);
+    $errors['resultHeading'] = validateLength($_POST["quote-heading"], 5, 20);
+    $errors['resultText'] = validateLength($_POST["quote-text"], 30, 100);
+    $errors['resultAuthor'] = validateLength($_POST["quote-author"], 5, 20);
     $errors['resultTags'] = validateTags($_POST["quote-tags"]);
 
     foreach ($errors as $key => $value) {
@@ -226,7 +230,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $heading = $_POST["quote-heading"];
       $text = $_POST["quote-text"];
       $author = $_POST["quote-author"];
-      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, text_content, quote_author, id_user) VALUE (NOW(), '$heading', 'post-quote', '$text', '$author', 1)");
+      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, text_content, quote_author, id_user) VALUE (NOW(), '$heading', 'post-quote', '$text', '$author', $userId)");
       $id = mysqli_insert_id($con);
       if (!empty($_POST["quote-tags"])) {
         $tags = $_POST["quote-tags"];
@@ -244,7 +248,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       test_input($value);
     }
 
-    $errors['resultHeading'] = validateHeadingTextAndAuthor($_POST["link-heading"], 5, 20);
+    $errors['resultHeading'] = validateLength($_POST["link-heading"], 5, 20);
     $errors['resultText'] = validateWebLink($_POST["link-link"], 30, 600);
     $errors['resultTags'] = validateTags($_POST["link-tags"]);
 
@@ -265,7 +269,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
       $link = $_POST["link-link"];
       $heading = $_POST["link-heading"];
-      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, website_link, id_user) VALUE (NOW(), '$heading', 'post-link', '$link', 1)");
+      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, website_link, id_user) VALUE (NOW(), '$heading', 'post-link', '$link', $userId)");
       $id = mysqli_insert_id($con);
       if (!empty($_POST["link-tags"])) {
         $tags = $_POST["link-tags"];
@@ -278,7 +282,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 if (!empty($_GET['filter'])) {
   $page_content = include_template('adding-post.php', ['types' => $rows_for_types]);
-  $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: добавление публикации', 'avatar' => getAvatarForUser()]);
+  $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: добавление публикации', 'avatar' => getAvatarForUser($_SESSION['username'])]);
 }
 
 if (isset($layout_content) && !empty($layout_content)) {

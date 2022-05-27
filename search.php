@@ -39,7 +39,7 @@ if ($result) {
   $page_content = include_template('no-results.php', ['query' => $keyWords]);
 }
 
-$layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: результат поиска', 'query' => $keyWords, 'avatar' => getAvatarForUser()]);
+$layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: результат поиска', 'query' => $keyWords, 'avatar' => getAvatarForUser($_SESSION['username'])]);
 
 if (isset($layout_content) && !empty($layout_content)) {
   print($layout_content);
