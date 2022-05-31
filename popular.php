@@ -32,15 +32,17 @@ date_default_timezone_set('Europe/Moscow');
 
 $pageAmount = ceil(count($posts) / 6);
 
-if ($_GET['sort'] === 'likes') {
+$sort = $_GET['sort'];
+
+if ($sort === 'likes') {
   usort($posts, function ($a, $b) {
     return ($a['likesAmount'] - $b['likesAmount']);
   });
-} else if ($_GET['sort'] === 'data') {
+} else if ($sort === 'data') {
   usort($posts, function ($a, $b) {
     return (strtotime($a['post_date']) < strtotime($b['post_date']));
   });
-} else if ($_GET['sort'] === 'popular' || (!isset($_GET['post']) && !isset($_GET['sort']))) {
+} else if ($sort === 'popular' || (!isset($_GET['post']) && !isset($sort))) {
   usort($posts, function ($a, $b) {
     return ($a['number_of_views'] < $b['number_of_views']);
   });

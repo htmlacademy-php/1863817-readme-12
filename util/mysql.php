@@ -142,3 +142,23 @@ function doQueryForType()
 
   return $posts;
 }
+
+function transactionForAddPosts($con, $tags, $sql)
+{
+  if (!empty($tags)) {
+    $result = mysqli_query($con, $sql);
+    $id = mysqli_insert_id($con);
+    $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
+
+    if ($result && $tagResult) {
+      mysqli_query($con, "COMMIT");
+    } else {
+      mysqli_query($con, "ROLLBACK");
+      $id = 'error';
+    }
+  } else {
+    $result = mysqli_query($con, $sql);
+  }
+
+  return $id;
+}

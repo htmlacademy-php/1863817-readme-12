@@ -111,13 +111,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       }
 
       $heading = $_POST["photo-heading"];
-      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, image_link, id_user) VALUE (NOW(), '$heading', 'post-photo', '$photo', $userId)");
-      $id = mysqli_insert_id($con);
-      if (!empty($_POST["photo-tags"])) {
-        $tags = $_POST["photo-tags"];
-        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
+      $id = transactionForAddPosts($con, $_POST["photo-tags"], "INSERT INTO posts (post_date, title, content_type, image_link, id_user) VALUE (NOW(), '$heading', 'post-photo', '$photo', $userId)");
+      if ($id === 'error') {
+        print('При отправке данных на сервер произошла ошибка, попробуйте перезагрузить страницу и повторите попытку');
+        header($location);
+      } else {
+        header("Location: /post.php?post-id=$id");
       }
-      header("Location: /post.php?post-id=$id");
     }
   }
 
@@ -150,13 +150,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
       $linkVideo = $_POST["video-link"];
       $heading = $_POST["video-heading"];
-      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, video_link, id_user) VALUE (NOW(), '$heading', 'post-video', '$linkVideo', $userId)");
-      $id = mysqli_insert_id($con);
-      if (!empty($_POST["video-tags"])) {
-        $tags = $_POST['video-tags'];
-        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
+      $id = transactionForAddPosts($con, $_POST["video-tags"], "INSERT INTO posts (post_date, title, content_type, video_link, id_user) VALUE (NOW(), '$heading', 'post-video', '$linkVideo', $userId)");
+      if ($id === 'error') {
+        print('При отправке данных на сервер произошла ошибка, попробуйте перезагрузить страницу и повторите попытку');
+        header($location);
+      } else {
+        header("Location: /post.php?post-id=$id");
       }
-      header("Location: /post.php?post-id=$id");
     }
   }
 
@@ -189,13 +189,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
       $heading = $_POST["text-heading"];
       $text = $_POST["text-text"];
-      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, text_content, id_user) VALUE (NOW(), '$heading', 'post-text', '$text', $userId)");
-      $id = mysqli_insert_id($con);
-      if (!empty($_POST["text-tags"])) {
-        $tags = $_POST["text-tags"];
-        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
+      $id = transactionForAddPosts($con, $_POST["text-tags"], "INSERT INTO posts (post_date, title, content_type, text_content, id_user) VALUE (NOW(), '$heading', 'post-text', '$text', $userId)");
+      if ($id === 'error') {
+        print('При отправке данных на сервер произошла ошибка, попробуйте перезагрузить страницу и повторите попытку');
+        header($location);
+      } else {
+        header("Location: /post.php?post-id=$id");
       }
-      header("Location: /post.php?post-id=$id");
     }
   }
 
@@ -230,13 +230,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $heading = $_POST["quote-heading"];
       $text = $_POST["quote-text"];
       $author = $_POST["quote-author"];
-      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, text_content, quote_author, id_user) VALUE (NOW(), '$heading', 'post-quote', '$text', '$author', $userId)");
-      $id = mysqli_insert_id($con);
-      if (!empty($_POST["quote-tags"])) {
-        $tags = $_POST["quote-tags"];
-        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
+      $id = transactionForAddPosts($con, $_POST["quote-tags"], "INSERT INTO posts (post_date, title, content_type, text_content, quote_author, id_user) VALUE (NOW(), '$heading', 'post-quote', '$text', '$author', $userId)");
+      if ($id === 'error') {
+        print('При отправке данных на сервер произошла ошибка, попробуйте перезагрузить страницу и повторите попытку');
+        header($location);
+      } else {
+        header("Location: /post.php?post-id=$id");
       }
-      header("Location: /post.php?post-id=$id");
     }
   }
 
@@ -269,13 +269,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
       $link = $_POST["link-link"];
       $heading = $_POST["link-heading"];
-      $result = mysqli_query($con, "INSERT INTO posts (post_date, title, content_type, website_link, id_user) VALUE (NOW(), '$heading', 'post-link', '$link', $userId)");
-      $id = mysqli_insert_id($con);
-      if (!empty($_POST["link-tags"])) {
-        $tags = $_POST["link-tags"];
-        $tagResult = mysqli_query($con, "INSERT INTO hashtags (id_post, hashtag_title) VALUE ($id, '$tags')");
+      $id = transactionForAddPosts($con, $_POST["link-tags"], "INSERT INTO posts (post_date, title, content_type, website_link, id_user) VALUE (NOW(), '$heading', 'post-link', '$link', $userId)");
+      if ($id === 'error') {
+        print('При отправке данных на сервер произошла ошибка, попробуйте перезагрузить страницу и повторите попытку');
+        header($location);
+      } else {
+        header("Location: /post.php?post-id=$id");
       }
-      header("Location: /post.php?post-id=$id");
     }
   }
 }

@@ -25,17 +25,8 @@ if ($login === $_SESSION['username']) {
   $isMyProfile = false;
 }
 
-if ($subscriptions) {
-  $subscriptionsAmount = count($subscriptions);
-} else {
-  $subscriptionsAmount = 0;
-}
-
-if ($posts) {
-  $postsAmount = count($posts);
-} else {
-  $postsAmount = 0;
-}
+$subscriptionsAmount = $subscriptions ? count($subscriptions) : 0;
+$postsAmount = $posts ? count($posts) : 0;
 
 foreach ($posts as $key => $post) {
   $idPost = $post['id_post'];

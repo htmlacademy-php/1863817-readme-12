@@ -25,10 +25,12 @@ foreach ($commentsWithoutAllInfo as $key => $comment) {
   $comments[] = $comment;
 }
 
-if (count($comments) > 2 && !isset($_GET['comments'])) {
-  $firstLength = count($comments);
-  $comments = array_slice($comments, 0, 2);
-  $moreCommentsExist = $firstLength - 2;
+if (isset($comments) && !empty($comments)) {
+  if (count($comments) > 2 && !isset($_GET['comments'])) {
+    $firstLength = count($comments);
+    $comments = array_slice($comments, 0, 2);
+    $moreCommentsExist = $firstLength - 2;
+  }
 }
 
 $card = getPostById();

@@ -11,7 +11,9 @@ if (!isset($_SESSION['username'])) {
 $con = connect();
 $userId = $_SESSION['userId'];
 
-$subs = doQuery($con, "SELECT id_receiver_sub from subscriptions where id_subscriber = $userId");
+if (isset($userId)) {
+  $subs = doQuery($con, "SELECT id_receiver_sub from subscriptions where id_subscriber = $userId");
+}
 
 if ($subs) {
   foreach ($subs as $key => $sub) {
@@ -19,21 +21,9 @@ if ($subs) {
 
     if ($_GET['filter'] === 'all') {
       $subPosts = doQuery($con, "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND posts.id_user = $subId");
-    }
-    if ($_GET['filter'] === 'text') {
-      $subPosts = doQuery($con, "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND posts.id_user = $subId AND content_type = 'post-text'");
-    }
-    if ($_GET['filter'] === 'video') {
-      $subPosts = doQuery($con, "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND posts.id_user = $subId AND content_type = 'post-video'");
-    }
-    if ($_GET['filter'] === 'link') {
-      $subPosts = doQuery($con, "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND posts.id_user = $subId AND content_type = 'post-link'");
-    }
-    if ($_GET['filter'] === 'quote') {
-      $subPosts = doQuery($con, "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND posts.id_user = $subId AND content_type = 'post-quote'");
-    }
-    if ($_GET['filter'] === 'photo') {
-      $subPosts = doQuery($con, "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND posts.id_user = $subId AND content_type = 'post-photo'");
+    } else {
+      $filter = 'post-' . $_GET['filter'];
+      $subPosts = doQuery($con, "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND posts.id_user = $subId AND content_type = '$filter'");
     }
 
     if ($subPosts) {
