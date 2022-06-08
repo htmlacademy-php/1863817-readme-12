@@ -71,7 +71,7 @@ function doQuery($conWithDatabase, $sql)
 {
   $result = mysqli_query($conWithDatabase, $sql);
 
-  if ($result) {
+  if (isset($result)) {
     $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
     return $rows;
   } else {
@@ -158,7 +158,19 @@ function transactionForAddPosts($con, $tags, $sql)
     }
   } else {
     $result = mysqli_query($con, $sql);
+    $id = mysqli_insert_id($con);
   }
 
   return $id;
+}
+
+function getCountNoCheckedMessages($userId)
+{
+  $noCheckedMessages = doQuery(connect(), "SELECT id_message FROM messages WHERE id_for_who_writed = $userId AND checked = 0");
+
+  if (isset($noCheckedMessages) && !empty($noCheckedMessages)) {
+    return count($noCheckedMessages);
+  }
+
+  return false;
 }

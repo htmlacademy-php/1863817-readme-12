@@ -1,11 +1,3 @@
-<?php
-// echo ('<pre>');
-// print_r($postsByUser);
-// echo ('</pre>');
-// echo ('<pre>');
-// print_r($postsAmount);
-// echo ('</pre>');
-?>
 <div class="page__main page__main--profile">
   <h1 class="visually-hidden">Профиль</h1>
   <div class="profile profile--default">
@@ -17,7 +9,7 @@
           </div>
           <div class="profile__name-wrapper user__name-wrapper">
             <span class="profile__name user__name"><?= $login; ?></span>
-            <time class="profile__user-time user__time" datetime="2014-03-20">5 лет на сайте</time>
+            <time class="post__time" datetime="<?= $dataForDatatime = date('Y-m-d H:i:s', strtotime($registrationDate)); ?>" title="<?= date('%d.%m.%Y %H:%M', strtotime($registrationDate)); ?>"><?= createTextForDate($dataForDatatime); ?> на сайте</time>
           </div>
         </div>
         <div class="profile__rating user__rating">
@@ -41,7 +33,7 @@
                 <a class="" href="/sub.php?sub=onsub&id=<?= $_GET['id']; ?>">Отписаться</a>
               </div>
             <? endif; ?>
-            <a class="profile__user-button user__button user__button--writing button button--green" href="#">Сообщение</a>
+            <a class="profile__user-button user__button user__button--writing button button--green" href="/messages.php?dialogWithUser=<?= $_GET['id']; ?>">Сообщение</a>
           </div>
         <? endif; ?>
       </div>
@@ -70,7 +62,21 @@
                 <?php foreach ($postsByUser as $key => $post) : ?>
                   <article class="profile__post post <?= $post['content_type']; ?>">
                     <header class="post__header">
-                      <h2><a href="/post.php?post-id=<?= $post["id_post"]; ?>"><?= $post['title']; ?></a></h2>
+                      <? if ($post['repost'] === '1') : ?>
+                        <div class="post__author">
+                          <a class="post__author-link" href="#" title="Автор">
+                            <div class="post__avatar-wrapper post__avatar-wrapper--repost">
+                              <img class="post__author-avatar" src="<?= $post['author_avatar_link']; ?>" alt="Аватар пользователя" width="60" height="60">
+                            </div>
+                            <div class="post__info">
+                              <b class="post__author-name">Репост: <?= $post['author_login']; ?></b>
+                            </div>
+                          </a>
+                        </div>
+                        <h2><a href="/post.php?post-id=<?= $post["id_post"]; ?>"><?= $post['title']; ?></a></h2>
+                      <? else : ?>
+                        <h2><a href="/post.php?post-id=<?= $post["id_post"]; ?>"><?= $post['title']; ?></a></h2>
+                      <? endif; ?>
                     </header>
                     <div class="post__main">
                       <?php if ($post["content_type"] == "post-quote") : ?>
@@ -137,7 +143,7 @@
                             <span><?= $post['likesAmount']; ?></span>
                             <span class="visually-hidden">количество лайков</span>
                           </a>
-                          <a class="post__indicator post__indicator--repost button" href="#" title="Репост">
+                          <a class="post__indicator post__indicator--repost button" href="/repost.php?id_post=<?= $post["id_post"]; ?>" title="Репост">
                             <svg class="post__indicator-icon" width="19" height="17">
                               <use xlink:href="#icon-repost"></use>
                             </svg>

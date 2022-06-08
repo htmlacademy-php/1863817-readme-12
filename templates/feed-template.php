@@ -84,14 +84,14 @@
                       <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
                         <use xlink:href="#icon-heart-active"></use>
                       </svg>
-                      <span><?= $post["likesAmount"]; ?></span>
+                      <span><?= $post["likes_count"]; ?></span>
                       <span class="visually-hidden">количество лайков</span>
                     </a>
                     <a class="post__indicator post__indicator--comments button" href="/post.php?post-id=<?= $post["id_post"]; ?>" title="Комментарии">
                       <svg class="post__indicator-icon" width="19" height="17">
                         <use xlink:href="#icon-comment"></use>
                       </svg>
-                      <span><?= $post["commentsAmount"]; ?></span>
+                      <span><?= $post["comments_count"]; ?></span>
                       <span class="visually-hidden">количество комментариев</span>
                     </a>
                     <a class="post__indicator post__indicator--repost button" href="#" title="Репост">

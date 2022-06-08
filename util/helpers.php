@@ -1,5 +1,22 @@
 <?php
+require_once 'vendor/autoload.php';
 
+function sendEmail($email, $title, $body)
+{
+  $transport = (new Swift_SmtpTransport('smtp.mail.ru', 465, 'ssl'))
+    ->setUsername('blinov228322@mail.ru')
+    ->setPassword('kV7WExHcHmpiMAwfwqet');
+
+  $mailer = new Swift_Mailer($transport);
+
+  $message = (new Swift_Message(''))
+    ->setFrom('blinov228322@mail.ru')
+    ->setTo($email)
+    ->setSubject($title)
+    ->setBody($body);
+
+  $result = $mailer->send($message);
+}
 /**
  * Проверяет переданную дату на соответствие формату 'ГГГГ-ММ-ДД'
  *
@@ -272,6 +289,7 @@ function createTextForDate($data)
     $resultNumber = round($resultNumber);
     $rightForm = get_noun_plural_form($resultNumber, 'месяц', 'месяца', 'месяцев');
   }
+
   if (isset($resultNumber, $rightForm) && !empty($resultNumber) && !empty($rightForm)) {
     return $resultNumber . ' ' . $rightForm;
   }

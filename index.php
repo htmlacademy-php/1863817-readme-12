@@ -27,8 +27,8 @@ if ($_POST) {
     $location .= "&loginError=Неверный логин";
   }
 
-  $hash = doQuery($con, "SELECT password FROM users WHERE user_login = '$valueLogin'");
-  $hash = $hash[0]['password'];
+  list($hash) = doQuery($con, "SELECT password FROM users WHERE user_login = '$valueLogin'");
+  $hash = $hash['password'];
   $pass = $_POST['password'];
   $resultPassword = password_verify($pass, $hash);
 
@@ -40,24 +40,22 @@ if ($_POST) {
     $location .= "&passError=Введите пароль";
   }
 
-  $id = doQuery($con, "SELECT id_user FROM users WHERE user_login = '$valueLogin'");
-  $id = $id[0]['id_user'];
+  list($id) = doQuery($con, "SELECT id_user FROM users WHERE user_login = '$valueLogin'");
+  $id = $id['id_user'];
 
   if ($resultLogin && $resultPassword) {
     session_start();
     $_SESSION['username'] = $valueLogin;
     $_SESSION['userId'] = $id;
-    // echo ('<pre>');
-    // print_r($_SESSION);
-    // echo ('</pre>');
+    header('Location: /feed.php?filter=all');
   } else {
     header($location);
   }
 }
 
 
-if (isset($_SESSION)) {
-  header('Location: /feed.php?filter=all');
-} else {
-  header('Location: /login.php');
-}
+// if (isset($_SESSION)) {
+//   header('Location: /feed.php?filter=all');
+// } else {
+//   header('Location: /login.php');
+// }

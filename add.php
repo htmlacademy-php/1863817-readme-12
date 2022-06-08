@@ -10,8 +10,7 @@ if (!isset($_SESSION['username'])) {
   header('Location: /login.php');
 } else {
   $login = $_SESSION['username'];
-  $userId = doQuery($con, "SELECT id_user FROM users WHERE user_login = '$login'");
-  $userId = $userId[0]['id_user'];
+  $userId = $_SESSION['userId'];
 }
 
 if ($con == false) {
@@ -30,10 +29,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       test_input($value);
     }
 
-    $errors['resultHeading'] = validateLength($_POST["photo-heading"], 5, 20);
-    $errors['resultFile'] = validatePhotoFile($_FILES["userpic-file-photo"]);
-    $errors['resultLink'] = validatePhotoLink($_POST["photo-link"]);
-    $errors['resultTags'] = validateTags($_POST["photo-tags"]);
+    $errors = [
+      'resultHeading' => validateLength($_POST["photo-heading"], 5, 20),
+      'resultTags' => validateTags($_POST["photo-tags"]),
+      'resultFile' => validatePhotoFile($_FILES["userpic-file-photo"]),
+      'resultLink' => validatePhotoLink($_POST["photo-link"])
+    ];
 
     if ($errors['resultHeading']) {
       $value = $errors['resultHeading'];
@@ -111,12 +112,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       }
 
       $heading = $_POST["photo-heading"];
-      $id = transactionForAddPosts($con, $_POST["photo-tags"], "INSERT INTO posts (post_date, title, content_type, image_link, id_user) VALUE (NOW(), '$heading', 'post-photo', '$photo', $userId)");
+      $id = transactionForAddPosts($con, $_POST["photo-tags"], "INSERT INTO posts (post_date, title, content_type, image_link, id_user, number_of_views) VALUE (NOW(), '$heading', 'post-photo', '$photo', $userId, 0)");
       if ($id === 'error') {
         print('При отправке данных на сервер произошла ошибка, попробуйте перезагрузить страницу и повторите попытку');
         header($location);
       } else {
-        header("Location: /post.php?post-id=$id");
+        $result = 'ok';
       }
     }
   }
@@ -129,9 +130,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       test_input($value);
     }
 
-    $errors['resultHeading'] = validateLength($_POST["video-heading"], 5, 20);
-    $errors['resultLink'] = validateVideo($_POST["video-link"]);
-    $errors['resultTags'] = validateTags($_POST["video-tags"]);
+    $errors = [
+      'resultHeading' => validateLength($_POST["video-heading"], 5, 20),
+      'resultLink' => validateVideo($_POST["video-link"]),
+      'resultTags' => validateTags($_POST["video-tags"])
+    ];
 
     foreach ($errors as $key => $value) {
       if ($value) {
@@ -150,12 +153,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
       $linkVideo = $_POST["video-link"];
       $heading = $_POST["video-heading"];
-      $id = transactionForAddPosts($con, $_POST["video-tags"], "INSERT INTO posts (post_date, title, content_type, video_link, id_user) VALUE (NOW(), '$heading', 'post-video', '$linkVideo', $userId)");
+      $id = transactionForAddPosts($con, $_POST["video-tags"], "INSERT INTO posts (post_date, title, content_type, video_link, id_user, number_of_views) VALUE (NOW(), '$heading', 'post-video', '$linkVideo', $userId, 0)");
       if ($id === 'error') {
         print('При отправке данных на сервер произошла ошибка, попробуйте перезагрузить страницу и повторите попытку');
         header($location);
       } else {
-        header("Location: /post.php?post-id=$id");
+        $result = 'ok';
       }
     }
   }
@@ -168,9 +171,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       test_input($value);
     }
 
-    $errors['resultHeading'] = validateLength($_POST["text-heading"], 5, 20);
-    $errors['resultText'] = validateLength($_POST["text-text"], 30, 600);
-    $errors['resultTags'] = validateTags($_POST["text-tags"]);
+    $errors = [
+      'resultHeading' => validateLength($_POST["text-heading"], 5, 20),
+      'resultText' => validateLength($_POST["text-text"], 30, 600),
+      'resultTags' => validateTags($_POST["text-tags"])
+    ];
 
     foreach ($errors as $key => $value) {
       if ($value) {
@@ -189,12 +194,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
       $heading = $_POST["text-heading"];
       $text = $_POST["text-text"];
-      $id = transactionForAddPosts($con, $_POST["text-tags"], "INSERT INTO posts (post_date, title, content_type, text_content, id_user) VALUE (NOW(), '$heading', 'post-text', '$text', $userId)");
+      $id = transactionForAddPosts($con, $_POST["text-tags"], "INSERT INTO posts (post_date, title, content_type, text_content, id_user, number_of_views) VALUE (NOW(), '$heading', 'post-text', '$text', $userId, 0)");
       if ($id === 'error') {
         print('При отправке данных на сервер произошла ошибка, попробуйте перезагрузить страницу и повторите попытку');
         header($location);
       } else {
-        header("Location: /post.php?post-id=$id");
+        $result = 'ok';
       }
     }
   }
@@ -207,10 +212,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       test_input($value);
     }
 
-    $errors['resultHeading'] = validateLength($_POST["quote-heading"], 5, 20);
-    $errors['resultText'] = validateLength($_POST["quote-text"], 30, 100);
-    $errors['resultAuthor'] = validateLength($_POST["quote-author"], 5, 20);
-    $errors['resultTags'] = validateTags($_POST["quote-tags"]);
+    $errors = [
+      'resultHeading' => validateLength($_POST["quote-heading"], 5, 20),
+      'resultText' => validateLength($_POST["quote-text"], 30, 100),
+      'resultAuthor' => validateLength($_POST["quote-author"], 5, 20),
+      'resultTags' => validateTags($_POST["quote-tags"])
+    ];
 
     foreach ($errors as $key => $value) {
       if ($value) {
@@ -230,12 +237,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $heading = $_POST["quote-heading"];
       $text = $_POST["quote-text"];
       $author = $_POST["quote-author"];
-      $id = transactionForAddPosts($con, $_POST["quote-tags"], "INSERT INTO posts (post_date, title, content_type, text_content, quote_author, id_user) VALUE (NOW(), '$heading', 'post-quote', '$text', '$author', $userId)");
+      $id = transactionForAddPosts($con, $_POST["quote-tags"], "INSERT INTO posts (post_date, title, content_type, text_content, quote_author, id_user, number_of_views) VALUE (NOW(), '$heading', 'post-quote', '$text', '$author', $userId, 0)");
       if ($id === 'error') {
         print('При отправке данных на сервер произошла ошибка, попробуйте перезагрузить страницу и повторите попытку');
         header($location);
       } else {
-        header("Location: /post.php?post-id=$id");
+        $result = 'ok';
       }
     }
   }
@@ -248,9 +255,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       test_input($value);
     }
 
-    $errors['resultHeading'] = validateLength($_POST["link-heading"], 5, 20);
-    $errors['resultText'] = validateWebLink($_POST["link-link"], 30, 600);
-    $errors['resultTags'] = validateTags($_POST["link-tags"]);
+    $errors = [
+      'resultHeading' => validateLength($_POST["link-heading"], 5, 20),
+      'resultText' => validateWebLink($_POST["link-link"], 30, 600),
+      'resultTags' => validateTags($_POST["link-tags"]),
+    ];
 
     foreach ($errors as $key => $value) {
       if ($value) {
@@ -269,15 +278,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
       $link = $_POST["link-link"];
       $heading = $_POST["link-heading"];
-      $id = transactionForAddPosts($con, $_POST["link-tags"], "INSERT INTO posts (post_date, title, content_type, website_link, id_user) VALUE (NOW(), '$heading', 'post-link', '$link', $userId)");
+      $id = transactionForAddPosts($con, $_POST["link-tags"], "INSERT INTO posts (post_date, title, content_type, website_link, id_user, number_of_views) VALUE (NOW(), '$heading', 'post-link', '$link', $userId, 0)");
       if ($id === 'error') {
         print('При отправке данных на сервер произошла ошибка, попробуйте перезагрузить страницу и повторите попытку');
         header($location);
       } else {
-        header("Location: /post.php?post-id=$id");
+        $result = 'ok';
       }
     }
   }
+}
+
+if ($result === 'ok') {
+  $subs = doQuery($con, "SELECT subscriptions.id_subscriber, users.*
+  FROM subscriptions
+  JOIN users ON users.id_user = subscriptions.id_subscriber
+  WHERE subscriptions.id_receiver_sub = $userId");
+  $title = 'Новая публикация от пользователя ' . $login;
+  foreach ($subs as $key => $value) {
+    $body = 'Здравствуйте, ' . $value['user_login'] . '. Пользователь ' . $login . ' только что опубликовал новую запись „' . $heading . '“. Посмотрите её на странице пользователя: http://readme/profile.php?id=' . $userId . '&active=posts';
+    sendEmail($value['email'], $title, $body);
+  }
+  header("Location: /post.php?post-id=$id");
 }
 
 if (!empty($_GET['filter'])) {
