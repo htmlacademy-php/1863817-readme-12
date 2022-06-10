@@ -1,9 +1,9 @@
 <?php
 
-function test_input($data)
+function test_input($con, $data)
 {
   $data = trim($data);
-  $data = stripslashes($data);
+  $data = mysqli_real_escape_string($con, $data);
   $data = htmlspecialchars($data);
   return $data;
 }
@@ -37,7 +37,7 @@ function validateLogin($value)
     return $textError = 'Поле обязательно для заполнения';
   }
 
-  $length = strlen($value);
+  $length = iconv_strlen($value);
 
   if ($length < 3 || $length > 20) {
     return $textError = "Значение должно быть от 3 до 20 символов";
@@ -60,7 +60,7 @@ function validatePassword($value)
     return $textErrors = 'Поле обязательно для заполнения';
   }
 
-  $length = strlen($value);
+  $length = iconv_strlen($value);
 
   if ($length < 9 || $length > 20) {
     $textErrors[] = 'Значение должно быть от 9 до 20 символов';
@@ -235,10 +235,10 @@ function validateLength($name, $min, $max)
     return $textError = 'Это поле должно быть заполнено';
   }
 
-  $len = strlen($name);
+  $len = iconv_strlen($name);
 
   if ($len > $max || $len < $min) {
-    return $textError = "Значение должно быть от $min до $max символов";
+    return $textError = "Значение должно быть от $min до $max символов $len";
   } else {
     return false;
   }

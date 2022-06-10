@@ -13,8 +13,10 @@ if (!isset($_SESSION['username'])) {
 
 $userId = $_SESSION['userId'];
 
-$idWhoWrited = $_GET['dialogWithUser'];
-$noCheckedMessages = doQuery($con, "SELECT id_message FROM messages WHERE id_who_writed = $idWhoWrited AND id_for_who_writed = $userId AND checked = 0");
+if (!empty($_GET['dialogWithUser'])) {
+  $idWhoWrited = test_input($con, $_GET['dialogWithUser']);
+  $noCheckedMessages = doQuery($con, "SELECT id_message FROM messages WHERE id_who_writed = $idWhoWrited AND id_for_who_writed = $userId AND checked = 0");
+}
 
 if (isset($noCheckedMessages) && !empty($noCheckedMessages)) {
 
@@ -47,25 +49,24 @@ if (isset($infoFromMessagesTable) && !empty($infoFromMessagesTable)) {
     $dialogs[$userLogin][] = $value;
   }
 
-  if (count($dialogs) !== 0 && !isset($_GET['dialogWithUser'])) {
+  if (count($dialogs) !== 0 && !isset($idWhoWrited)) {
     $firstKey = array_key_first($dialogs);
     $dialogWithUser = $dialogs[$firstKey][0]['id_user'];
     header('Location: /messages.php?dialogWithUser=' . $dialogWithUser);
   }
 
   if (isset($_POST['message'])) {
-    $value = $_POST['message'];
-    test_input($value);
+    $value = test_input($con, $_POST['message']);
     $error = validateLength($value, 1, 300);
 
     if (!empty($error)) {
       header("Location: /messages.php?dialogWithUser=" . $_POST['dialog'] . "&error=$error");
     } else {
-      $forWhoWrited = $_POST['dialog'];
+      $forWhoWrited = test_input($con, $_POST['dialog']);
       print($forWhoWrited);
       $sql = "INSERT INTO messages (message_date, message_text, id_who_writed, id_for_who_writed) VALUE (NOW(), '$value', $userId, $forWhoWrited)";
       $result = mysqli_query($con, $sql);
-      header("Location: /messages.php?dialog=" . $_POST['dialog']);
+      header("Location: /messages.php?dialog=" . $forWhoWrited);
     }
   }
 
@@ -97,7 +98,7 @@ if (isset($infoFromMessagesTable) && !empty($infoFromMessagesTable)) {
   }
 
   if (!isset($isNewDialog)) {
-    $id = $_GET['dialogWithUser'];
+    $id = $idWhoWrited;
     $newUserInfo = doQuery($con, "SELECT user_login, avatar_link FROM users WHERE id_user = $id");
     $newUser['login'] = $newUserInfo[0]['user_login'];
     $newUser['avatar'] = $newUserInfo[0]['avatar_link'];

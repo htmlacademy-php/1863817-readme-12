@@ -12,7 +12,7 @@ if (!isset($_SESSION['username'])) {
 }
 
 $userId = $_SESSION['userId'];
-$idPost = $_GET['id_post'];
+$idPost = test_input($con, $_GET['id_post']);
 $post = doQuery($con, "SELECT * FROM posts WHERE id_post = $idPost");
 
 if (isset($post) && !empty($post)) {

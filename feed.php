@@ -14,7 +14,7 @@ $userId = $_SESSION['userId'];
 if ($_GET['filter'] === 'all') {
   $condition = "";
 } else {
-  $filter = 'post-' . $_GET['filter'];
+  $filter = 'post-' . test_input($con, $_GET['filter']);
   $condition = "AND content_type = '$filter'";
 }
 

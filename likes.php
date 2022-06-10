@@ -8,7 +8,7 @@ if (!isset($_SESSION['username'])) {
   header('Location: /login.php');
 }
 
-$idPost = $_GET['postId'];
+$idPost = test_input($con, $_GET['postId']);
 $userId = $_SESSION['userId'];
 
 $result = doQuery($con, "SELECT * FROM posts WHERE id_post = $idPost");

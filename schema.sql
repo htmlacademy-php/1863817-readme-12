@@ -7,20 +7,22 @@ CREATE TABLE IF NOT EXISTS users (
   email VARCHAR(128) UNIQUE NOT NULL,
   password VARCHAR(128) NOT NULL,
   registration_date DATETIME(6) NOT NULL,
-  avatar_link varchar(256),
-  login VARCHAR(64) NOT NULL,
+  avatar_link VARCHAR(256),
   PRIMARY KEY (`id_user`)
 );
 
 CREATE TABLE IF NOT EXISTS posts (
   id_post INT UNSIGNED AUTO_INCREMENT,
   post_date DATETIME(6) NOT NULL,
-  title varchar(256),
+  title VARCHAR(256),
   text_content TEXT,
-  quote_author varchar(256) default '',
-  image_link varchar(256) default '',
-  video_link varchar(256) default '',
-  website_link varchar(256) default '',
+  quote_author VARCHAR(256) default '',
+  image_link VARCHAR(256) default '',
+  video_link VARCHAR(256) default '',
+  website_link VARCHAR(256) default '',
+  repost TINYINT(1) default 0,
+  id_author INT(10) default NULL,
+  original_post_id INT(10) default NULL,
   number_of_views INT,
   id_user INT,
   content_type VARCHAR(64) NOT NULL,
@@ -44,6 +46,7 @@ CREATE INDEX index_post_comment ON comments(id_post);
 CREATE TABLE IF NOT EXISTS likes (
   id_user INT NOT NULL,
   id_post INT NOT NULL,
+  likes_date DATETIME(6) NOT NULL,
   likes_date DATETIME(6) NOT NULL
 );
 
@@ -64,6 +67,7 @@ CREATE TABLE IF NOT EXISTS messages (
   message_text TEXT NOT NULL,
   id_who_writed INT NOT NULL,
   id_for_who_writed INT NOT NULL,
+  checked TINYINT(1) default 0,
   PRIMARY KEY (`id_message`)
 );
 

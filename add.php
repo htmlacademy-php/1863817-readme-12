@@ -15,18 +15,16 @@ if (!isset($_SESSION['username'])) {
 
 if ($con == false) {
   print("Ошибка подключения: " . mysqli_connect_error());
-} else {
-  $rows_for_types = doQuery($con, "SELECT * FROM contentTypes");
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   if (isset($_POST['photo-heading'])) {
     // photo
-    $location = "Location: /add.php?filter=3";
+    $location = "Location: /add.php?filter=photo";
 
     foreach ($_POST as $key => $value) {
-      test_input($value);
+      test_input($con, $value);
     }
 
     $errors = [
@@ -68,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
 
-    if (strlen($location) > 27) {
+    if (iconv_strlen($location) > 27) {
       $error = true;
     }
 
@@ -124,10 +122,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   if (isset($_POST['video-heading'])) {
     // video
-    $location = "Location: /add.php?filter=5";
+    $location = "Location: /add.php?filter=video";
 
     foreach ($_POST as $key => $value) {
-      test_input($value);
+      test_input($con, $value);
     }
 
     $errors = [
@@ -165,10 +163,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   if (isset($_POST['text-heading'])) {
     // text
-    $location = "Location: /add.php?filter=2";
+    $location = "Location: /add.php?filter=text";
 
     foreach ($_POST as $key => $value) {
-      test_input($value);
+      test_input($con, $value);
     }
 
     $errors = [
@@ -206,10 +204,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   if (isset($_POST['quote-heading'])) {
     // quote
-    $location = "Location: /add.php?filter=1";
+    $location = "Location: /add.php?filter=quote";
 
     foreach ($_POST as $key => $value) {
-      test_input($value);
+      test_input($con, $value);
     }
 
     $errors = [
@@ -249,10 +247,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   if (isset($_POST['link-heading'])) {
     // link
-    $location = "Location: /add.php?filter=4";
+    $location = "Location: /add.php?filter=link";
 
     foreach ($_POST as $key => $value) {
-      test_input($value);
+      test_input($con, $value);
     }
 
     $errors = [
@@ -303,7 +301,7 @@ if ($result === 'ok') {
 }
 
 if (!empty($_GET['filter'])) {
-  $page_content = include_template('adding-post.php', ['types' => $rows_for_types]);
+  $page_content = include_template('adding-post.php');
   $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: добавление публикации', 'avatar' => getAvatarForUser($_SESSION['username'])]);
 }
 

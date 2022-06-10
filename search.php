@@ -11,9 +11,7 @@ if (!isset($_SESSION['username'])) {
 
 $userId = $_SESSION['userId'];
 
-test_input($_GET['search']);
-
-$keyWords = $_GET['search'];
+$keyWords = test_input($con, $_GET['search']);
 $con = connect();
 
 if (substr($_GET['search'], 0, 1) === '#') {

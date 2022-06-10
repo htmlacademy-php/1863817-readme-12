@@ -8,7 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $location = "Location: /registration.php?registration=1";
 
   foreach ($_POST as $key => $value) {
-    test_input($value);
+    test_input($con, $value);
   }
 
   $errors['resultEmail'] = validateEmail($_POST["email"]);

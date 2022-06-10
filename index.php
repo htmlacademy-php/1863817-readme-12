@@ -3,11 +3,10 @@ require 'util/helpers.php';
 require 'util/mysql.php';
 require 'util/validate.php';
 
-test_input($_POST['login']);
-test_input($_POST['password']);
+test_input($con, $_POST['password']);
 
 $con = connect();
-$valueEmail = $_POST['login'];
+$valueEmail = test_input($con, $_POST['login']);
 
 if ($_POST) {
   $location = "Location: /login.php?errors=1";

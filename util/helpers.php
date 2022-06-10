@@ -198,41 +198,6 @@ function extract_youtube_id($youtube_url)
   return $id;
 }
 
-/**
- * @param $index
- * @return false|string
- */
-function generate_random_date($index)
-{
-  $deltas = [['minutes' => 59], ['hours' => 23], ['days' => 6], ['weeks' => 4], ['months' => 11]];
-  $dcnt = count($deltas);
-
-  if ($index < 0) {
-    $index = 0;
-  }
-
-  if ($index >= $dcnt) {
-    $index = $dcnt - 1;
-  }
-
-  $delta = $deltas[$index];
-  $timeval = rand(1, current($delta));
-  $timename = key($delta);
-
-  $ts = strtotime("$timeval $timename ago");
-  $dt = date('Y-m-d H:i:s', $ts);
-
-  return $dt;
-}
-
-// Добавляет класс в зависимости от типа контента
-function addClass($key, $param, $class)
-{
-  if ($_GET[$key] === $param) {
-    return $class;
-  }
-}
-
 // Добавляет ссылку в случаи если текст поста больше 300 символов
 function addLinkForBigText($string, $symbols = 300)
 {

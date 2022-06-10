@@ -7,8 +7,8 @@ session_start();
 $con = connect();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $comment = test_input($_POST['comment']);
-  $postId = $_POST['id'];
+  $comment = test_input($con, $_POST['comment']);
+  $postId = test_input($con, $_POST['id']);
   $commentError = validateLength($comment, 4, 100);
 
   if ($commentError) {

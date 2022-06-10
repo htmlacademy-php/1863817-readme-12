@@ -10,7 +10,7 @@ if (!isset($_SESSION['username'])) {
   header('Location: /login.php');
 }
 
-$profileId = $_GET['id'];
+$profileId = test_input($con, $_GET['id']);
 $userId = $_SESSION['userId'];
 $userInfo = doQuery($con, "SELECT user_login, registration_date FROM users WHERE id_user = $profileId");
 $login = $userInfo[0]['user_login'];

@@ -7,59 +7,51 @@
       <div class="adding-post__tabs-wrapper tabs">
         <div class="adding-post__tabs filters">
           <ul class="adding-post__tabs-list filters__list tabs__list">
-            <?php foreach ($types as $key => $type) : ?>
-              <? if ($type["content_type_title"] == "p") : ?>
-                <li class="adding-post__tabs-item filters__item">
-                  <a class="adding-post__tabs-link filters__button filters__button--photo tabs__item button <?= addClass('filter', $type["id_type"], 'tabs__item--active filters__button--active') ?>" href="/add.php?filter=<?= $type["id_type"]; ?>">
-                    <svg class="filters__icon" width="22" height="18">
-                      <use xlink:href="#icon-filter-<?= $type["content_class_type"]; ?>"></use>
-                    </svg>
-                    <span>Фото</span>
-                  </a>
-                </li>
-              <? elseif ($type["content_type_title"] == "v") : ?>
-                <li class="adding-post__tabs-item filters__item">
-                  <a class="adding-post__tabs-link filters__button filters__button--video tabs__item button <?= addClass('filter', $type["id_type"], 'tabs__item--active filters__button--active') ?>" href="/add.php?filter=<?= $type["id_type"]; ?>">
-                    <svg class="filters__icon" width="24" height="16">
-                      <use xlink:href="#icon-filter-<?= $type["content_class_type"]; ?>"></use>
-                    </svg>
-                    <span>Видео</span>
-                  </a>
-                </li>
-              <? elseif ($type["content_type_title"] == "t") : ?>
-                <li class="adding-post__tabs-item filters__item">
-                  <a class="adding-post__tabs-link filters__button filters__button--text tabs__item button <?= addClass('filter', $type["id_type"], 'tabs__item--active filters__button--active') ?>" href="/add.php?filter=<?= $type["id_type"]; ?>">
-                    <svg class="filters__icon" width="20" height="21">
-                      <use xlink:href="#icon-filter-<?= $type["content_class_type"]; ?>"></use>
-                    </svg>
-                    <span>Текст</span>
-                  </a>
-                </li>
-              <? elseif ($type["content_type_title"] == "q") : ?>
-                <li class="adding-post__tabs-item filters__item">
-                  <a class="adding-post__tabs-link filters__button filters__button--quote tabs__item button <?= addClass('filter', $type["id_type"], 'tabs__item--active filters__button--active') ?>" href="/add.php?filter=<?= $type["id_type"]; ?>">
-                    <svg class="filters__icon" width="21" height="20">
-                      <use xlink:href="#icon-filter-<?= $type["content_class_type"]; ?>"></use>
-                    </svg>
-                    <span>Цитата</span>
-                  </a>
-                </li>
-              <? elseif ($type["content_type_title"] == "l") : ?>
-                <li class="adding-post__tabs-item filters__item">
-                  <a class="adding-post__tabs-link filters__button filters__button--link tabs__item button <?= addClass('filter', $type["id_type"], 'tabs__item--active filters__button--active') ?>" href="/add.php?filter=<?= $type["id_type"]; ?>">
-                    <svg class="filters__icon" width="21" height="18">
-                      <use xlink:href="#icon-filter-<?= $type["content_class_type"]; ?>"></use>
-                    </svg>
-                    <span>Ссылка</span>
-                  </a>
-                </li>
-              <? endif; ?>
-            <? endforeach; ?>
+            <li class="adding-post__tabs-item filters__item">
+              <a class="adding-post__tabs-link filters__button filters__button--photo tabs__item button <?= $_GET['filter'] === 'photo' ? 'tabs__item--active filters__button--active' : ''; ?>" href="/add.php?filter=photo">
+                <svg class="filters__icon" width="22" height="18">
+                  <use xlink:href="#icon-filter-photo"></use>
+                </svg>
+                <span>Фото</span>
+              </a>
+            </li>
+            <li class="adding-post__tabs-item filters__item">
+              <a class="adding-post__tabs-link filters__button filters__button--video tabs__item button <?= $_GET['filter'] === 'video' ? 'tabs__item--active filters__button--active' : ''; ?>" href="/add.php?filter=video">
+                <svg class="filters__icon" width="24" height="16">
+                  <use xlink:href="#icon-filter-video"></use>
+                </svg>
+                <span>Видео</span>
+              </a>
+            </li>
+            <li class="adding-post__tabs-item filters__item">
+              <a class="adding-post__tabs-link filters__button filters__button--text tabs__item button <?= $_GET['filter'] === 'text' ? 'tabs__item--active filters__button--active' : ''; ?>" href="/add.php?filter=text">
+                <svg class="filters__icon" width="20" height="21">
+                  <use xlink:href="#icon-filter-text"></use>
+                </svg>
+                <span>Текст</span>
+              </a>
+            </li>
+            <li class="adding-post__tabs-item filters__item">
+              <a class="adding-post__tabs-link filters__button filters__button--quote tabs__item button <?= $_GET['filter'] === 'quote' ? 'tabs__item--active filters__button--active' : ''; ?>" href="/add.php?filter=quote">
+                <svg class="filters__icon" width="21" height="20">
+                  <use xlink:href="#icon-filter-quote"></use>
+                </svg>
+                <span>Цитата</span>
+              </a>
+            </li>
+            <li class="adding-post__tabs-item filters__item">
+              <a class="adding-post__tabs-link filters__button filters__button--link tabs__item button <?= $_GET['filter'] === 'link' ? 'tabs__item--active filters__button--active' : ''; ?>" href="/add.php?filter=link">
+                <svg class="filters__icon" width="21" height="18">
+                  <use xlink:href="#icon-filter-link"></use>
+                </svg>
+                <span>Ссылка</span>
+              </a>
+            </li>
           </ul>
         </div>
         <div class="adding-post__tab-content">
           <!-- photo -->
-          <?php if ($_GET['filter'] === '3') : ?>
+          <?php if ($_GET['filter'] === 'photo') : ?>
             <section class="adding-post__photo tabs__content tabs__content--active">
               <h2 class="visually-hidden">Форма добавления фото</h2>
               <form class="adding-post__form form dropzone" action="/add.php" method="post" enctype="multipart/form-data" autocomplete="off">
@@ -150,7 +142,7 @@
               </form>
             </section>
             <!-- video -->
-          <?php elseif ($_GET['filter'] === '5') : ?>
+          <?php elseif ($_GET['filter'] === 'video') : ?>
             <section class="adding-post__video tabs__content tabs__content--active">
               <h2 class="visually-hidden">Форма добавления видео</h2>
               <form class="adding-post__form form" action="/add.php" method="post" enctype="multipart/form-data" autocomplete="off">
@@ -214,7 +206,7 @@
               </form>
             </section>
             <!-- text -->
-          <?php elseif ($_GET['filter'] === '2') : ?>
+          <?php elseif ($_GET['filter'] === 'text') : ?>
             <section class="adding-post__text tabs__content tabs__content--active">
               <h2 class="visually-hidden">Форма добавления текста</h2>
               <form class="adding-post__form form" action="/add.php" method="post" enctype="multipart/form-data" autocomplete="off">
@@ -278,7 +270,7 @@
               </form>
             </section>
             <!-- quote -->
-          <?php elseif ($_GET['filter'] === '1') : ?>
+          <?php elseif ($_GET['filter'] === 'quote') : ?>
             <section class="adding-post__quote tabs__content tabs__content--active">
               <h2 class="visually-hidden">Форма добавления цитаты</h2>
               <form class="adding-post__form form" action="/add.php" method="post" enctype="multipart/form-data" autocomplete="off">
@@ -356,7 +348,7 @@
               </form>
             </section>
             <!-- link -->
-          <?php elseif ($_GET['filter'] === '4') : ?>
+          <?php elseif ($_GET['filter'] === 'link') : ?>
             <section class="adding-post__link tabs__content tabs__content--active">
               <h2 class="visually-hidden">Форма добавления ссылки</h2>
               <form class="adding-post__form form" action="/add.php" method="post" enctype="multipart/form-data" autocomplete="off">

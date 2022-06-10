@@ -20,7 +20,7 @@
                   </span>
                   <div class="messages__preview">
                     <p class="messages__preview-text">
-                      <? if (strlen($value[count($value) - 1]['message_text']) > 13) :
+                      <? if (iconv_strlen($value[count($value) - 1]['message_text']) > 13) :
                         list($newString, $cut) = addLinkForBigText($value[count($value) - 1]['message_text'], 13); ?>
                         <?= $newString; ?>
                       <? else : ?>

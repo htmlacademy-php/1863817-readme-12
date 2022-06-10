@@ -1,6 +1,7 @@
 <?php
 require 'util/helpers.php';
 require 'util/mysql.php';
+require 'util/validate.php';
 
 session_start();
 
@@ -11,7 +12,7 @@ if (!isset($_SESSION['username'])) {
 $con = connect();
 $userId = $_SESSION['userId'];
 
-$idPost = $_GET['post-id'];
+$idPost = test_input($con, $_GET['post-id']);
 $updateViews = mysqli_query($con, "UPDATE posts SET number_of_views = number_of_views + 1 WHERE id_post = $idPost");
 
 $comments = doQuery($con, "SELECT comments.*, users.user_login, users.avatar_link
