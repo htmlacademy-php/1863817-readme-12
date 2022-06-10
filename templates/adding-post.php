@@ -143,7 +143,10 @@
                   <div class="adding-post__file adding-post__file--photo form__file dropzone-previews">
                   </div>
                 </div>
-                <?= file_get_contents('templates/blocks/buttons.php'); ?>
+                <div class="adding-post__buttons">
+                  <button class="adding-post__submit button button--main" type="submit">Опубликовать</button>
+                  <a class="adding-post__close" href="#">Закрыть</a>
+                </div>
               </form>
             </section>
             <!-- video -->
@@ -204,7 +207,10 @@
                     </div>
                   <? endif; ?>
                 </div>
-                <?= file_get_contents('templates/blocks/buttons.php'); ?>
+                <div class="adding-post__buttons">
+                  <button class="adding-post__submit button button--main" type="submit">Опубликовать</button>
+                  <a class="adding-post__close" href="#">Закрыть</a>
+                </div>
               </form>
             </section>
             <!-- text -->
@@ -265,7 +271,10 @@
                     </div>
                   <? endif; ?>
                 </div>
-                <?= file_get_contents('templates/blocks/buttons.php'); ?>
+                <div class="adding-post__buttons">
+                  <button class="adding-post__submit button button--main" type="submit">Опубликовать</button>
+                  <a class="adding-post__close" href="#">Закрыть</a>
+                </div>
               </form>
             </section>
             <!-- quote -->
@@ -340,7 +349,10 @@
                     </div>
                   <? endif; ?>
                 </div>
-                <?= file_get_contents('templates/blocks/buttons.php'); ?>
+                <div class="adding-post__buttons">
+                  <button class="adding-post__submit button button--main" type="submit">Опубликовать</button>
+                  <a class="adding-post__close" href="#">Закрыть</a>
+                </div>
               </form>
             </section>
             <!-- link -->
@@ -401,7 +413,10 @@
                     </div>
                   <? endif; ?>
                 </div>
-                <?= file_get_contents('templates/blocks/buttons.php'); ?>
+                <div class="adding-post__buttons">
+                  <button class="adding-post__submit button button--main" type="submit">Опубликовать</button>
+                  <a class="adding-post__close" href="#">Закрыть</a>
+                </div>
               </form>
             </section>
           <?php endif; ?>

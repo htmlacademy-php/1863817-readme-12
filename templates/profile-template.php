@@ -147,7 +147,7 @@
                             <svg class="post__indicator-icon" width="19" height="17">
                               <use xlink:href="#icon-repost"></use>
                             </svg>
-                            <span>5</span>
+                            <span><?= $post['reposts_amount']; ?></span>
                             <span class="visually-hidden">количество репостов</span>
                           </a>
                         </div>
@@ -248,12 +248,12 @@
                     <li class="post-mini post-mini--photo post user">
                       <div class="post-mini__user-info user__info">
                         <div class="post-mini__avatar user__avatar">
-                          <a class="user__avatar-link" href="/profile.php?id=<?= $like['id_user']; ?>&active=posts">
+                          <a class="user__avatar-link" href="/profile.php?id=<?= $like['user_like']; ?>&active=posts">
                             <img class="post-mini__picture user__picture" src="<?= $like['avatar_link']; ?>" alt="Аватар пользователя" width="60" height="60">
                           </a>
                         </div>
                         <div class="post-mini__name-wrapper user__name-wrapper">
-                          <a class="post-mini__name user__name" href="/profile.php?id=<?= $like['id_user']; ?>&active=posts">
+                          <a class="post-mini__name user__name" href="/profile.php?id=<?= $like['user_like']; ?>&active=posts">
                             <span><?= $like['user_login']; ?></span>
                           </a>
                           <div class="post-mini__action">
@@ -313,15 +313,16 @@
                     <li class="post-mini post-mini--photo post user">
                       <div class="post-mini__user-info user__info">
                         <div class="post-mini__avatar user__avatar">
-                          <a class="user__avatar-link" href="/profile.php?id=<?= $sub['id_receiver_sub']; ?>&active=posts">
+                          <a class="user__avatar-link" href="/profile.php?id=<?= $sub['id_user']; ?>&active=posts">
                             <img class="post-mini__picture user__picture" src="<?= $sub['avatar_link']; ?>" alt="Аватар пользователя" width="60" height="60">
                           </a>
                         </div>
                         <div class="post-mini__name-wrapper user__name-wrapper">
-                          <a class="post-mini__name user__name" href="/profile.php?id=<?= $sub['id_receiver_sub']; ?>&active=posts">
-                            <span><?= $sub['login']; ?></span>
+                          <a class="post-mini__name user__name" href="/profile.php?id=<?= $sub['id_user']; ?>&active=posts">
+                            <span><?= $sub['user_login']; ?></span>
                           </a>
-                          <time class="post-mini__time user__additional" datetime="2014-03-20T20:20">5 лет на сайте</time>
+                          <br>
+                          <time class="post__time" datetime="<?= $dataForDatatime = date('Y-m-d H:i:s', strtotime($sub['registration_date'])); ?>" title="<?= date('%d.%m.%Y %H:%M', strtotime($sub['registration_date'])); ?>"><?= createTextForDate($dataForDatatime); ?> на сайте</time>
                         </div>
                       </div>
                       <div class="post-mini__rating user__rating">
@@ -334,11 +335,11 @@
                           <span class="post-mini__rating-text user__rating-text"><?= get_noun_plural_form($sub['subsAmount'], 'подписчик', 'подписчика', 'подписчиков') ?></span>
                         </p>
                       </div>
-                      <? if ($sub['amISub'] === 0) : ?>
+                      <? if ($sub['amISub'] === '0' && $sub['id_user'] !== $_SESSION['userId']) : ?>
                         <div class="post-mini__user-buttons user__buttons">
                           <a class="post-mini__user-button user__button user__button--subscription button button--main" href="/sub.php?sub=sub&id=<?= $sub['id_receiver_sub']; ?>">Подписаться</a>
                         </div>
-                      <? else : ?>
+                      <? elseif ($sub['amISub'] !== '0' && $sub['id_user'] !== $_SESSION['userId']) : ?>
                         <div class="post-mini__user-buttons user__buttons">
                           <a class="post-mini__user-button user__button user__button--subscription button button--quartz" href="/sub.php?sub=onsub&id=<?= $sub['id_receiver_sub']; ?>">Отписаться</a>
                         </div>

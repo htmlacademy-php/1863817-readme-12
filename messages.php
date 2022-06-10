@@ -115,15 +115,6 @@ if (isset($infoFromMessagesTable) && !empty($infoFromMessagesTable)) {
   $layout_content = include_template('layout.php', ['content' => 'В данный моменту вас нет активных диалогов', 'title' => 'readme: личные сообщения', 'avatar' => getAvatarForUser($_SESSION['username'])]);
 }
 
-// echo ('<pre>');
-// print_r($dialogsSortByDate);
-// echo ('</pre>');
-
-// echo ('<pre>');
-// print_r($newMessage);
-// echo ('</pre>');
-
-
 if (isset($layout_content) && !empty($layout_content)) {
   print($layout_content);
 }

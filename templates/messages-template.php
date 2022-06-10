@@ -1,4 +1,4 @@
-<main class="page__main page__main--messages">
+<div class="page__main page__main--messages">
   <h1 class="visually-hidden">Личные сообщения</h1>
   <section class="messages tabs">
     <h2 class="visually-hidden">Сообщения</h2>
@@ -154,4 +154,4 @@
       </div>
     </div>
   </section>
-</main>
+</div>

@@ -51,11 +51,6 @@ if ($_POST) {
   } else {
     header($location);
   }
+} else {
+  header('Location: /login.php');
 }
-
-
-// if (isset($_SESSION)) {
-//   header('Location: /feed.php?filter=all');
-// } else {
-//   header('Location: /login.php');
-// }

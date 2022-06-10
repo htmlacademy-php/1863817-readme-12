@@ -62,7 +62,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $password = password_hash($_POST["password"], PASSWORD_BCRYPT);
-    // $password = substr($password, 0, 60);
     $email = $_POST["email"];
     $login = $_POST["login"];
     $result = mysqli_query(connect(), "INSERT INTO users (registration_date, email, password, avatar_link, user_login) VALUE (NOW(), '$email', '$password', '$photo', '$login')");

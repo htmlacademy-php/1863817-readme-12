@@ -15,10 +15,6 @@ $userId = $_SESSION['userId'];
 $idPost = $_GET['id_post'];
 $post = doQuery($con, "SELECT * FROM posts WHERE id_post = $idPost");
 
-echo ('<pre>');
-print_r($post);
-echo ('</pre>');
-
 if (isset($post) && !empty($post)) {
   $idAuthor = $post[0]['id_user'];
   $textContent = $post[0]['text_content'];

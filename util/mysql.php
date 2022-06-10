@@ -119,26 +119,34 @@ function getAllPostsPostsById()
 }
 
 // Делает запрос в зависимости от типа контента
-function doQueryForType()
+function doQueryForType($user)
 {
-  if ($_GET['post'] === 'all' || !isset($_GET['post'])) {
-    $posts = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user");
-  }
+  $condition = '';
+
   if ($_GET['post'] === '1') {
-    $posts = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND content_type = 'post-quote'");
+    $condition = " WHERE posts.content_type = 'post-quote'";
   }
   if ($_GET['post'] === '2') {
-    $posts = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND content_type = 'post-text'");
+    $condition = " WHERE posts.content_type = 'post-text'";
   }
   if ($_GET['post'] === '3') {
-    $posts = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND content_type = 'post-photo'");
+    $condition = " WHERE posts.content_type = 'post-photo'";
   }
   if ($_GET['post'] === '4') {
-    $posts = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND content_type = 'post-link'");
+    $condition = " WHERE posts.content_type = 'post-link'";
   }
   if ($_GET['post'] === '5') {
-    $posts = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_user = users.id_user AND content_type = 'post-video'");
+    $condition = " WHERE posts.content_type = 'post-video'";
   }
+
+  $sql = "SELECT posts.*, users.user_login, users.avatar_link, COUNT(likes.id_post) AS likes_amount,
+  (SELECT COUNT(*) FROM likes WHERE likes.id_post = posts.id_post AND likes.id_user = $user) AS amILikeThisPost,
+  (SELECT COUNT(*) FROM comments WHERE comments.id_post = posts.id_post) AS comments_amount
+  FROM posts
+  LEFT JOIN likes ON likes.id_post = posts.id_post
+  JOIN users ON posts.id_user = users.id_user" . $condition . " GROUP BY posts.id_post, users.id_user";
+
+  $posts = doQuery(connect(), $sql);
 
   return $posts;
 }

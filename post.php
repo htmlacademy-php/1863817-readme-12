@@ -9,21 +9,15 @@ if (!isset($_SESSION['username'])) {
 }
 
 $con = connect();
+$userId = $_SESSION['userId'];
 
-$id = $_GET['post-id'];
-$updateViews = mysqli_query($con, "UPDATE posts SET number_of_views = number_of_views + 1 WHERE id_post = $id");
+$idPost = $_GET['post-id'];
+$updateViews = mysqli_query($con, "UPDATE posts SET number_of_views = number_of_views + 1 WHERE id_post = $idPost");
 
-$commentsWithoutAllInfo = getEssenceForPost('comments');
-
-foreach ($commentsWithoutAllInfo as $key => $comment) {
-  $AuthorCommentId = $comment['id_user'];
-  $author = doQuery($con, "SELECT user_login, avatar_link FROM users WHERE id_user = $AuthorCommentId");
-  $authorLogin = $author[0]['user_login'];
-  $authorAvatar = $author[0]['avatar_link'];
-  $comment['user_login'] = $authorLogin;
-  $comment['avatar_link'] = $authorAvatar;
-  $comments[] = $comment;
-}
+$comments = doQuery($con, "SELECT comments.*, users.user_login, users.avatar_link
+FROM comments
+LEFT JOIN users ON users.id_user = comments.id_user
+WHERE id_post = $idPost");
 
 if (isset($comments) && !empty($comments)) {
   if (count($comments) > 2 && !isset($_GET['comments'])) {
@@ -33,49 +27,38 @@ if (isset($comments) && !empty($comments)) {
   }
 }
 
-$card = getPostById();
-$userId = $_SESSION['userId'];
-$amILikeThisPost = doQuery(connect(), "SELECT * from likes where id_post = $id and id_user = $userId");
-if ($amILikeThisPost) {
-  $card[0]['amILikeThisPost'] = 1;
-}
-$profileId = $card[0]["id_user"];
-$amISubOnMainProfile = doQuery($con, "SELECT * from subscriptions where id_receiver_sub = $profileId AND id_subscriber = $userId");
+$card = doQuery($con, "SELECT posts.*, users.registration_date, users.user_login, users.avatar_link, hashtags.hashtag_title, COUNT(likes.id_post) AS likes_amount,
+(SELECT COUNT(*) FROM likes WHERE likes.id_post = posts.id_post AND likes.id_user = $userId) AS amILikeThisPost,
+(SELECT COUNT(*) FROM comments WHERE comments.id_post = posts.id_post) AS comments_amount,
+(SELECT COUNT(id_subscriber) FROM subscriptions WHERE id_receiver_sub = users.id_user) AS subs_amount,
+(SELECT COUNT(*) FROM subscriptions WHERE id_receiver_sub = users.id_user AND id_subscriber = $userId) AS amISub,
+(SELECT COUNT(*) FROM posts AS second_posts WHERE posts.id_post = second_posts.original_post_id) AS reposts_amount
+FROM posts
+LEFT JOIN likes ON likes.id_post = posts.id_post
+LEFT JOIN hashtags ON posts.id_post = hashtags.id_post
+JOIN users ON posts.id_user = users.id_user
+WHERE posts.id_post = $idPost
+GROUP BY posts.id_post, users.id_user, hashtags.hashtag_title");
+$card = $card[0];
 
+$postAuthor = $card['id_user'];
 
-if (isset($amISubOnMainProfile) && !empty($amISubOnMainProfile)) {
-  $amISubOnMainProfile = 1;
+$postsAmount = doQuery($con, "SELECT COUNT(*) AS posts_amount FROM posts WHERE id_user = $postAuthor");
+$postsAmount = $postsAmount[0]['posts_amount'];
+
+if (empty($card)) {
+  $layout_content = include_template('layout.php', ['content' => 'ERROR 404', 'title' => 'readme: публикация', 'avatar' => getAvatarForUser($_SESSION['username'])]);
 } else {
-  $amISubOnMainProfile = 0;
-}
-
-$registrationDate = doQuery($con, "SELECT registration_date from users where id_user = $profileId");
-$registrationDate = $registrationDate[0]['registration_date'];
-
-if ($con == false) {
-  print("Ошибка подключения: " . mysqli_connect_error());
-} else {
-  if (isset($_GET['post-id']) && empty($_GET['post-id']) === false) {
-    if (empty($card)) {
-      $layout_content = include_template('layout.php', ['content' => 'ERROR 404', 'title' => 'readme: публикация', 'avatar' => getAvatarForUser($_SESSION['username'])]);
-    } else {
-      $page_content = include_template(
-        'post-details.php',
-        [
-          'amISubOnMainProfile' => $amISubOnMainProfile,
-          'registrationDate' => $registrationDate,
-          'moreCommentsExist' => $moreCommentsExist,
-          'card' => $card,
-          'subscriptions' => getSubById(),
-          'posts' => getAllPostsPostsById(),
-          'likes' => getEssenceForPost('likes'),
-          'comments' => $comments,
-          'tags' => getEssenceForPost('hashtags')
-        ]
-      );
-      $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: публикация', 'avatar' => getAvatarForUser($_SESSION['username'])]);
-    }
-  }
+  $page_content = include_template(
+    'post-details.php',
+    [
+      'moreCommentsExist' => $moreCommentsExist,
+      'card' => $card,
+      'comments' => $comments,
+      'postsAmount' => $postsAmount
+    ]
+  );
+  $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: публикация', 'avatar' => getAvatarForUser($_SESSION['username'])]);
 }
 
 if (isset($layout_content) && !empty($layout_content)) {

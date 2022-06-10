@@ -8,27 +8,13 @@ if (!isset($_SESSION['username'])) {
   header('Location: /login.php');
 }
 
+$userId = $_SESSION['userId'];
+
 if (connect() == false) {
   print("Ошибка подключения: " . mysqli_connect_error());
 } else {
-  $rows_for_types = doQuery(connect(), "SELECT * FROM contentTypes");
-  $postsWithoutLikes = doQueryForType();
+  $posts = doQueryForType($userId);
 }
-
-$userId = $_SESSION['userId'];
-
-foreach ($postsWithoutLikes as $key => $value) {
-  $idPost = $value['id_post'];
-  $likesAmount = doQuery(connect(), "SELECT COUNT(id_post) from likes where id_post = $idPost");
-  $amILikeThisPost = doQuery(connect(), "SELECT * from likes where id_post = $idPost and id_user = $userId");
-  if ($amILikeThisPost) {
-    $value['amILikeThisPost'] = 1;
-  }
-  $value['likesAmount'] = $likesAmount[0]['COUNT(id_post)'];
-  $posts[] = $value;
-}
-
-date_default_timezone_set('Europe/Moscow');
 
 $pageAmount = ceil(count($posts) / 6);
 
@@ -66,10 +52,8 @@ if ($linkForMorePage) {
   }
 }
 
-
-$page_content = include_template('popular-template.php', ['cards' => $posts, 'types' => $rows_for_types, 'linkForMorePage' => $linkForMorePages, 'noMorePages' => $noMorePages]);
+$page_content = include_template('popular-template.php', ['cards' => $posts, 'linkForMorePage' => $linkForMorePages, 'noMorePages' => $noMorePages]);
 $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: популярное', 'avatar' => getAvatarForUser($_SESSION['username'])]);
-
 
 if (isset($layout_content) && !empty($layout_content)) {
   print($layout_content);
