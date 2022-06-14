@@ -1,5 +1,22 @@
 <?php
+require_once 'vendor/autoload.php';
 
+function sendEmail($email, $title, $body)
+{
+  $transport = (new Swift_SmtpTransport('smtp.mail.ru', 465, 'ssl'))
+    ->setUsername('blinov228322@mail.ru')
+    ->setPassword('kV7WExHcHmpiMAwfwqet');
+
+  $mailer = new Swift_Mailer($transport);
+
+  $message = (new Swift_Message(''))
+    ->setFrom('blinov228322@mail.ru')
+    ->setTo($email)
+    ->setSubject($title)
+    ->setBody($body);
+
+  $result = $mailer->send($message);
+}
 /**
  * Проверяет переданную дату на соответствие формату 'ГГГГ-ММ-ДД'
  *
@@ -143,14 +160,14 @@ function embed_youtube_video($youtube_url)
  * @param string|null $youtube_url Ссылка на youtube видео
  * @return string
  */
-function embed_youtube_cover(string $youtube_url = null)
+function embed_youtube_cover(string $youtube_url = null, $width, $height, string $class = null)
 {
   $res = "";
   $id = extract_youtube_id($youtube_url);
 
   if ($id) {
     $src = sprintf("https://img.youtube.com/vi/%s/mqdefault.jpg", $id);
-    $res = '<img alt="youtube cover" width="320" height="120" src="' . $src . '" />';
+    $res = "<img class='$class' alt='youtube cover' width='$width' height='$height' src='" . $src . "' />";
   }
 
   return $res;
@@ -179,41 +196,6 @@ function extract_youtube_id($youtube_url)
   }
 
   return $id;
-}
-
-/**
- * @param $index
- * @return false|string
- */
-function generate_random_date($index)
-{
-  $deltas = [['minutes' => 59], ['hours' => 23], ['days' => 6], ['weeks' => 4], ['months' => 11]];
-  $dcnt = count($deltas);
-
-  if ($index < 0) {
-    $index = 0;
-  }
-
-  if ($index >= $dcnt) {
-    $index = $dcnt - 1;
-  }
-
-  $delta = $deltas[$index];
-  $timeval = rand(1, current($delta));
-  $timename = key($delta);
-
-  $ts = strtotime("$timeval $timename ago");
-  $dt = date('Y-m-d H:i:s', $ts);
-
-  return $dt;
-}
-
-// Добавляет класс в зависимости от типа контента
-function addClass($key, $param, $class)
-{
-  if ($_GET[$key] === $param) {
-    return $class;
-  }
 }
 
 // Добавляет ссылку в случаи если текст поста больше 300 символов
@@ -253,22 +235,28 @@ function createTextForDate($data)
 
   if ($resultInterval / 60 / 60 < 1) {
     $resultNumber = ($resultInterval / 60);
+    $resultNumber = round($resultNumber);
     $rightForm = get_noun_plural_form($resultNumber, 'минута', 'минуты', 'минут');
   } else if ($resultInterval / 60 / 60 / 24 < 1) {
     $resultNumber = ($resultInterval / 60 / 60);
+    $resultNumber = round($resultNumber);
     $rightForm = get_noun_plural_form($resultNumber, 'час', 'часа', 'часов');
   } else if ($resultInterval / 60 / 60 / 24 >= 1 && $resultInterval / 60 / 60 / 24 < 7) {
     $resultNumber = ($resultInterval / 60 / 60 / 24);
+    $resultNumber = round($resultNumber);
     $rightForm = get_noun_plural_form($resultNumber, 'день', 'дня', 'дней');
   } else if ($resultInterval / 60 / 60 / 24 >= 7 and $resultInterval / 60 / 60 / 24 / 7 < 5) {
     $resultNumber = ($resultInterval / 60 / 60 / 24 / 7);
+    $resultNumber = round($resultNumber);
     $rightForm = get_noun_plural_form($resultNumber, 'неделя', 'недели', 'недель');
   } else if ($resultInterval / 60 / 60 / 24 / 7 > 5) {
     $resultNumber = floor($resultInterval / 60 / 60 / 24 / 30);
+    $resultNumber = round($resultNumber);
     $rightForm = get_noun_plural_form($resultNumber, 'месяц', 'месяца', 'месяцев');
   }
+
   if (isset($resultNumber, $rightForm) && !empty($resultNumber) && !empty($rightForm)) {
-    return $resultNumber . ' ' . $rightForm . ' ' . 'назад';
+    return $resultNumber . ' ' . $rightForm;
   }
 
   return false;
@@ -279,7 +267,7 @@ function getEndPath($fullpath, $symbol)
   $url = $fullpath;
   $stringToArray = explode($symbol, $url);
   $lastElement = count($stringToArray) - 1;
-  return $endPath = $stringToArray[$lastElement];
+  return $stringToArray[$lastElement];
 }
 
 function downloadPhotoFromWebLink($link)

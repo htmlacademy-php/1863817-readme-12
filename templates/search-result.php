@@ -21,7 +21,7 @@
                     </div>
                     <div class="post__info">
                       <b class="post__author-name"><?= $card["user_login"]; ?></b>
-                      <span class="post__time">5 часов назад</span>
+                      <time class="post__time" datetime="<?= $dataForDatatime = date('Y-m-d H:i:s', strtotime($card["post_date"])); ?>" title="<?= date('%d.%m.%Y %H:%M', strtotime($card["post_date"])); ?>"><?= createTextForDate($dataForDatatime); ?> назад</time>
                     </div>
                   </a>
                 </header>
@@ -58,7 +58,7 @@
                       <div class="post-video__block video_search">
                         <div class="post-video__preview">
                           <a href='<?= $card["video_link"]; ?>'>
-                            <?= embed_youtube_cover($card["video_link"]); ?>
+                            <?= embed_youtube_cover($card["video_link"], 320, 120); ?>
                           </a>
                         </div>
                         <div class="post-video__control">
@@ -104,14 +104,14 @@
                           <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
                             <use xlink:href="#icon-heart-active"></use>
                           </svg>
-                          <span><?= $card["likes"]; ?></span>
+                          <span><?= $card["likes_amount"]; ?></span>
                           <span class="visually-hidden">количество лайков</span>
                         </a>
                         <a class="post__indicator post__indicator--comments button" href="#" title="Комментарии">
                           <svg class="post__indicator-icon" width="19" height="17">
                             <use xlink:href="#icon-comment"></use>
                           </svg>
-                          <span><?= $card["comments"]; ?></span>
+                          <span><?= $card["comments_amount"]; ?></span>
                           <span class="visually-hidden">количество комментариев</span>
                         </a>
                       </div>

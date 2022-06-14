@@ -9,37 +9,38 @@ if (!isset($_SESSION['username'])) {
   header('Location: /login.php');
 }
 
-test_input($_GET['search']);
+$userId = $_SESSION['userId'];
 
-$keyWords = $_GET['search'];
+$keyWords = test_input($con, $_GET['search']);
 $con = connect();
 
 if (substr($_GET['search'], 0, 1) === '#') {
-  $result = doQuery($con, "SELECT * FROM posts JOIN hashtags WHERE MATCH(hashtag_title) AGAINST('$keyWords') AND hashtags.id_post = posts.id_post ORDER BY post_date DESC");
+  $hashtagJoin = "LEFT JOIN hashtags ON hashtags.id_post = posts.id_post";
+  $match = 'hashtag_title';
 } else {
-  $result = doQuery($con, "SELECT * FROM posts WHERE MATCH(title, text_content, quote_author) AGAINST('$keyWords')");
+  $hashtagJoin = "";
+  $match = 'title, text_content, quote_author';
 }
 
+$sql = "SELECT posts.*, users.user_login, users.avatar_link, COUNT(comments.id_post) AS comments_amount,
+(SELECT COUNT(*) FROM likes WHERE likes.id_post = posts.id_post) AS likes_amount ,
+(SELECT COUNT(*) FROM likes WHERE likes.id_post = posts.id_post AND likes.id_user = $userId) AS amILikeThisPost
+FROM posts
+LEFT JOIN comments ON comments.id_post = posts.id_post
+JOIN users ON posts.id_user = users.id_user " . $hashtagJoin .
+  " WHERE MATCH($match) AGAINST('$keyWords')
+GROUP BY posts.id_post, users.id_user
+ORDER BY posts.post_date DESC";
 
-foreach ($result as $key => $value) {
-  $idPost = $value['id_post'];
-  $idUser = $value['id_user'];
-  $post = doQuery(connect(), "SELECT * FROM posts JOIN users ON posts.id_post = $idPost AND users.id_user = $idUser");
-  $likes = doQuery(connect(), "SELECT * FROM likes WHERE id_post = $idPost");
-  $post[0]['likes'] = count($likes);
-  $comments = doQuery(connect(), "SELECT * FROM comments WHERE id_post = $idPost");
-  $post[0]['comments'] = count($comments);
-  $posts[] = $post[0];
-}
+$result = doQuery($con, $sql);
 
 if ($result) {
-  $page_content = include_template('search-result.php', ['cards' => $posts, 'types' => $rows_for_types, 'query' => $keyWords]);
-  $posts = [];
+  $page_content = include_template('search-result.php', ['cards' => $result, 'types' => $rows_for_types, 'query' => $keyWords]);
 } else {
   $page_content = include_template('no-results.php', ['query' => $keyWords]);
 }
 
-$layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: результат поиска', 'query' => $keyWords, 'avatar' => getAvatarForUser()]);
+$layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: результат поиска', 'query' => $keyWords, 'avatar' => getAvatarForUser($_SESSION['username'])]);
 
 if (isset($layout_content) && !empty($layout_content)) {
   print($layout_content);

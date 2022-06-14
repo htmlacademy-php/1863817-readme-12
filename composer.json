@@ -1,0 +1,19 @@
+{
+    "name": "saper/readme",
+    "description": "blog",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Saper\\Readme\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "y"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "swiftmailer/swiftmailer": "^6.0"
+    }
+}

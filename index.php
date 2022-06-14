@@ -3,11 +3,10 @@ require 'util/helpers.php';
 require 'util/mysql.php';
 require 'util/validate.php';
 
-test_input($_POST['login']);
-test_input($_POST['password']);
+test_input($con, $_POST['password']);
 
 $con = connect();
-$valueEmail = $_POST['login'];
+$valueEmail = test_input($con, $_POST['login']);
 
 if ($_POST) {
   $location = "Location: /login.php?errors=1";
@@ -27,8 +26,8 @@ if ($_POST) {
     $location .= "&loginError=Неверный логин";
   }
 
-  $hash = doQuery($con, "SELECT password FROM users WHERE user_login = '$valueLogin'");
-  $hash = $hash[0]['password'];
+  list($hash) = doQuery($con, "SELECT password FROM users WHERE user_login = '$valueLogin'");
+  $hash = $hash['password'];
   $pass = $_POST['password'];
   $resultPassword = password_verify($pass, $hash);
 
@@ -40,20 +39,17 @@ if ($_POST) {
     $location .= "&passError=Введите пароль";
   }
 
+  list($id) = doQuery($con, "SELECT id_user FROM users WHERE user_login = '$valueLogin'");
+  $id = $id['id_user'];
+
   if ($resultLogin && $resultPassword) {
     session_start();
     $_SESSION['username'] = $valueLogin;
-    // echo ('<pre>');
-    // print_r($_SESSION);
-    // echo ('</pre>');
+    $_SESSION['userId'] = $id;
+    header('Location: /feed.php?filter=all');
   } else {
     header($location);
   }
-}
-
-
-if (isset($_SESSION)) {
-  header('Location: /feed.php');
 } else {
   header('Location: /login.php');
 }
