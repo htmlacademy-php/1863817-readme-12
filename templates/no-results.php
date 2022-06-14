@@ -1,4 +1,4 @@
-<main class="page__main page__main--search-results">
+<div class="page__main page__main--search-results">
   <h1 class="visually-hidden">Страница результатов поиска (нет результатов)</h1>
   <section class="search">
     <h2 class="visually-hidden">Результаты поиска</h2>
@@ -21,4 +21,4 @@
       </div>
     </div>
   </section>
-</main>
+</div>
