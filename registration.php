@@ -11,25 +11,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     test_input($con, $value);
   }
 
-  $errors['resultEmail'] = validateEmail($_POST["email"]);
-  $errors['resultLogin'] = validateLogin($_POST["login"]);
-  $errors['resultPassword'] = validatePassword($_POST["password"]);
-  $errors['resultRepeatPassword'] = validateRepeatPassword($_POST["password"], $_POST["password-repeat"]);
-  $errors['resultFile'] = validatePhotoFile($_FILES["userpic-file-photo"]);
+  $errors = [
+    'resultEmail' => validateEmail($_POST["email"]),
+    'resultLogin' => validateLogin($_POST["login"]),
+    'resultPassword' => validatePassword($_POST["password"]),
+    'resultRepeatPassword' => validateRepeatPassword($_POST["password"], $_POST["password-repeat"]),
+    'resultFile' => validatePhotoFile($_FILES["userpic-file-photo"])
+  ];
 
   foreach ($errors as $key => $value) {
     if ($value) {
-      $value = urlencode($value);
-      $location .= "&$key=$value";
+      $location .= "&$key=" . urlencode($value);
       $error = true;
     }
   }
 
   if ($error) {
-
     foreach ($_POST as $key => $value) {
-      $value = urlencode($value);
-      $location .= "&$key=$value";
+      $location .= "&$key=" . urlencode($value);
     }
 
     if (!empty($_FILES["userpic-file-photo"]['tmp_name']) && !$errors['resultFile']) {

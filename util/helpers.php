@@ -267,7 +267,7 @@ function getEndPath($fullpath, $symbol)
   $url = $fullpath;
   $stringToArray = explode($symbol, $url);
   $lastElement = count($stringToArray) - 1;
-  return $endPath = $stringToArray[$lastElement];
+  return $stringToArray[$lastElement];
 }
 
 function downloadPhotoFromWebLink($link)

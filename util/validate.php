@@ -21,7 +21,7 @@ function validateEmail($value)
   }
 
   $con = mysqli_connect("localhost", "root", "", "readme");
-  $sameEmail = mysqli_query($con, "SELECT * FROM users WHERE email='$value'");
+  $sameEmail = mysqli_query($con, "SELECT email FROM users WHERE email='$value'");
   $result = mysqli_num_rows($sameEmail);
 
   if ($result) {
@@ -85,7 +85,6 @@ function validatePassword($value)
   if (count($textErrors) > 1) {
     $textErrors = implode('<br>', $textErrors);
   }
-
 
   if (!empty($textErrors)) {
     return $textErrors;

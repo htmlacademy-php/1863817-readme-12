@@ -72,8 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($error) {
       foreach ($_POST as $key => $value) {
-        $value = urlencode($value);
-        $location .= "&$key=$value";
+        $location .= "&$key=" . urlencode($value);
       }
 
       if (!empty($_FILES["userpic-file-photo"]['tmp_name']) && !$errors['resultFile']) {
@@ -143,8 +142,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($error) {
       foreach ($_POST as $key => $value) {
-        $value = urlencode($value);
-        $location .= "&$key=$value";
+        $location .= "&$key=" . urlencode($value);
       }
 
       header($location);
@@ -184,8 +182,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($error) {
       foreach ($_POST as $key => $value) {
-        $value = urlencode($value);
-        $location .= "&$key=$value";
+        $location .= "&$key=" . urlencode($value);
       }
 
       header($location);
@@ -226,8 +223,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($error) {
       foreach ($_POST as $key => $value) {
-        $value = urlencode($value);
-        $location .= "&$key=$value";
+        $location .= "&$key=" . urlencode($value);
       }
 
       header($location);
@@ -268,8 +264,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($error) {
       foreach ($_POST as $key => $value) {
-        $value = urlencode($value);
-        $location .= "&$key=$value";
+        $location .= "&$key=" . urlencode($value);
       }
 
       header($location);
