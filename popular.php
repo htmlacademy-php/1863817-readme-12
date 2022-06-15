@@ -22,7 +22,7 @@ $sort = $_GET['sort'];
 
 if ($sort === 'likes') {
   usort($posts, function ($a, $b) {
-    return ($a['likesAmount'] - $b['likesAmount']);
+    return ($a['likes_amount'] < $b['likes_amount']);
   });
 } else if ($sort === 'data') {
   usort($posts, function ($a, $b) {

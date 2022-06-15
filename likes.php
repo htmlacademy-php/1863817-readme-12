@@ -1,5 +1,6 @@
 <?php
 require 'util/mysql.php';
+require 'util/validate.php';
 
 session_start();
 $con = connect();

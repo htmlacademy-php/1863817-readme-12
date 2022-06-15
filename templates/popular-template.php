@@ -149,11 +149,17 @@
               <div class="post__author">
                 <a class="post__author-link" href="/profile.php?id=<?= $card["id_user"]; ?>&active=posts" title="Автор">
                   <div class="post__avatar-wrapper">
-                    <img class="post__author-avatar" src="/<?= $card["avatar_link"]; ?>" alt="Аватар пользователя" width="40" height="40">
+                    <img class="post__author-avatar" src="/<?= $card["avatar_link"]; ?>" alt="<?= !empty($card["avatar_link"]) ? 'Аватар пользователя.' : ''; ?>" width="40" height="40">
                   </div>
                   <div class="post__info">
                     <b class="post__author-name"><?= $card["user_login"]; ?></b>
-                    <time class="post__time" datetime="<?= $dataForDatatime = date('Y-m-d H:i:s', strtotime($card["post_date"])); ?>" title="<?= date('%d.%m.%Y %H:%M', strtotime($card["post_date"])); ?>"><?= createTextForDate($dataForDatatime); ?> назад</time>
+                    <time class="post__time" datetime="<?= $dataForDatatime = date('Y-m-d H:i:s', strtotime($card["post_date"])); ?>" title="<?= date('%d.%m.%Y %H:%M', strtotime($card["post_date"])); ?>">
+                      <? if (empty(createTextForDate($dataForDatatime))) : ?>
+                        только что
+                      <? else : ?>
+                        <?= createTextForDate($dataForDatatime); ?> назад
+                      <? endif; ?>
+                    </time>
                   </div>
                 </a>
               </div>

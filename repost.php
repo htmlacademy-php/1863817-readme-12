@@ -25,6 +25,8 @@ if (isset($post) && !empty($post)) {
   $websiteLink = $post[0]['website_link'];
   $contentType = $post[0]['content_type'];
   mysqli_query($con, "INSERT INTO posts
-  (text_content, title, quote_author, image_link, video_link, website_link, content_type, id_user, post_date, number_of_views, repost, id_author)
-  VALUE ('$textContent', '$title', '$quoteAuthor', '$imageLink', '$videoLink', '$websiteLink', '$contentType', $userId, NOW(), 0, 1, $idAuthor)");
+  (text_content, title, quote_author, image_link, video_link, website_link, content_type, id_user, post_date, number_of_views, repost, id_author, original_post_id)
+  VALUE ('$textContent', '$title', '$quoteAuthor', '$imageLink', '$videoLink', '$websiteLink', '$contentType', $userId, NOW(), 0, 1, $idAuthor, $idPost)");
+  $location = "Location: /profile.php?id=" . $userId . "&active=posts";
+  header($location);
 }

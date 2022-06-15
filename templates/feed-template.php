@@ -15,11 +15,17 @@
                 <header class="post__header post__author">
                   <a class="post__author-link" href="profile.php?id=<?= $post['id_user']; ?>&active=posts" title="Автор">
                     <div class="post__avatar-wrapper">
-                      <img class="post__author-avatar" src="<?= $post['avatar_link']; ?>" alt="Аватар пользователя" width="60" height="60">
+                      <img class="post__author-avatar" src="<?= $post['avatar_link']; ?>" alt="<?= !empty($post["avatar_link"]) ? 'Аватар пользователя.' : ''; ?>" width="60" height="60">
                     </div>
                     <div class="post__info">
                       <b class="post__author-name"><?= $post["user_login"]; ?></b>
-                      <time class="post__time" datetime="<?= $dataForDatatime = date('Y-m-d H:i:s', strtotime($post["post_date"])); ?>" title="<?= date('%d.%m.%Y %H:%M', strtotime($post["post_date"])); ?>"><?= createTextForDate($dataForDatatime); ?> назад</time>
+                      <time class="post__time" datetime="<?= $dataForDatatime = date('Y-m-d H:i:s', strtotime($post["post_date"])); ?>" title="<?= date('%d.%m.%Y %H:%M', strtotime($post["post_date"])); ?>">
+                        <? if (empty(createTextForDate($dataForDatatime))) : ?>
+                          только что
+                        <? else : ?>
+                          <?= createTextForDate($dataForDatatime); ?> назад
+                        <? endif; ?>
+                      </time>
                     </div>
                   </a>
                 </header>

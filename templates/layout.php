@@ -127,11 +127,7 @@
               <li class="header__profile">
                 <a class="header__profile-link" href="#">
                   <div class="header__avatar-wrapper">
-                    <? if (!empty($avatar[0]["avatar_link"])) : ?>
-                      <img class="header__profile-avatar" src="<?= $avatar[0]["avatar_link"]; ?>" width="40" height="40" alt="Аватар профиля">
-                    <? else : ?>
-                      <img class="header__profile-avatar" src="" width="40" height="40">
-                    <? endif; ?>
+                    <img class="header__profile-avatar" src="<?= $avatar[0]["avatar_link"]; ?>" width="40" height="40" alt="<?= !empty($avatar[0]["avatar_link"]) ? 'Аватар профиля.' : ''; ?>">
                   </div>
                   <div class="header__profile-name">
                     <span>
@@ -174,13 +170,13 @@
                   </div>
                 </div>
               </li>
-              <? if (empty($_GET['filter'])) : ?>
+              <? if ($_SERVER['SCRIPT_NAME'] !== '/add.php') : ?>
                 <li>
                   <a class="header__post-button button button--transparent" href="/add.php?filter=text">Пост</a>
                 </li>
               <? else : ?>
                 <li>
-                  <a class="header__post-button header__post-button--active button button--transparent" href="#">Закрыть</a>
+                  <a class="header__post-button header__post-button--active button button--transparent" href="/feed.php?filter=all">Закрыть</a>
                 </li>
               <? endif; ?>
             </ul>
@@ -190,7 +186,7 @@
       <? if (!empty($_GET['registration'])) : ?>
         <ul class="header__user-nav">
           <li class="header__authorization">
-            <a class="header__user-button header__authorization-button button" href="login.html">Вход</a>
+            <a class="header__user-button header__authorization-button button" href="/login.php">Вход</a>
           </li>
           <li>
             <a class="header__user-button header__user-button--active header__register-button button">Регистрация</a>

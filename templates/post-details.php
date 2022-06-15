@@ -85,7 +85,7 @@
           </div>
           <ul class="post__tags">
             <?php
-            $tags = ($tags["hashtag_title"]);
+            $tags = ($card["hashtag_title"]);
             $tags = explode(' ', $tags);
             ?>
             <? foreach ($tags as $key => $tag) : ?>
@@ -95,7 +95,7 @@
           <div class="comments">
             <form class="comments__form form" action="/comment.php" method="post">
               <div class="comments__my-avatar">
-                <img class="comments__picture" src="img/userpic-medium.jpg" alt="Аватар пользователя">
+                <img class="comments__picture" src="<?= $avatar[0]["avatar_link"]; ?>" width="40" height="40" alt="<?= !empty($avatar[0]["avatar_link"]) ? 'Аватар профиля.' : ''; ?>">
               </div>
               <div class="form__input-section <?= isset($_GET['error']) ? 'form__input-section--error' : ''; ?>">
                 <textarea class="comments__textarea form__textarea form__input" name="comment" placeholder="Ваш комментарий"><?= isset($_GET['value']) ? $_GET['value'] : ''; ?></textarea>
@@ -119,7 +119,7 @@
                     <li class="comments__item user">
                       <div class="comments__avatar">
                         <a class="user__avatar-link" href="/profile.php?id=<?= $comment["id_user"]; ?>&active=posts">
-                          <img class="comments__picture" src="<?= $comment['avatar_link']; ?>" alt="Аватар пользователя" width="40" height="40">
+                          <img class="comments__picture" src="<?= $comment['avatar_link']; ?>" alt="<?= !empty($comment["avatar_link"]) ? 'Аватар пользователя.' : ''; ?>" width="40" height="40">
                         </a>
                       </div>
                       <div class="comments__info">
@@ -127,7 +127,13 @@
                           <a class="comments__user-name" href="#">
                             <span><?= $comment['user_login']; ?></span>
                           </a>
-                          <time class="post__time" datetime="<?= $dataForDatatime = date('Y-m-d H:i:s', strtotime($comment["comment_date"])); ?>" title="<?= date('%d.%m.%Y %H:%M', strtotime($comment["comment_date"])); ?>"><?= createTextForDate($dataForDatatime); ?> назад</time>
+                          <time class="post__time" datetime="<?= $dataForDatatime = date('Y-m-d H:i:s', strtotime($comment["comment_date"])); ?>" title="<?= date('%d.%m.%Y %H:%M', strtotime($comment["comment_date"])); ?>">
+                            <? if (empty(createTextForDate($dataForDatatime))) : ?>
+                              только что
+                            <? else : ?>
+                              <?= createTextForDate($dataForDatatime); ?> назад
+                            <? endif; ?>
+                          </time>
                         </div>
                         <p class="comments__text">
                           <?= $comment['comment_text']; ?>
@@ -150,7 +156,7 @@
           <div class="post-details__user-info user__info">
             <div class="post-details__avatar user__avatar">
               <a class="post-details__avatar-link user__avatar-link" href="/profile.php?id=<?= $card["id_user"]; ?>&active=posts">
-                <img class="post-details__picture user__picture" src="/<?= $card["avatar_link"]; ?>" alt="Аватар пользователя" width="60" height="60">
+                <img class="post-details__picture user__picture" src="/<?= $card["avatar_link"]; ?>" alt="<?= !empty($card["avatar_link"]) ? 'Аватар пользователя.' : ''; ?>" width="60" height="60">
               </a>
             </div>
             <div class="post-details__name-wrapper user__name-wrapper">

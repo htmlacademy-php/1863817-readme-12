@@ -6,13 +6,12 @@ require 'util/validate.php';
 test_input($con, $_POST['password']);
 
 $con = connect();
-$valueEmail = test_input($con, $_POST['login']);
 
 if ($_POST) {
   $location = "Location: /login.php?errors=1";
 
   $con = connect();
-  $valueLogin = $_POST['login'];
+  $valueLogin = test_input($con, $_POST['login']);
   $sameLogin = mysqli_query($con, "SELECT * FROM users WHERE user_login = '$valueLogin'");
   $resultLogin = mysqli_num_rows($sameLogin);
 
@@ -51,5 +50,9 @@ if ($_POST) {
     header($location);
   }
 } else {
-  header('Location: /login.php');
+  if (isset($_SESSION)) {
+    header('Location: /feed.php?filter=all');
+  } else {
+    header('Location: /login.php');
+  }
 }
