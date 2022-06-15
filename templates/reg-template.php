@@ -4,7 +4,7 @@
   </div>
   <section class="registration container">
     <h2 class="visually-hidden">Форма регистрации</h2>
-    <form class="registration__form form" action="registration.php" method="post" enctype="multipart/form-data" autocomplete="off">
+    <form class="registration__form form" action="/registration.php/" method="post" enctype="multipart/form-data" autocomplete="off">
       <div class="form__text-inputs-wrapper">
         <div class="form__text-inputs">
           <div class="registration__input-wrapper form__input-wrapper <?= !empty($_GET['resultEmail']) ? 'form__input-section--error' : null; ?>">

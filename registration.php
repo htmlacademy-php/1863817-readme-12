@@ -2,8 +2,14 @@
 require 'util/helpers.php';
 require 'util/mysql.php';
 require 'util/validate.php';
+echo ('<pre>');
+print_r($_SERVER);
+echo ('</pre>');
+
+// die();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  print(3);
 
   $location = "Location: /registration.php?registration=1";
 
@@ -27,6 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
 
   if ($error) {
+    print(1);
     foreach ($_POST as $key => $value) {
       $location .= "&$key=" . urlencode($value);
     }
@@ -48,6 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     header($location);
   } else {
+    print(2);
     if (!empty($_FILES["userpic-file-photo"]['tmp_name'])) {
       if (!empty($_POST["link-download-if-reload"])) {
         unlink($_POST["link-download-if-reload"]);
