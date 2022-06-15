@@ -5,7 +5,7 @@
       <div class="profile__user user container">
         <div class="profile__user-info user__info">
           <div class="profile__avatar user__avatar">
-            <img class="profile__picture user__picture" src="<?= $profileAvatar[0]['avatar_link']; ?>" width="100" height="100" alt="Аватар пользователя">
+            <img class="profile__picture user__picture" src="<?= $profileAvatar[0]['avatar_link']; ?>" width="100" height="100" alt="<?= !empty($profileAvatar[0]["avatar_link"]) ? 'Аватар пользователя.' : ''; ?>">
           </div>
           <div class="profile__name-wrapper user__name-wrapper">
             <span class="profile__name user__name"><?= $login; ?></span>
@@ -33,7 +33,7 @@
                 <a class="" href="/sub.php?sub=onsub&id=<?= $_GET['id']; ?>">Отписаться</a>
               </div>
             <? endif; ?>
-            <a class="profile__user-button user__button user__button--writing button button--green" href="/messages.php?dialogWithUser=<?= $_GET['id']; ?>">Сообщение</a>
+            <a class="profile__user-button user__button user__button--writing button button--green" href="/messages.php?dialogWithUser=<?= $_GET['id']; ?>&newMessage=1">Сообщение</a>
           </div>
         <? endif; ?>
       </div>
@@ -151,7 +151,13 @@
                             <span class="visually-hidden">количество репостов</span>
                           </a>
                         </div>
-                        <time class="post__time" datetime="<?= $dataForDatatime = date('Y-m-d H:i:s', strtotime($post["post_date"])); ?>" title="<?= date('%d.%m.%Y %H:%M', strtotime($post["post_date"])); ?>"><?= createTextForDate($dataForDatatime); ?> назад</time>
+                        <time class="post__time" datetime="<?= $dataForDatatime = date('Y-m-d H:i:s', strtotime($post["post_date"])); ?>" title="<?= date('%d.%m.%Y %H:%M', strtotime($post["post_date"])); ?>">
+                          <? if (empty(createTextForDate($dataForDatatime))) : ?>
+                            только что
+                          <? else : ?>
+                            <?= createTextForDate($dataForDatatime); ?> назад
+                          <? endif; ?>
+                        </time>
                       </div>
                       <ul class="post__tags">
                         <?php
@@ -176,7 +182,7 @@
                               <li class="comments__item user">
                                 <div class="comments__avatar">
                                   <a class="user__avatar-link" href="/profile.php?id=<?= $comment["id_user"]; ?>&active=posts">
-                                    <img class="comments__picture" src="<?= $comment['avatar_link']; ?>" alt="Аватар пользователя" width="40" height="40">
+                                    <img class="comments__picture" src="<?= $comment['avatar_link']; ?>" alt="<?= !empty($comment["avatar_link"]) ? 'Аватар пользователя.' : ''; ?>" width="40" height="40">
                                   </a>
                                 </div>
                                 <div class="comments__info">
@@ -206,15 +212,9 @@
 
                       <form class="comments__form form" action="/comment.php" method="post">
 
-                        <? if (!empty($avatarFotCommentIcon[0]["avatar_link"])) : ?>
-                          <div class="comments__my-avatar">
-                            <img class="comments__picture" src="<?= $avatarFotCommentIcon[0]["avatar_link"]; ?>" width="40" height="40" alt="Аватар профиля">
-                          </div>
-                        <? else : ?>
-                          <div class="comments__my-avatar">
-                            <img class="comments__picture" src="" width="40" height="40" alt="Аватар профиля">
-                          </div>
-                        <? endif; ?>
+                        <div class="comments__my-avatar">
+                          <img class="comments__picture" src="<?= $avatarFotCommentIcon[0]["avatar_link"]; ?>" width="40" height="40" alt="<?= !empty($avatarFotCommentIcon[0]["avatar_link"]) ? 'Аватар профиля.' : ''; ?>">
+                        </div>
 
                         <div class="form__input-section <?= isset($_GET['error']) ? 'form__input-section--error' : ''; ?>">
                           <textarea class="comments__textarea form__textarea form__input" name="comment" placeholder="Ваш комментарий"><?= isset($_GET['value']) ? $_GET['value'] : ''; ?></textarea>
@@ -314,7 +314,7 @@
                       <div class="post-mini__user-info user__info">
                         <div class="post-mini__avatar user__avatar">
                           <a class="user__avatar-link" href="/profile.php?id=<?= $sub['id_user']; ?>&active=posts">
-                            <img class="post-mini__picture user__picture" src="<?= $sub['avatar_link']; ?>" alt="Аватар пользователя" width="60" height="60">
+                            <img class="post-mini__picture user__picture" src="<?= $sub['avatar_link']; ?>" alt="<?= !empty($sub["avatar_link"]) ? 'Аватар пользователя.' : ''; ?>" width="60" height="60">
                           </a>
                         </div>
                         <div class="post-mini__name-wrapper user__name-wrapper">

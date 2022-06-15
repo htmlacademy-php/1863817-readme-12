@@ -46,7 +46,7 @@
           <li class="messages__contacts-item">
             <a class="messages__contacts-tab tabs__item messages__contacts-tab--active tabs__item--active" href="/messages.php?dialogWithUser=<?= $value[0]['id_user']; ?>">
               <div class="messages__avatar-wrapper">
-                <img class="messages__avatar" src="<?= $newUser['avatar'] ?>" alt="Аватар пользователя" width="60" height="60">
+                <img class="messages__avatar" src="<?= $newUser['avatar'] ?>" alt="<?= !empty($newUser["avatar"]) ? 'Аватар пользователя.' : ''; ?>" width="60" height="60">
               </div>
               <div class="messages__info">
                 <span class="messages__contact-name">
@@ -70,7 +70,7 @@
                       <div class="messages__item-avatar">
                         <a class="messages__author-link" href="/profile.php?id=<?= $dialog[0]['id_user']; ?>&active=posts">
                           <? if (!empty($value["avatar_link"])) : ?>
-                            <img class="messages__avatar" src="<?= $value["avatar_link"]; ?>" width="40" height="40" alt="Аватар профиля">
+                            <img class="messages__avatar" src="<?= $value["avatar_link"]; ?>" width="40" height="40" alt="<?= !empty($value["avatar_link"]) ? 'Аватар профиля.' : ''; ?>">
                           <? else : ?>
                             <img class="messages__avatar" src="" width="40" height="40">
                           <? endif; ?>
@@ -98,11 +98,7 @@
                     <div class="messages__info-wrapper">
                       <div class="messages__item-avatar">
                         <a class="messages__author-link" href="/profile.php?id=<?= $_SESSION['userId']; ?>&active=posts">
-                          <? if (!empty($avatar[0]["avatar_link"])) : ?>
-                            <img class="messages__avatar" src="<?= $avatar[0]["avatar_link"]; ?>" width="40" height="40" alt="Аватар профиля">
-                          <? else : ?>
-                            <img class="messages__avatar" src="" width="40" height="40">
-                          <? endif; ?>
+                          <img class="messages__avatar" src="<?= $avatar[0]["avatar_link"]; ?>" width="40" height="40" alt="<?= !empty($avatar[0]["avatar_link"]) ? 'Аватар профиля.' : ''; ?>">
                         </a>
                       </div>
                       <div class="messages__item-info">
@@ -132,7 +128,7 @@
         <form class="comments__form form" action="/messages.php?dialogWithUser=<?= $_GET['dialog']; ?>" method="post" enctype="multipart/form-data" autocomplete="off">
           <div class="comments__my-avatar">
             <? if (!empty($avatar[0]["avatar_link"])) : ?>
-              <img class="comments__picture" src="<?= $avatar[0]["avatar_link"]; ?>" width="40" height="40" alt="Аватар профиля">
+              <img class="comments__picture" src="<?= $avatar[0]["avatar_link"]; ?>" width="40" height="40" alt="<?= !empty($avatar[0]["avatar_link"]) ? 'Аватар профиля.' : ''; ?>">
             <? else : ?>
               <img class="comments__picture" src="" width="40" height="40">
             <? endif; ?>

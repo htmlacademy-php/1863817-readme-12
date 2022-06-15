@@ -11,8 +11,8 @@ if (!isset($_SESSION['username'])) {
 
 $userId = $_SESSION['userId'];
 
-$keyWords = test_input($con, $_GET['search']);
 $con = connect();
+$keyWords = test_input($con, $_GET['search']);
 
 if (substr($_GET['search'], 0, 1) === '#') {
   $hashtagJoin = "LEFT JOIN hashtags ON hashtags.id_post = posts.id_post";

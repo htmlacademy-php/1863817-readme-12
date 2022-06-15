@@ -4,7 +4,6 @@ require 'util/mysql.php';
 require 'util/validate.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
   $location = "Location: /registration.php?registration=1";
 
   foreach ($_POST as $key => $value) {

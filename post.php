@@ -56,7 +56,8 @@ if (empty($card)) {
       'moreCommentsExist' => $moreCommentsExist,
       'card' => $card,
       'comments' => $comments,
-      'postsAmount' => $postsAmount
+      'postsAmount' => $postsAmount,
+      'avatar' => getAvatarForUser($_SESSION['username'])
     ]
   );
   $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: публикация', 'avatar' => getAvatarForUser($_SESSION['username'])]);

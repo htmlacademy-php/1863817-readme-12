@@ -33,71 +33,74 @@ left JOIN messages ON users.id_user = messages.id_who_writed OR users.id_user = 
 WHERE messages.id_for_who_writed = $userId OR messages.id_who_writed = $userId and users.id_user != $userId
 ORDER BY messages.id_message");
 
-if (isset($infoFromMessagesTable) && !empty($infoFromMessagesTable)) {
-  foreach ($infoFromMessagesTable as $key => $value) {
-    $humans[] = $value['user_login'];
+if (isset($_POST['message'])) {
+  $value = test_input($con, $_POST['message']);
+  $error = validateLength($value, 1, 300);
+
+  if (!empty($error)) {
+    header("Location: /messages.php?dialogWithUser=" . $_POST['dialog'] . "&error=$error");
+  } else {
+    $forWhoWrited = test_input($con, $_POST['dialog']);
+    print($forWhoWrited);
+    $sql = "INSERT INTO messages (message_date, message_text, id_who_writed, id_for_who_writed) VALUE (NOW(), '$value', $userId, $forWhoWrited)";
+    $result = mysqli_query($con, $sql);
+    header("Location: /messages.php?dialog=" . $forWhoWrited);
   }
+}
 
-  $humans = array_unique($humans);
+if ((isset($infoFromMessagesTable) && !empty($infoFromMessagesTable)) || isset($_GET['newMessage'])) {
 
-  foreach ($humans as $key => $value) {
-    $dialogs[$value] = [];
-  }
-
-  foreach ($infoFromMessagesTable as $key => $value) {
-    $userLogin = $value['user_login'];
-    $dialogs[$userLogin][] = $value;
-  }
-
-  if (count($dialogs) !== 0 && !isset($idWhoWrited)) {
-    $firstKey = array_key_first($dialogs);
-    $dialogWithUser = $dialogs[$firstKey][0]['id_user'];
-    header('Location: /messages.php?dialogWithUser=' . $dialogWithUser);
-  }
-
-  if (isset($_POST['message'])) {
-    $value = test_input($con, $_POST['message']);
-    $error = validateLength($value, 1, 300);
-
-    if (!empty($error)) {
-      header("Location: /messages.php?dialogWithUser=" . $_POST['dialog'] . "&error=$error");
-    } else {
-      $forWhoWrited = test_input($con, $_POST['dialog']);
-      print($forWhoWrited);
-      $sql = "INSERT INTO messages (message_date, message_text, id_who_writed, id_for_who_writed) VALUE (NOW(), '$value', $userId, $forWhoWrited)";
-      $result = mysqli_query($con, $sql);
-      header("Location: /messages.php?dialog=" . $forWhoWrited);
+  if (isset($infoFromMessagesTable) && !empty($infoFromMessagesTable)) {
+    foreach ($infoFromMessagesTable as $key => $value) {
+      $humans[] = $value['user_login'];
     }
-  }
 
-  foreach ($dialogs as $firstKey => $dialog) {
-    usort($dialog, function ($a, $b) {
-      return (strtotime($a['message_date']) < strtotime($b['message_date']));
-    });
+    $humans = array_unique($humans);
 
-    foreach ($dialog as $secondKey => $message) {
+    foreach ($humans as $key => $value) {
+      $dialogs[$value] = [];
+    }
 
-      if ($message['id_for_who_writed'] !== $_SESSION['userId']) {
-        break;
-      } else {
-        if ($message['checked'] === '0') {
-          $lastElement = count($dialog) - 1;
-          $dialog[$lastElement]['newMessagesCount'] += 1;
+    foreach ($infoFromMessagesTable as $key => $value) {
+      $userLogin = $value['user_login'];
+      $dialogs[$userLogin][] = $value;
+    }
+
+    if (count($dialogs) !== 0 && !isset($idWhoWrited)) {
+      $firstKey = array_key_first($dialogs);
+      $dialogWithUser = $dialogs[$firstKey][0]['id_user'];
+      header('Location: /messages.php?dialogWithUser=' . $dialogWithUser);
+    }
+
+    foreach ($dialogs as $firstKey => $dialog) {
+      usort($dialog, function ($a, $b) {
+        return (strtotime($a['message_date']) < strtotime($b['message_date']));
+      });
+
+      foreach ($dialog as $secondKey => $message) {
+
+        if ($message['id_for_who_writed'] !== $_SESSION['userId']) {
+          break;
+        } else {
+          if ($message['checked'] === '0') {
+            $lastElement = count($dialog) - 1;
+            $dialog[$lastElement]['newMessagesCount'] += 1;
+          }
         }
       }
-    }
 
-    usort($dialog, function ($a, $b) {
-      return (strtotime($a['message_date']) > strtotime($b['message_date']));
-    });
-    if ($dialog[0]['id_user'] === $_GET['dialogWithUser']) {
-      $isNewDialog += 1;
-    }
+      usort($dialog, function ($a, $b) {
+        return (strtotime($a['message_date']) > strtotime($b['message_date']));
+      });
+      if ($dialog[0]['id_user'] === $_GET['dialogWithUser']) {
+        $isNewDialog += 1;
+      }
 
-    $dialogsSortByDate[$firstKey] = $dialog;
+      $dialogsSortByDate[$firstKey] = $dialog;
+    }
   }
 
-  if (!isset($isNewDialog)) {
+  if (!isset($isNewDialog) || isset($_GET['newMessage'])) {
     $id = $idWhoWrited;
     $newUserInfo = doQuery($con, "SELECT user_login, avatar_link FROM users WHERE id_user = $id");
     $newUser['login'] = $newUserInfo[0]['user_login'];
