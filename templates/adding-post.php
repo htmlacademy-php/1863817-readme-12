@@ -60,7 +60,7 @@
                     <div class="adding-post__input-wrapper form__input-wrapper <?= !empty($_GET['resultHeading']) ? 'form__input-section--error' : null; ?>">
                       <label class="adding-post__label form__label" for="photo-heading">Заголовок <span class="form__input-required">*</span></label>
                       <div class="form__input-section">
-                        <input class="adding-post__input form__input" id="photo-heading" type="text" name="photo-heading" value="<?= $_GET['photo-heading']; ?>" placeholder="Введите заголовок">
+                        <input class="adding-post__input form__input" id="photo-heading" type="text" name="photo-heading" value="<?= isset($_GET['photo-heading']) ? $_GET['photo-heading'] : ''; ?>" placeholder="Введите заголовок">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                           <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -71,7 +71,7 @@
                     <div class="adding-post__input-wrapper form__input-wrapper <?= !empty($_GET['resultLink']) ? 'form__input-section--error' : null; ?>">
                       <label class="adding-post__label form__label" for="photo-url">Ссылка из интернета</label>
                       <div class="form__input-section">
-                        <input class="adding-post__input form__input" id="photo-url" type="text" name="photo-link" value="<?= $_GET['photo-link']; ?>" placeholder="Введите ссылку">
+                        <input class="adding-post__input form__input" id="photo-url" type="text" name="photo-link" value="<?= isset($_GET['photo-link']) ? $_GET['photo-link'] : ''; ?>" placeholder="Введите ссылку">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                           <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -82,7 +82,7 @@
                     <div class="adding-post__input-wrapper form__input-wrapper <?= !empty($_GET['resultTags']) ? 'form__input-section--error' : null; ?>">
                       <label class="adding-post__label form__label" for="photo-tags">Теги</label>
                       <div class="form__input-section">
-                        <input class="adding-post__input form__input" id="photo-tags" type="text" name="photo-tags" value="<?= $_GET['photo-tags']; ?>" placeholder="Введите теги">
+                        <input class="adding-post__input form__input" id="photo-tags" type="text" name="photo-tags" value="<?= isset($_GET['photo-tags']) ? $_GET['photo-tags'] : ''; ?>" placeholder="Введите теги">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                           <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -151,7 +151,7 @@
                     <div class="adding-post__input-wrapper form__input-wrapper <?= !empty($_GET['resultHeading']) ? 'form__input-section--error' : null; ?>">
                       <label class="adding-post__label form__label" for="video-heading">Заголовок <span class="form__input-required">*</span></label>
                       <div class="form__input-section">
-                        <input class="adding-post__input form__input" id="video-heading" type="text" value="<?= $_GET['video-heading']; ?>" name="video-heading" placeholder="Введите заголовок">
+                        <input class="adding-post__input form__input" id="video-heading" type="text" value="<?= isset($_GET['video-heading']) ? $_GET['video-heading'] : ''; ?>" name="video-heading" placeholder="Введите заголовок">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                           <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -162,7 +162,7 @@
                     <div class="adding-post__input-wrapper form__input-wrapper <?= !empty($_GET['resultLink']) ? 'form__input-section--error' : null; ?>">
                       <label class="adding-post__label form__label" for="video-url">Ссылка youtube <span class="form__input-required">*</span></label>
                       <div class="form__input-section">
-                        <input class="adding-post__input form__input" id="video-url" type="text" value="<?= $_GET['video-link']; ?>" name="video-link" placeholder="Введите ссылку">
+                        <input class="adding-post__input form__input" id="video-url" type="text" value="<?= isset($_GET['video-link']) ? $_GET['video-link'] : ''; ?>" name="video-link" placeholder="Введите ссылку">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                           <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -173,7 +173,7 @@
                     <div class="adding-post__input-wrapper form__input-wrapper <?= !empty($_GET['resultTags']) ? 'form__input-section--error' : null; ?>">
                       <label class="adding-post__label form__label" for="video-tags">Теги</label>
                       <div class="form__input-section">
-                        <input class="adding-post__input form__input" id="video-tags" type="text" value="<?= $_GET['video-tags']; ?>" name="video-tags" placeholder="Введите теги">
+                        <input class="adding-post__input form__input" id="video-tags" type="text" value="<?= isset($_GET['video-tags']) ? $_GET['video-tags'] : ''; ?>" name="video-tags" placeholder="Введите теги">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                           <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -215,7 +215,7 @@
                     <div class="adding-post__input-wrapper form__input-wrapper <?= empty($_GET['resultHeading']) === false ? 'form__input-section--error' : null; ?>">
                       <label class="adding-post__label form__label" for="text-heading">Заголовок <span class="form__input-required">*</span></label>
                       <div class="form__input-section">
-                        <input class="adding-post__input form__input" id="text-heading" value="<?= $_GET['text-heading']; ?>" type="text" name="text-heading" placeholder="Введите заголовок">
+                        <input class="adding-post__input form__input" id="text-heading" value="<?= isset($_GET['text-heading']) ? $_GET['text-heading'] : ''; ?>" type="text" name="text-heading" placeholder="Введите заголовок">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                           <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -226,7 +226,7 @@
                     <div class="adding-post__textarea-wrapper form__textarea-wrapper <?= empty($_GET['resultText']) === false ? 'form__input-section--error' : null; ?>">
                       <label class="adding-post__label form__label" for="post-text">Текст поста <span class="form__input-required">*</span></label>
                       <div class="form__input-section">
-                        <textarea class="adding-post__textarea form__textarea form__input" id="post-text" name="text-text" placeholder="Введите текст публикации"><?= $_GET['text-text']; ?></textarea>
+                        <textarea class="adding-post__textarea form__textarea form__input" id="post-text" name="text-text" placeholder="Введите текст публикации"><?= isset($_GET['text-text']) ? $_GET['text-text'] : ''; ?></textarea>
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                           <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -237,7 +237,7 @@
                     <div class="adding-post__input-wrapper form__input-wrapper <?= empty($_GET['resultTags']) === false ? 'form__input-section--error' : null; ?>">
                       <label class="adding-post__label form__label" for="text-tags">Теги</label>
                       <div class="form__input-section">
-                        <input class="adding-post__input form__input" id="text-tags" type="text" value="<?= $_GET['text-tags']; ?>" name="text-tags" placeholder="Введите теги">
+                        <input class="adding-post__input form__input" id="text-tags" type="text" value="<?= isset($_GET['text-tags']) ? $_GET['text-tags'] : ''; ?>" name="text-tags" placeholder="Введите теги">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                           <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -279,7 +279,7 @@
                     <div class="adding-post__input-wrapper form__input-wrapper <?= !empty($_GET['resultHeading']) ? 'form__input-section--error' : null; ?>">
                       <label class="adding-post__label form__label" for="quote-heading">Заголовок <span class="form__input-required">*</span></label>
                       <div class="form__input-section">
-                        <input class="adding-post__input form__input" id="quote-heading" type="text" name="quote-heading" value="<?= $_GET['quote-heading']; ?>" placeholder="Введите заголовок">
+                        <input class="adding-post__input form__input" id="quote-heading" type="text" name="quote-heading" value="<?= isset($_GET['quote-heading']) ? $_GET['quote-heading'] : ''; ?>" placeholder="Введите заголовок">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                           <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -290,7 +290,7 @@
                     <div class="adding-post__input-wrapper form__textarea-wrapper <?= !empty($_GET['resultText']) ? 'form__input-section--error' : null; ?>">
                       <label class="adding-post__label form__label" for="cite-text">Текст цитаты <span class="form__input-required">*</span></label>
                       <div class="form__input-section">
-                        <textarea class="adding-post__textarea adding-post__textarea--quote form__textarea form__input" id="cite-text" name="quote-text" placeholder="Текст цитаты"><?= $_GET['quote-text']; ?></textarea>
+                        <textarea class="adding-post__textarea adding-post__textarea--quote form__textarea form__input" id="cite-text" name="quote-text" placeholder="Текст цитаты"><?= isset($_GET['quote-text']) ? $_GET['quote-text'] : ''; ?></textarea>
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                           <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -301,7 +301,7 @@
                     <div class="adding-post__textarea-wrapper form__input-wrapper <?= !empty($_GET['resultAuthor']) ? 'form__input-section--error' : null; ?>">
                       <label class="adding-post__label form__label" for="quote-author">Автор <span class="form__input-required">*</span></label>
                       <div class="form__input-section">
-                        <input class="adding-post__input form__input" id="quote-author" type="text" value="<?= $_GET['quote-author']; ?>" name="quote-author" placeholder="Автор">
+                        <input class="adding-post__input form__input" id="quote-author" type="text" value="<?= isset($_GET['quote-author']) ? $_GET['quote-author'] : ''; ?>" name="quote-author" placeholder="Автор">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                           <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -312,7 +312,7 @@
                     <div class="adding-post__input-wrapper form__input-wrapper <?= !empty($_GET['resultTags']) ? 'form__input-section--error' : null; ?>">
                       <label class="adding-post__label form__label" for="cite-tags">Теги</label>
                       <div class="form__input-section">
-                        <input class="adding-post__input form__input" id="cite-tags" type="text" name="quote-tags" value="<?= $_GET['quote-tags']; ?>" placeholder="Введите теги">
+                        <input class="adding-post__input form__input" id="cite-tags" type="text" name="quote-tags" value="<?= isset($_GET['quote-tags']) ? $_GET['quote-tags'] : ''; ?>" placeholder="Введите теги">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                           <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -357,7 +357,7 @@
                     <div class="adding-post__input-wrapper form__input-wrapper <?= empty($errorsWithKeys['heading']) === false ? 'form__input-section--error' : null; ?>">
                       <label class="adding-post__label form__label" for="link-heading">Заголовок <span class="form__input-required">*</span></label>
                       <div class="form__input-section">
-                        <input class="adding-post__input form__input" id="link-heading" type="text" name="link-heading" value="<?= $_GET['heading']; ?>" placeholder="Введите заголовок">
+                        <input class="adding-post__input form__input" id="link-heading" type="text" name="link-heading" value="<?= isset($_GET['link-heading']) ? $_GET['link-heading'] : ''; ?>" placeholder="Введите заголовок">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                           <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -368,7 +368,7 @@
                     <div class="adding-post__textarea-wrapper form__input-wrapper <?= empty($errorsWithKeys['link']) === false ? 'form__input-section--error' : null; ?>">
                       <label class="adding-post__label form__label" for="post-link">Ссылка <span class="form__input-required">*</span></label>
                       <div class="form__input-section">
-                        <input class="adding-post__input form__input" id="post-link" type="text" name="link-link" value="<?= $linkValue; ?>" placeholder="Введите ссылку">
+                        <input class="adding-post__input form__input" id="post-link" type="text" name="link-link" value="<?= isset($_GET['link-link']) ? $_GET['link-link'] : ''; ?>" placeholder="Введите ссылку">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                           <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -379,7 +379,7 @@
                     <div class="adding-post__input-wrapper form__input-wrapper <?= empty($errorsWithKeys['tags']) === false ? 'form__input-section--error' : null; ?>">
                       <label class="adding-post__label form__label" for="link-tags">Теги</label>
                       <div class="form__input-section">
-                        <input class="adding-post__input form__input" id="link-tags" type="text" name="link-tags" value="<?= $_GET['tags']; ?>" placeholder="Введите теги">
+                        <input class="adding-post__input form__input" id="link-tags" type="text" name="link-tags" value="<?= isset($_GET['link-tags']) ? $_GET['link-tags'] : ''; ?>" placeholder="Введите теги">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                           <h3 class="form__error-title">Ошибка при заполнении поля</h3>

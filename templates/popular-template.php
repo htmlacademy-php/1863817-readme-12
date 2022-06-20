@@ -8,7 +8,7 @@
         <b class="popular__sorting-caption sorting__caption">Сортировка:</b>
         <ul class="popular__sorting-list sorting__list">
           <li class="sorting__item sorting__item--popular">
-            <a class="sorting__link <?= $_GET['sort'] === 'popular' ? 'sorting__link--active' : ''; ?>" href="/popular.php?sort=popular&post=<?= $_GET['post']; ?>">
+            <a class="sorting__link <?= $_GET['sort'] === 'popular' ? 'sorting__link--active' : ''; ?>" href="/popular.php?sort=popular&post=popular">
               <span>Популярность</span>
               <svg class="sorting__icon" width="10" height="12">
                 <use xlink:href="#icon-sort"></use>
@@ -16,7 +16,7 @@
             </a>
           </li>
           <li class="sorting__item">
-            <a class="sorting__link <?= $_GET['sort'] === 'likes' ? 'sorting__link--active' : ''; ?>" href="/popular.php?sort=likes&post=<?= $_GET['post']; ?>">
+            <a class="sorting__link <?= $_GET['sort'] === 'likes' ? 'sorting__link--active' : ''; ?>" href="/popular.php?sort=likes&post=likes">
               <span>Лайки</span>
               <svg class="sorting__icon" width="10" height="12">
                 <use xlink:href="#icon-sort"></use>
@@ -24,7 +24,7 @@
             </a>
           </li>
           <li class="sorting__item">
-            <a class="sorting__link <?= $_GET['sort'] === 'data' ? 'sorting__link--active' : ''; ?>" href="/popular.php?sort=data&post=<?= $_GET['post']; ?>">
+            <a class="sorting__link <?= $_GET['sort'] === 'data' ? 'sorting__link--active' : ''; ?>" href="/popular.php?sort=data&post=data">
               <span>Дата</span>
               <svg class="sorting__icon" width="10" height="12">
                 <use xlink:href="#icon-sort"></use>
@@ -94,14 +94,14 @@
               </a>
             </header>
             <div class="post__main">
-              <?php if ($card["content_type"] == "post-quote") : ?>
+              <?php if ($card["content_type"] === "post-quote") : ?>
                 <blockquote>
                   <p>
                     <?= $card["text_content"]; ?>
                   </p>
                   <cite>Неизвестный Автор</cite>
                 </blockquote>
-              <?php elseif ($card["content_type"] == "post-text") :
+              <?php elseif ($card["content_type"] === "post-text") :
                 list($newString, $cut) = addLinkForBigText($card["text_content"]); ?>
                 <p>
                   <?= $newString; ?>
@@ -111,11 +111,11 @@
                     <a class="post-text__more-link" href="/post.php?post-id=<?= $card["id_post"]; ?>">Читать далее</a>
                   </div>
                 <?php endif; ?>
-              <?php elseif ($card["content_type"] == "post-photo") : ?>
+              <?php elseif ($card["content_type"] === "post-photo") : ?>
                 <div class="post-photo__image-wrapper">
                   <img src="<?= $card["image_link"]; ?>" alt="Фото от пользователя" width="360" height="240">
                 </div>
-              <?php elseif ($card["content_type"] == "post-video") : ?>
+              <?php elseif ($card["content_type"] === "post-video") : ?>
                 <div class="post-video__block">
                   <div class="post-video__preview">
                     <a href='<?= $card["video_link"]; ?>'>
@@ -129,7 +129,7 @@
                     <span class="visually-hidden">Запустить проигрыватель</span>
                   </a>
                 </div>
-              <?php elseif ($card["content_type"] == "post-link") : ?>
+              <?php elseif ($card["content_type"] === "post-link") : ?>
                 <div class="post-link__wrapper">
                   <a class="post-link__external" href="http://<?= $card["website_link"]; ?>" title="Перейти по ссылке">
                     <div class="post-link__info-wrapper">
@@ -189,12 +189,12 @@
         <?php endforeach; ?>
       <?php endif; ?>
     </div>
-    <? if ($linkForMorePage) : ?>
+    <? if (isset($linkForMorePage)) : ?>
       <div class="popular__page-links">
-        <? if ($_GET['page'] !== '1') : ?>
+        <? if (isset($_GET['page']) && $_GET['page'] !== '1') : ?>
           <a class="popular__page-link popular__page-link--prev button button--gray" href="/popular.php?page=<?= $_GET['page'] * 1 - 1 ?>">Предыдущая страница</a>
         <? endif; ?>
-        <? if (!$noMorePages) : ?>
+        <? if (isset($noMorePages) && !$noMorePages) : ?>
           <a class="popular__page-link popular__page-link--next button button--gray" href="/popular.php?page=<?= $_GET['page'] * 1 + 1 ?>">Следующая страница</a>
         <? endif; ?>
       </div>

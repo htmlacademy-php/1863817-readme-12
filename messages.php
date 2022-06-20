@@ -4,12 +4,8 @@ require 'util/mysql.php';
 require 'util/validate.php';
 
 session_start();
-
-$con = connect();
-
-if (!isset($_SESSION['username'])) {
-  header('Location: /login.php');
-}
+isSessionExist();
+$con =  connect();
 
 $userId = $_SESSION['userId'];
 
@@ -93,11 +89,13 @@ if ((isset($infoFromMessagesTable) && !empty($infoFromMessagesTable)) || isset($
         return (strtotime($a['message_date']) > strtotime($b['message_date']));
       });
       if ($dialog[0]['id_user'] === $_GET['dialogWithUser']) {
-        $isNewDialog += 1;
+        $isNewDialog = 1;
       }
 
       $dialogsSortByDate[$firstKey] = $dialog;
     }
+
+    $dataForTemplate['dialogs'] = $dialogsSortByDate;
   }
 
   if (!isset($isNewDialog) || isset($_GET['newMessage'])) {
@@ -106,14 +104,11 @@ if ((isset($infoFromMessagesTable) && !empty($infoFromMessagesTable)) || isset($
     $newUser['login'] = $newUserInfo[0]['user_login'];
     $newUser['avatar'] = $newUserInfo[0]['avatar_link'];
     $newUser['id'] = $_GET['dialogWithUser'];
+    $dataForTemplate['newUser'] = $newUser;
   }
 
-  if (isset($newUser) && !empty($newUser)) {
-    $page_content = include_template('messages-template.php', ['dialogs' => $dialogsSortByDate, 'newMessagesCount' => $newMessagesCount, 'newUser' => $newUser, 'avatar' => getAvatarForUser($_SESSION['username'])]);
-  } else {
-    $page_content = include_template('messages-template.php', ['dialogs' => $dialogsSortByDate, 'newMessagesCount' => $newMessagesCount, 'avatar' => getAvatarForUser($_SESSION['username'])]);
-  }
-
+  $dataForTemplate['avatar'] = getAvatarForUser($_SESSION['username']);
+  $page_content = include_template('messages-template.php', $dataForTemplate);
   $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: личные сообщения', 'avatar' => getAvatarForUser($_SESSION['username'])]);
 } else {
   $layout_content = include_template('layout.php', ['content' => 'В данный моменту вас нет активных диалогов', 'title' => 'readme: личные сообщения', 'avatar' => getAvatarForUser($_SESSION['username'])]);

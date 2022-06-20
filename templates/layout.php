@@ -94,7 +94,7 @@
         <form class="header__search-form form" action="/search.php" method="get" autocomplete="off">
           <div class="header__search">
             <label class="visually-hidden">Поиск</label>
-            <input class="header__search-input form__input" type="search" value="<?= substr($query, 0, 1) !== '#' ? $query : ''; ?>" name='search'>
+            <input class="header__search-input form__input" type="search" value="<?= isset($query) && !empty($query) && substr($query, 0, 1) !== '#' ? $query : ''; ?>" name='search'>
             <button class="header__search-button button" type="submit">
               <svg class="header__search-icon" width="18" height="18">
                 <use xlink:href="#icon-search"></use>
@@ -250,7 +250,7 @@
       </div>
     </div>
   </footer>
-  <? if ($_GET['filter'] === 'photo' || $_GET['registration'] === '1') : ?>
+  <? if ((isset($_GET['filter']) && $_GET['filter'] === 'photo') || (isset($_GET['registration']) && $_GET['registration'] === '1')) : ?>
     <script src="js/helpers.js"></script>
   <? endif; ?>
 </body>

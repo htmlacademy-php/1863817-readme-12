@@ -30,14 +30,14 @@
                   </a>
                 </header>
                 <div class="post__main">
-                  <?php if ($post["content_type"] == "post-quote") : ?>
+                  <?php if ($post["content_type"] === "post-quote") : ?>
                     <blockquote>
                       <p>
                         <?= $post["text_content"]; ?>
                       </p>
                       <cite>Неизвестный Автор</cite>
                     </blockquote>
-                  <?php elseif ($post["content_type"] == "post-text") :
+                  <?php elseif ($post["content_type"] === "post-text") :
                     list($newString, $cut) = addLinkForBigText($post["text_content"]); ?>
                     <p>
                       <?= $newString; ?>
@@ -47,11 +47,11 @@
                         <a class="post-text__more-link" href="#">Читать далее</a>
                       </div>
                     <?php endif; ?>
-                  <?php elseif ($post["content_type"] == "post-photo") : ?>
+                  <?php elseif ($post["content_type"] === "post-photo") : ?>
                     <div class="post-photo__image-wrapper">
                       <img src="<?= $post["image_link"]; ?>" alt="Фото от пользователя" width="360" height="240">
                     </div>
-                  <?php elseif ($post["content_type"] == "post-video") : ?>
+                  <?php elseif ($post["content_type"] === "post-video") : ?>
                     <div class="post-video__block">
                       <div class="post-video__preview">
                         <a href='<?= $post["video_link"]; ?>'>
@@ -65,7 +65,7 @@
                         <span class="visually-hidden">Запустить проигрыватель</span>
                       </a>
                     </div>
-                  <?php elseif ($post["content_type"] == "post-link") : ?>
+                  <?php elseif ($post["content_type"] === "post-link") : ?>
                     <div class="post-link__wrapper">
                       <a class="post-link__external" href="http://<?= $post["website_link"]; ?>" title="Перейти по ссылке">
                         <div class="post-link__info-wrapper">

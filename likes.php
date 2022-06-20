@@ -3,11 +3,8 @@ require 'util/mysql.php';
 require 'util/validate.php';
 
 session_start();
-$con = connect();
-
-if (!isset($_SESSION['username'])) {
-  header('Location: /login.php');
-}
+isSessionExist();
+$con =  connect();
 
 $idPost = test_input($con, $_GET['postId']);
 $userId = $_SESSION['userId'];

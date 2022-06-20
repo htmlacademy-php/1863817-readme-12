@@ -7,7 +7,7 @@ const noRepeatPassInput = document.getElementById('registration-password');
 const repeatPassInput = document.getElementById('registration-password-repeat');
 
 const showPass = (input) => {
-  if (input.type == "text") {
+  if (input.type === "text") {
     input.type = "password";
   } else {
     input.type = "text";

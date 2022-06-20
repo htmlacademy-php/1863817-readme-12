@@ -143,7 +143,7 @@
                   <? endforeach; ?>
                 <? endif; ?>
               </ul>
-              <? if ($moreCommentsExist) : ?>
+              <? if (isset($moreCommentsExist)) : ?>
                 <a class="comments__more-link" href="<?= $_SERVER['REQUEST_URI'] . '&comments=all'; ?>">
                   <span>Показать все комментарии</span>
                   <sup class="comments__amount"><?= $moreCommentsExist; ?></sup>
@@ -177,7 +177,7 @@
             </p>
           </div>
           <div class="post-details__user-buttons user__buttons">
-            <? if ($amISubOnMainProfile === 0) : ?>
+            <? if (isset($amISubOnMainProfile) && $amISubOnMainProfile === 0) : ?>
               <a class="user__button user__button--subscription button button--main" href="/sub.php?sub=sub&id=<?= $card["id_user"]; ?>">Подписаться</a>
             <? else : ?>
               <a class="user__button user__button--subscription button button--main button--quartz" href="/sub.php?sub=onsub&id=<?= $card["id_user"]; ?>">Отписаться</a>

@@ -1,6 +1,10 @@
 <?php
 
-// Устанавливает соединение с БД
+/**
+ * Устанавливает соединение с бд
+ * @return object в случаи успешного соединения возвращает объект соединения
+ * @return false в случаи ошибки соединения
+ */
 function connect()
 {
   $con =  mysqli_connect("127.0.0.1", "root", "", "readme");
@@ -9,7 +13,13 @@ function connect()
   return $con;
 }
 
-// Делает запрос к БД и преобразовывает результат в двумерный массив
+/**
+ * Делает запрос к БД и преобразовывает результат в двумерный массив
+ * @param object $conWithDatabase ресурс соединения с бд
+ * @param string $sql запрос
+ * @return array в случаи успешного запроса возвращает массив с данными
+ * @return false в случаи ошибки запроса
+ */
 function doQuery($conWithDatabase, $sql)
 {
   $result = mysqli_query($conWithDatabase, $sql);
@@ -22,36 +32,47 @@ function doQuery($conWithDatabase, $sql)
   }
 }
 
-// Получение аватара пользователя
-
+/**
+ * Получение аватара пользователя
+ * @param string $login уникальный логин пользователя
+ * @return array в случаи успешного запроса возвращает массив с полем avatar_link
+ * @return false в случаи ошибки запроса
+ */
 function getAvatarForUser($login)
 {
   return $result = doQuery(connect(), "SELECT avatar_link FROM users WHERE user_login = '$login'");
 }
 
-// Делает запрос в зависимости от типа контента
-function doQueryForType($user)
+/**
+ * Делает запрос на получение постов в зависимости от типа контента или его отсутствии
+ * @param string $userId уникальный id юзера, сессия которого открыта
+ * @return array в случаи успешного запроса возвращает массив с постами
+ * @return false в случаи ошибки запроса
+ */
+function doQueryForType($userId)
 {
   $condition = '';
 
-  if ($_GET['post'] === '1') {
-    $condition = " WHERE posts.content_type = 'post-quote'";
-  }
-  if ($_GET['post'] === '2') {
-    $condition = " WHERE posts.content_type = 'post-text'";
-  }
-  if ($_GET['post'] === '3') {
-    $condition = " WHERE posts.content_type = 'post-photo'";
-  }
-  if ($_GET['post'] === '4') {
-    $condition = " WHERE posts.content_type = 'post-link'";
-  }
-  if ($_GET['post'] === '5') {
-    $condition = " WHERE posts.content_type = 'post-video'";
+  if (isset($_GET['post']) && !empty($_GET['post'])) {
+    if ($_GET['post'] === '1') {
+      $condition = " WHERE posts.content_type = 'post-quote'";
+    }
+    if ($_GET['post'] === '2') {
+      $condition = " WHERE posts.content_type = 'post-text'";
+    }
+    if ($_GET['post'] === '3') {
+      $condition = " WHERE posts.content_type = 'post-photo'";
+    }
+    if ($_GET['post'] === '4') {
+      $condition = " WHERE posts.content_type = 'post-link'";
+    }
+    if ($_GET['post'] === '5') {
+      $condition = " WHERE posts.content_type = 'post-video'";
+    }
   }
 
   $sql = "SELECT posts.*, users.user_login, users.avatar_link, COUNT(likes.id_post) AS likes_amount,
-  (SELECT COUNT(*) FROM likes WHERE likes.id_post = posts.id_post AND likes.id_user = $user) AS amILikeThisPost,
+  (SELECT COUNT(*) FROM likes WHERE likes.id_post = posts.id_post AND likes.id_user = $userId) AS amILikeThisPost,
   (SELECT COUNT(*) FROM comments WHERE comments.id_post = posts.id_post) AS comments_amount
   FROM posts
   LEFT JOIN likes ON likes.id_post = posts.id_post
@@ -62,6 +83,15 @@ function doQueryForType($user)
   return $posts;
 }
 
+/**
+ * Создает транзакцию для добавления информации о посте в таблицу posts и добавления информации о тэгах в таблицу hashtags в случаи их наличия,
+ * в случаии отсутствия тэгов происходит запрос только на добавление информации о посте
+ * @param object $con ресурс соединения с бд
+ * @param string $tags значение поля теги
+ * @param string $sql запроса на добавление поста
+ * @return integer в случаи успешной транзакции и коммита возвращает id добавленного поста
+ * @return string в случаи ошибки транзакции происходит откат возвращается строка 'error'
+ */
 function transactionForAddPosts($con, $tags, $sql)
 {
   if (!empty($tags)) {
@@ -83,6 +113,12 @@ function transactionForAddPosts($con, $tags, $sql)
   return $id;
 }
 
+/**
+ * Возвращает количество непрочитанных сообщений пользоателя
+ * @param integer $userId уникальный id юзера, сессия которого открыта
+ * @return integer в случаи наличия непрочитанных сообщений возвращает их количество
+ * @return false в случаи отсутствия непрочитанных сообщений
+ */
 function getCountNoCheckedMessages($userId)
 {
   $noCheckedMessages = doQuery(connect(), "SELECT id_message FROM messages WHERE id_for_who_writed = $userId AND checked = 0");

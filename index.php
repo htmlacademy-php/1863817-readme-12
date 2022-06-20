@@ -3,14 +3,10 @@ require 'util/helpers.php';
 require 'util/mysql.php';
 require 'util/validate.php';
 
-test_input($con, $_POST['password']);
-
 $con = connect();
 
 if ($_POST) {
   $location = "Location: /login.php?errors=1";
-
-  $con = connect();
   $valueLogin = test_input($con, $_POST['login']);
   $sameLogin = mysqli_query($con, "SELECT * FROM users WHERE user_login = '$valueLogin'");
   $resultLogin = mysqli_num_rows($sameLogin);
@@ -27,7 +23,7 @@ if ($_POST) {
 
   list($hash) = doQuery($con, "SELECT password FROM users WHERE user_login = '$valueLogin'");
   $hash = $hash['password'];
-  $pass = $_POST['password'];
+  $pass = test_input($con, $_POST['password']);
   $resultPassword = password_verify($pass, $hash);
 
   if (!$resultPassword && !empty($pass)) {
