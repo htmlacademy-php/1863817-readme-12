@@ -4,30 +4,35 @@ require 'util/mysql.php';
 require 'util/validate.php';
 
 session_start();
-
-$con = connect();
-
-if (!isset($_SESSION['username'])) {
-  header('Location: /login.php');
-}
+isSessionExist();
+$con =  connect();
 
 $profileId = test_input($con, $_GET['id']);
 $userId = $_SESSION['userId'];
 $userInfo = doQuery($con, "SELECT user_login, registration_date FROM users WHERE id_user = $profileId");
-$login = $userInfo[0]['user_login'];
-$registrationDate = $userInfo[0]['registration_date'];
 
-list($subscriptionsAmount) = doQuery($con, "SELECT COUNT(id_subscriber) AS count_subs FROM subscriptions WHERE id_receiver_sub = $profileId");
-$subscriptionsAmount = $subscriptionsAmount['count_subs'];
+if (isset($userInfo)) {
+  $login = $userInfo[0]['user_login'];
+  $registrationDate = $userInfo[0]['registration_date'];
+  $dataForTemplate['registrationDate'] = $registrationDate;
+  $dataForTemplate['login'] = $login;
+}
 
-$postsAmount = doQuery($con, "SELECT COUNT(id_post) AS posts_amount FROM posts WHERE id_user = $profileId");
-$postsAmount = $postsAmount[0]['posts_amount'];
+$postsAndSubsAmount = doQuery($con, "SELECT COUNT(id_subscriber) AS count_subs,
+(SELECT COUNT(id_post) FROM posts WHERE id_user = $profileId) AS posts_amount
+FROM subscriptions
+WHERE id_receiver_sub = $profileId");
+
+$dataForTemplate['subscriptionsAmount'] = $postsAndSubsAmount[0]['count_subs'];
+$dataForTemplate['postsAmount'] = $postsAndSubsAmount[0]['posts_amount'];
 
 if ($login === $_SESSION['username']) {
-  $isMyProfile = true;
+  $dataForTemplate['isMyProfile'] = true;
 } else {
-  $isMyProfile = false;
+  $dataForTemplate['isMyProfile'] = false;
 }
+
+$dataForTemplate['profileAvatar']  =  getAvatarForUser($login);
 
 $amISubOnMainProfile = doQuery($con, "SELECT * from subscriptions where id_receiver_sub = $profileId AND id_subscriber = $userId");
 
@@ -36,6 +41,8 @@ if (isset($amISubOnMainProfile) && !empty($amISubOnMainProfile)) {
 } else {
   $amISubOnMainProfile = 0;
 }
+
+$dataForTemplate['amISubOnMainProfile'] = $amISubOnMainProfile;
 
 if ($_GET['active'] === 'posts') {
 
@@ -80,6 +87,7 @@ if ($_GET['active'] === 'posts') {
 
       $finalPosts[] = $value;
     }
+    $dataForTemplate['postsByUser'] = $finalPosts;
   }
 } else if ($_GET['active'] === 'likes') {
 
@@ -88,6 +96,7 @@ if ($_GET['active'] === 'posts') {
   JOIN likes ON posts.id_post = likes.id_post
   LEFT JOIN users ON users.id_user = likes.id_user
   WHERE posts.id_user = $profileId");
+  $dataForTemplate['likes'] = $likesAllInfo;
 } else if ($_GET['active'] === 'subs') {
 
   $subs = doQuery($con, "SELECT users.id_user, users.avatar_link, users.user_login, users.registration_date, COUNT(posts.id_post) AS postsAmount,
@@ -98,20 +107,11 @@ if ($_GET['active'] === 'posts') {
   LEFT JOIN posts ON posts.id_user = subscriptions.id_receiver_sub
   WHERE id_subscriber = $profileId
   GROUP BY users.id_user");
+  $dataForTemplate['subs'] = $subs;
 }
 
-$page_content = include_template('profile-template.php', [
-  'registrationDate' => $registrationDate,
-  'amISubOnMainProfile' => $amISubOnMainProfile,
-  'likes' => $likesAllInfo,
-  'subs' => $subs,
-  'postsByUser' => $finalPosts,
-  'login' => $login,
-  'profileAvatar' => getAvatarForUser($login),
-  'subscriptionsAmount' => $subscriptionsAmount,
-  'postsAmount' => $postsAmount,
-  'isMyProfile' => $isMyProfile,
-  'avatarFotCommentIcon' => getAvatarForUser($_SESSION['username'])
-]);
+$dataForTemplate['avatarForCommentIcon'] = getAvatarForUser($_SESSION['username']);
+
+$page_content = include_template('profile-template.php', $dataForTemplate);
 $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: мой профиль', 'avatar' => getAvatarForUser($_SESSION['username'])]);
 print($layout_content);

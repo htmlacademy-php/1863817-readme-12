@@ -1,6 +1,12 @@
 <?php
 require_once 'vendor/autoload.php';
 
+/**
+ * отправляет сообщение на электронную почту
+ * @param string $email адрес получателя
+ * @param string $title тема письма
+ * @param string $body тело письма
+ */
 function sendEmail($email, $title, $body)
 {
   $transport = (new Swift_SmtpTransport('smtp.mail.ru', 465, 'ssl'))
@@ -112,7 +118,6 @@ function include_template($name, array $data = [])
 /**
  * Функция проверяет доступно ли видео по ссылке на youtube
  * @param string $url ссылка на видео
- *
  * @return string Ошибку если валидация не прошла
  */
 function check_youtube_url($url)
@@ -185,11 +190,11 @@ function extract_youtube_id($youtube_url)
   $parts = parse_url($youtube_url);
 
   if ($parts) {
-    if ($parts['path'] == '/watch') {
+    if ($parts['path'] === '/watch') {
       parse_str($parts['query'], $vars);
       $id = $vars['v'] ?? null;
     } else {
-      if ($parts['host'] == 'youtu.be') {
+      if ($parts['host'] === 'youtu.be') {
         $id = substr($parts['path'], 1);
       }
     }
@@ -198,7 +203,13 @@ function extract_youtube_id($youtube_url)
   return $id;
 }
 
-// Добавляет ссылку в случаи если текст поста больше 300 символов
+/**
+ * Добавляет ссылку в случаи если текст поста больше 300 символов
+ * @param string $string Текст поста
+ * @param integer $symbols Значение количества символом после которого должно происходить обрезание, по умолчанию значение 300
+ * @return array 1 элемент массива $newString содержит итоговую строку для отображения на странице,
+ * 2 элемент массива $cut содержит булевое значение, которое говорит о том была итоговая строка обрезана или нет
+ */
 function addLinkForBigText($string, $symbols = 300)
 {
   if (is_string($string)) {
@@ -222,13 +233,22 @@ function addLinkForBigText($string, $symbols = 300)
   return [$newString, $cut];
 }
 
-// создает дату в формате Unix
+/**
+ * возврщает разницу между начтоящим временем и переданной датой в формате Unix
+ * @param string $dataForPost Дата в формате отличном от Unix
+ * @return integer
+ */
 function createUnixInterval($dataForPost)
 {
   return strtotime('now') - strtotime($dataForPost);
 }
 
-// создает текст для даты в нужной форме
+/**
+ * возврщает строку с указанием прошедшего времени с учетом правил формата (в зависимости от количества прошедшего времени)
+ * @param string $dataForPost Дата в формате отличном от Unix
+ * @return string
+ * @return false в случаи ошибки
+ */
 function createTextForDate($data)
 {
   $resultInterval = createUnixInterval($data);
@@ -262,6 +282,12 @@ function createTextForDate($data)
   return false;
 }
 
+/**
+ * Возвращет конец переданного пути
+ * @param string $fullpath полный путь
+ * @param string $symbol символ после которого следует конец пути
+ * @return string
+ */
 function getEndPath($fullpath, $symbol)
 {
   $url = $fullpath;
@@ -270,6 +296,10 @@ function getEndPath($fullpath, $symbol)
   return $stringToArray[$lastElement];
 }
 
+/**
+ * Скачивает файл из интернета и кладет его по переданному пути
+ * @param string $link ссылка из интернета
+ */
 function downloadPhotoFromWebLink($link)
 {
   $endPath = getEndPath($link, '/');
@@ -278,8 +308,22 @@ function downloadPhotoFromWebLink($link)
   file_put_contents($pathLink, file_get_contents($link));
 }
 
+/**
+ * Генерирует рандомное имя для файла и возвращает его
+ * @return string
+ */
 function generateRandomFileName()
 {
   $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
   return $randomName = substr(str_shuffle($permitted_chars), 0, 10);
+}
+
+/**
+ * Проверяет наличие сессии, в случаи отсутствия переадресовывает на страницу авторизации
+ */
+function isSessionExist()
+{
+  if (!isset($_SESSION['username'])) {
+    header('Location: /login.php');
+  }
 }

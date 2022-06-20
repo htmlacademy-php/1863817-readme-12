@@ -3,12 +3,8 @@ require 'util/helpers.php';
 require 'util/mysql.php';
 
 session_start();
-
-$con = connect();
-
-if (!isset($_SESSION['username'])) {
-  header('Location: /login.php');
-}
+isSessionExist();
+$con =  connect();
 
 $profileId = intval($_GET['id']);
 $userId = $_SESSION['userId'];

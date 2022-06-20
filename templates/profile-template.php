@@ -79,14 +79,14 @@
                       <? endif; ?>
                     </header>
                     <div class="post__main">
-                      <?php if ($post["content_type"] == "post-quote") : ?>
+                      <?php if ($post["content_type"] === "post-quote") : ?>
                         <blockquote>
                           <p>
                             <?= $post["text_content"]; ?>
                           </p>
                           <cite>Неизвестный Автор</cite>
                         </blockquote>
-                      <?php elseif ($post["content_type"] == "post-text") :
+                      <?php elseif ($post["content_type"] === "post-text") :
                         list($newString, $cut) = addLinkForBigText($post["text_content"]); ?>
                         <p>
                           <?= $newString; ?>
@@ -96,11 +96,11 @@
                             <a class="post-text__more-link" href="#">Читать далее</a>
                           </div>
                         <?php endif; ?>
-                      <?php elseif ($post["content_type"] == "post-photo") : ?>
+                      <?php elseif ($post["content_type"] === "post-photo") : ?>
                         <div class="post-photo__image-wrapper">
                           <img src="<?= $post["image_link"]; ?>" alt="Фото от пользователя" width="360" height="240">
                         </div>
-                      <?php elseif ($post["content_type"] == "post-video") : ?>
+                      <?php elseif ($post["content_type"] === "post-video") : ?>
                         <div class="post-video__block">
                           <div class="post-video__preview">
                             <a href='<?= $post["video_link"]; ?>'>
@@ -114,7 +114,7 @@
                             <span class="visually-hidden">Запустить проигрыватель</span>
                           </a>
                         </div>
-                      <?php elseif ($post["content_type"] == "post-link") : ?>
+                      <?php elseif ($post["content_type"] === "post-link") : ?>
                         <div class="post-link__wrapper">
                           <a class="post-link__external" href="http://<?= $post["website_link"]; ?>" title="Перейти по ссылке">
                             <div class="post-link__info-wrapper">
@@ -200,7 +200,7 @@
                             <? endforeach; ?>
                           <? endif; ?>
                         </ul>
-                        <? if ($post['moreCommentsExist'] && isset($_GET['showcomments'])) : ?>
+                        <? if (isset($post['moreCommentsExist']) && isset($_GET['showcomments'])) : ?>
                           <a class="comments__more-link" href="/profile.php?id=<?= $_GET['id']; ?>&active=posts&showcomments=1&comments=1">
                             <span>Показать все комментарии</span>
                             <sup class="comments__amount"><?= $post['moreCommentsExist']; ?></sup>
@@ -213,7 +213,7 @@
                       <form class="comments__form form" action="/comment.php" method="post">
 
                         <div class="comments__my-avatar">
-                          <img class="comments__picture" src="<?= $avatarFotCommentIcon[0]["avatar_link"]; ?>" width="40" height="40" alt="<?= !empty($avatarFotCommentIcon[0]["avatar_link"]) ? 'Аватар профиля.' : ''; ?>">
+                          <img class="comments__picture" src="<?= $avatarForCommentIcon[0]["avatar_link"]; ?>" width="40" height="40" alt="<?= !empty($avatarForCommentIcon[0]["avatar_link"]) ? 'Аватар профиля.' : ''; ?>">
                         </div>
 
                         <div class="form__input-section <?= isset($_GET['error']) ? 'form__input-section--error' : ''; ?>">
@@ -249,7 +249,7 @@
                       <div class="post-mini__user-info user__info">
                         <div class="post-mini__avatar user__avatar">
                           <a class="user__avatar-link" href="/profile.php?id=<?= $like['user_like']; ?>&active=posts">
-                            <img class="post-mini__picture user__picture" src="<?= $like['avatar_link']; ?>" alt="Аватар пользователя" width="60" height="60">
+                            <img class="post-mini__picture user__picture" src="<?= $like['avatar_link']; ?>" alt="<?= !empty($like["avatar_link"]) ? 'Аватар пользователя.' : ''; ?>" width="60" height="60">
                           </a>
                         </div>
                         <div class="post-mini__name-wrapper user__name-wrapper">

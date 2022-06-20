@@ -4,14 +4,10 @@ require 'util/mysql.php';
 require 'util/validate.php';
 
 session_start();
+isSessionExist();
+$con =  connect();
 
-if (!isset($_SESSION['username'])) {
-  header('Location: /login.php');
-}
-
-$userId = $_SESSION['userId'];
-
-$con = connect();
+$userId = $_SESSION['userId'];;
 $keyWords = test_input($con, $_GET['search']);
 
 if (substr($_GET['search'], 0, 1) === '#') {
@@ -35,7 +31,7 @@ ORDER BY posts.post_date DESC";
 $result = doQuery($con, $sql);
 
 if ($result) {
-  $page_content = include_template('search-result.php', ['cards' => $result, 'types' => $rows_for_types, 'query' => $keyWords]);
+  $page_content = include_template('search-result.php', ['cards' => $result, 'query' => $keyWords]);
 } else {
   $page_content = include_template('no-results.php', ['query' => $keyWords]);
 }

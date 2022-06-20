@@ -10,7 +10,7 @@
           <div class="registration__input-wrapper form__input-wrapper <?= !empty($_GET['resultEmail']) ? 'form__input-section--error' : null; ?>">
             <label class="registration__label form__label" for="registration-email">Электронная почта <span class="form__input-required">*</span></label>
             <div class="form__input-section">
-              <input class="registration__input form__input" id="registration-email" type="email" name="email" value="<?= $_GET['email']; ?>" placeholder="Укажите эл.почту">
+              <input class="registration__input form__input" id="registration-email" type="email" name="email" value="<?= isset($_GET['email']) ? $_GET['email'] : ''; ?>" placeholder="Укажите эл.почту">
               <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
               <div class="form__error-text">
                 <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -21,7 +21,7 @@
           <div class="registration__input-wrapper form__input-wrapper <?= !empty($_GET['resultLogin']) ? 'form__input-section--error' : null; ?>">
             <label class="registration__label form__label" for="registration-login">Логин <span class="form__input-required">*</span></label>
             <div class="form__input-section">
-              <input class="registration__input form__input" id="registration-login" type="text" name="login" value="<?= $_GET['login']; ?>" placeholder="Укажите логин">
+              <input class="registration__input form__input" id="registration-login" type="text" name="login" value="<?= isset($_GET['login']) ? $_GET['login'] : ''; ?>" placeholder="Укажите логин">
               <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
               <div class="form__error-text">
                 <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -32,7 +32,7 @@
           <div class="registration__input-wrapper form__input-wrapper <?= !empty($_GET['resultPassword']) ? 'form__input-section--error' : null; ?>">
             <label class="registration__label form__label" for="registration-password">Пароль<span class="form__input-required">*</span></label>
             <div class="form__input-section">
-              <input class="registration__input form__input" id="registration-password" type="password" name="password" value="<?= $_GET['password']; ?>" placeholder="Придумайте пароль">
+              <input class="registration__input form__input" id="registration-password" type="password" name="password" value="<?= isset($_GET['password']) ? $_GET['password'] : ''; ?>" placeholder="Придумайте пароль">
               <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
               <div class="form__error-text">
                 <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -44,7 +44,7 @@
           <div class="registration__input-wrapper form__input-wrapper <?= !empty($_GET['resultRepeatPassword']) ? 'form__input-section--error' : null; ?>">
             <label class="registration__label form__label" for="registration-password-repeat">Повтор пароля<span class="form__input-required">*</span></label>
             <div class="form__input-section">
-              <input class="registration__input form__input" id="registration-password-repeat" type="password" value="<?= $_GET['password-repeat']; ?>" name="password-repeat" placeholder="Повторите пароль">
+              <input class="registration__input form__input" id="registration-password-repeat" type="password" value="<?= isset($_GET['password-repeat']) ? $_GET['password-repeat'] : ''; ?>" name="password-repeat" placeholder="Повторите пароль">
               <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
               <div class="form__error-text">
                 <h3 class="form__error-title">Ошибка при заполнении поля</h3>
@@ -90,7 +90,7 @@
             </div>
           </div>
           <div class="adding-post__input-file-button form__input-file-button form__input-file-button--photo button">
-            <input class='visually-hidden' id='link-download-if-reload' name='link-download-if-reload' value='<?= $_GET['photo']; ?>' type='text'>
+            <input class='visually-hidden' id='link-download-if-reload' name='link-download-if-reload' value='<?= isset($_GET['photo']) ? $_GET['photo'] : ''; ?>' type='text'>
             <input class="adding-post__input-file form__input-file" id="userpic-file-photo" type="file" name="userpic-file-photo">
             <span>Выбрать фото</span>
             <svg class="adding-post__attach-icon form__attach-icon" width="10" height="20">

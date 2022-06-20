@@ -4,20 +4,13 @@ require 'util/mysql.php';
 require 'util/validate.php';
 
 session_start();
+isSessionExist();
 $con =  connect();
 
-if (!isset($_SESSION['username'])) {
-  header('Location: /login.php');
-} else {
-  $login = $_SESSION['username'];
-  $userId = $_SESSION['userId'];
-}
+$login = $_SESSION['username'];
+$userId = $_SESSION['userId'];
 
-if ($con == false) {
-  print("Ошибка подключения: " . mysqli_connect_error());
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
   if (isset($_POST['photo-heading'])) {
     // photo
@@ -251,7 +244,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $errors = [
       'resultHeading' => validateLength($_POST["link-heading"], 5, 20),
-      'resultText' => validateWebLink($_POST["link-link"], 30, 600),
+      'resultText' => validateWebLink($_POST["link-link"]),
       'resultTags' => validateTags($_POST["link-tags"]),
     ];
 
@@ -282,7 +275,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
 }
 
-if ($result === 'ok') {
+if (isset($result) && $result === 'ok') {
   $subs = doQuery($con, "SELECT subscriptions.id_subscriber, users.*
   FROM subscriptions
   JOIN users ON users.id_user = subscriptions.id_subscriber

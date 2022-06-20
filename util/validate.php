@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Убирает из параметра запроса/текстового поля sql/xss иньекции
+ * @param object $con ресурс соединения с бд
+ * @param string $data проверяемое значение
+ * @return string очищенная, безопасная строка
+ */
 function test_input($con, $data)
 {
   $data = trim($data);
@@ -8,6 +14,12 @@ function test_input($con, $data)
   return $data;
 }
 
+/**
+ * Проверяет поле email на наличие ошибок
+ * @param string $value значение поля email
+ * @return string возвращает текст ошибки в случаи передачи невалидного значения
+ * @return false в случаи отсутствия ошибок
+ */
 function validateEmail($value)
 {
   if (empty($value)) {
@@ -31,6 +43,12 @@ function validateEmail($value)
   return false;
 }
 
+/**
+ * Проверяет поле логин на наличие ошибок
+ * @param string $value значение поля логин
+ * @return string возвращает текст ошибки в случаи передачи невалидного значения
+ * @return false в случаи отсутствия ошибок
+ */
 function validateLogin($value)
 {
   if (empty($value)) {
@@ -54,6 +72,12 @@ function validateLogin($value)
   return false;
 }
 
+/**
+ * Проверяет поле пароля на наличие ошибок
+ * @param string $value значение поля пароль
+ * @return string возвращает текст ошибки/ошибок в случаи передачи невалидного значения
+ * @return false в случаи отсутствия ошибок
+ */
 function validatePassword($value)
 {
   if (empty($value)) {
@@ -93,6 +117,13 @@ function validatePassword($value)
   return false;
 }
 
+/**
+ * Проверяет чтобы поле повтора пароля было заполненно и совпадало с паролем
+ * @param string $firstPassword значение поля пароль
+ * @param string $secondPassword значение поля повтора пароля
+ * @return string возвращает текст ошибки в случаи передачи невалидного значения
+ * @return false в случаи отсутствия ошибок
+ */
 function validateRepeatPassword($firstPassword, $secondPassword)
 {
   if (empty($secondPassword)) {
@@ -102,8 +133,16 @@ function validateRepeatPassword($firstPassword, $secondPassword)
   if ($firstPassword !== $secondPassword) {
     return $textError = 'Пароли не совпадают';
   }
+
+  return false;
 }
 
+/**
+ * Проверяет поле ссылки на фотографию из интернета на наличие ошибок
+ * @param string $link значение поля ссылки
+ * @return string возвращает текст ошибки в случаи передачи невалидного значения
+ * @return false в случаи отсутствия ошибок
+ */
 function validatePhotoLink($link)
 {
   if (!empty($link)) {
@@ -124,6 +163,12 @@ function validatePhotoLink($link)
   }
 }
 
+/**
+ * Проверяет добавленный пользователем файл на наличие ошибок
+ * @param string $file загруженный пользователем файл
+ * @return string возвращает текст ошибки в случаи передачи невалидного значения
+ * @return false в случаи отсутствия ошибок
+ */
 function validatePhotoFile($file)
 {
   if (!empty($file['tmp_name'])) {
@@ -144,6 +189,12 @@ function validatePhotoFile($file)
   }
 }
 
+/**
+ * Проверяет поле ссылки на видео из интернета на наличие ошибок
+ * @param string $link значение поля ссылки на видео
+ * @return string возвращает текст ошибки в случаи передачи невалидного значения
+ * @return false в случаи отсутствия ошибок
+ */
 function validateVideo($link)
 {
   if (empty($link)) {
@@ -164,6 +215,12 @@ function validateVideo($link)
   }
 }
 
+/**
+ * Проверяет поле теги на наличие ошибок
+ * @param string $string значение поля теги
+ * @return string возвращает текст ошибки/ошибок в случаи передачи невалидного значения
+ * @return false в случаи отсутствия ошибок
+ */
 function validateTags($string)
 {
   if (!empty($string)) {
@@ -208,6 +265,12 @@ function validateTags($string)
   }
 }
 
+/**
+ * Проверяет поле ссылки из интернета на наличие ошибок
+ * @param string $link значение поля ссылки из интернета
+ * @return string возвращает текст ошибки в случаи передачи невалидного значения
+ * @return false в случаи отсутствия ошибок
+ */
 function validateWebLink($link)
 {
   if (empty($link)) {
@@ -228,6 +291,14 @@ function validateWebLink($link)
   }
 }
 
+/**
+ * Валидирует длину переданного поля
+ * @param string $name поле, длину которого необходимо проверить
+ * @param string $min минимально допустимая длинна
+ * @param string $max максимально допустимая длинна
+ * @return string возвращает текст ошибки в случаи передачи невалидного значения
+ * @return false в случаи отсутствия ошибок
+ */
 function validateLength($name, $min, $max)
 {
   if (empty($name)) {

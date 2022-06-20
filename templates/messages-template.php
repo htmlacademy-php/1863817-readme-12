@@ -7,7 +7,7 @@
         <? if (isset($dialogs) && !empty($dialogs)) : ?>
           <? foreach ($dialogs as $key => $value) : ?>
             <li class="messages__contacts-item">
-              <a class="messages__contacts-tab tabs__item <?= $_GET['dialogWithUser'] == $value[0]['id_user'] ? 'messages__contacts-tab--active tabs__item--active' : ''; ?>" href="/messages.php?dialogWithUser=<?= $value[0]['id_user']; ?>">
+              <a class="messages__contacts-tab tabs__item <?= $_GET['dialogWithUser'] === $value[0]['id_user'] ? 'messages__contacts-tab--active tabs__item--active' : ''; ?>" href="/messages.php?dialogWithUser=<?= $value[0]['id_user']; ?>">
                 <div class="messages__avatar-wrapper">
                   <img class="messages__avatar" src="<?= $value[0]["avatar_link"]; ?>" width="60" height="60" alt="<?= !empty($value[0]["avatar_link"]) ? 'Аватар профиля.' : ''; ?>">
                   <? if (isset($value[0]["newMessagesCount"]) && !empty($value[0]["newMessagesCount"])) : ?>
@@ -62,7 +62,7 @@
       <div class="messages__chat-wrapper">
         <? if (isset($dialogs) && !empty($dialogs)) : ?>
           <? foreach ($dialogs as $key => $dialog) : ?>
-            <ul class="messages__list tabs__content <?= $_GET['dialogWithUser'] == $dialog[0]['id_user'] ? 'tabs__content--active' : ''; ?>">
+            <ul class="messages__list tabs__content <?= $_GET['dialogWithUser'] === $dialog[0]['id_user'] ? 'tabs__content--active' : ''; ?>">
               <? foreach ($dialog as $key => $value) : ?>
                 <? if ($value['id_who_writed'] !== $_SESSION['userId']) : ?>
                   <li class="messages__item">
@@ -125,7 +125,7 @@
         <? endif; ?>
       </div>
       <div class="comments">
-        <form class="comments__form form" action="/messages.php?dialogWithUser=<?= $_GET['dialog']; ?>" method="post" enctype="multipart/form-data" autocomplete="off">
+        <form class="comments__form form" action="/messages.php?dialogWithUser=<?= $_GET['dialogWithUser']; ?>" method="post" enctype="multipart/form-data" autocomplete="off">
           <div class="comments__my-avatar">
             <? if (!empty($avatar[0]["avatar_link"])) : ?>
               <img class="comments__picture" src="<?= $avatar[0]["avatar_link"]; ?>" width="40" height="40" alt="<?= !empty($avatar[0]["avatar_link"]) ? 'Аватар профиля.' : ''; ?>">

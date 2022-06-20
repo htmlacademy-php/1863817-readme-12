@@ -26,7 +26,7 @@
                   </a>
                 </header>
                 <div class="post__main">
-                  <?php if ($card["content_type"] == "post-quote") : ?>
+                  <?php if ($card["content_type"] === "post-quote") : ?>
                     <h2><a href="/post.php?post-id=<?= $card["id_post"]; ?>"><?= $card["title"]; ?></a></h2>
                     <blockquote>
                       <p>
@@ -36,7 +36,7 @@
                         <?= $card["quote_author"]; ?>
                       </cite>
                     </blockquote>
-                  <?php elseif ($card["content_type"] == "post-text") :
+                  <?php elseif ($card["content_type"] === "post-text") :
                     list($newString, $cut) = addLinkForBigText($card["text_content"]); ?>
                     <h2><a href="/post.php?post-id=<?= $card["id_post"]; ?>"><?= $card["title"]; ?></a></h2>
                     <p>
@@ -47,12 +47,12 @@
                         <a class="post-text__more-link" href="#">Читать далее</a>
                       </div>
                     <?php endif; ?>
-                  <?php elseif ($card["content_type"] == "post-photo") : ?>
+                  <?php elseif ($card["content_type"] === "post-photo") : ?>
                     <h2><a href="/post.php?post-id=<?= $card["id_post"]; ?>"><?= $card["title"]; ?></a></h2>
                     <div class="post-photo__image-wrapper">
                       <img src="<?= $card["image_link"]; ?>" alt="Фото от пользователя" width="360" height="240">
                     </div>
-                  <?php elseif ($card["content_type"] == "post-video") : ?>
+                  <?php elseif ($card["content_type"] === "post-video") : ?>
                     <h2><a href="/post.php?post-id=<?= $card["id_post"]; ?>"><?= $card["title"]; ?></a></h2>
                     <div class="post__main">
                       <div class="post-video__block video_search">
@@ -79,7 +79,7 @@
                           <span class="visually-hidden">Запустить проигрыватель</span>
                         </button>
                       </div>
-                    <?php elseif ($card["content_type"] == "post-link") : ?>
+                    <?php elseif ($card["content_type"] === "post-link") : ?>
                       <div class="post-link__wrapper">
                         <a class="post-link__external" href="http://<?= $card["website_link"]; ?>" title="Перейти по ссылке">
                           <div class="post-link__info-wrapper">

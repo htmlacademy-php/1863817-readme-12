@@ -4,10 +4,8 @@ require 'util/mysql.php';
 require 'util/validate.php';
 
 session_start();
-
-if (!isset($_SESSION['username'])) {
-  header('Location: /login.php');
-}
+isSessionExist();
+$con =  connect();
 
 $con = connect();
 $userId = $_SESSION['userId'];
