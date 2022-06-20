@@ -41,3 +41,5 @@ $layout_content = include_template('layout.php', ['content' => $page_content, 't
 if (isset($layout_content) && !empty($layout_content)) {
   print($layout_content);
 }
+
+/////
