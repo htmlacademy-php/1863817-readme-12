@@ -8,6 +8,7 @@ $con =  connect();
 
 $idPost = test_input($con, $_GET['postId']);
 $userId = $_SESSION['userId'];
+
 $result = doQuery($con, "SELECT * FROM posts WHERE id_post = $idPost");
 
 if ($result) {
