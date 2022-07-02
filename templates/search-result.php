@@ -44,7 +44,7 @@
                     </p>
                     <?php if ($cut) : ?>
                       <div class="post-text__more-link-wrapper">
-                        <a class="post-text__more-link" href="#">Читать далее</a>
+                        <a class="post-text__more-link" href="/post.php?post-id=<?= $card["id_post"]; ?>">Читать далее</a>
                       </div>
                     <?php endif; ?>
                   <?php elseif ($card["content_type"] === "post-photo") : ?>

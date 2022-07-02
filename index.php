@@ -7,43 +7,38 @@ $con = connect();
 
 if ($_POST) {
   $location = "Location: /login.php?errors=1";
-  $valueLogin = test_input($con, $_POST['login']);
+  if (empty($_POST['login'])) {
+    header('Location: /login.php?errors=1&loginError=Введите логин');
+  } else {
+    $valueLogin = test_input($con, $_POST['login']);
+    $location .= "&valueLogin=$valueLogin";
+  }
   $sameLogin = mysqli_query($con, "SELECT * FROM users WHERE user_login = '$valueLogin'");
   $resultLogin = mysqli_num_rows($sameLogin);
 
-  if (empty($valueLogin)) {
-    $location .= "&loginError=Введите логин";
-  } else {
-    $location .= "&valueLogin=$valueLogin";
-  }
-
   if (!$resultLogin && !empty($valueLogin)) {
-    $location .= "&loginError=Неверный логин";
-  }
-
-  list($hash) = doQuery($con, "SELECT password FROM users WHERE user_login = '$valueLogin'");
-  $hash = $hash['password'];
-  $pass = test_input($con, $_POST['password']);
-  $resultPassword = password_verify($pass, $hash);
-
-  if (!$resultPassword && !empty($pass)) {
-    $location .= "&passError=Пароли не совпадают";
-  }
-
-  if (empty($pass)) {
-    $location .= "&passError=Введите пароль";
-  }
-
-  list($id) = doQuery($con, "SELECT id_user FROM users WHERE user_login = '$valueLogin'");
-  $id = $id['id_user'];
-
-  if ($resultLogin && $resultPassword) {
-    session_start();
-    $_SESSION['username'] = $valueLogin;
-    $_SESSION['userId'] = $id;
-    header('Location: /feed.php?filter=all');
+    header('Location: /login.php?errors=1&loginError=Неверный логин');
   } else {
-    header($location);
+
+    if (empty($_POST['password'])) {
+      header($location . '&passError=Введите пароль');
+    } else {
+      list($hash) = doQuery($con, "SELECT password FROM users WHERE user_login = '$valueLogin'");
+      $hash = $hash['password'];
+      $pass = test_input($con, $_POST['password']);
+      $resultPassword = password_verify($pass, $hash);
+
+      if (!$resultPassword) {
+        header($location . '&passError=Пароли не совпадают');
+      } else {
+        list($id) = doQuery($con, "SELECT id_user FROM users WHERE user_login = '$valueLogin'");
+        $id = $id['id_user'];
+        session_start();
+        $_SESSION['username'] = $valueLogin;
+        $_SESSION['userId'] = $id;
+        header('Location: /feed.php?filter=all');
+      }
+    }
   }
 } else {
   if (isset($_SESSION)) {

@@ -1,6 +1,7 @@
 <?php
 require 'util/mysql.php';
 require 'util/validate.php';
+require 'util/helpers.php';
 
 session_start();
 isSessionExist();

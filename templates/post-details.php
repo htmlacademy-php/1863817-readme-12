@@ -88,9 +88,9 @@
             $tags = ($card["hashtag_title"]);
             $tags = explode(' ', $tags);
             ?>
-            <? foreach ($tags as $key => $tag) : ?>
+            <?php foreach ($tags as $key => $tag) : ?>
               <li><a href="/search.php?search=<?= urlencode($tag); ?>"><?= $tag ?></a></li>
-            <? endforeach; ?>
+            <?php endforeach; ?>
           </ul>
           <div class="comments">
             <form class="comments__form form" action="/comment.php" method="post">
@@ -102,20 +102,20 @@
                 <input class="visually-hidden" name="id" value="<?= $_GET['post-id']; ?>">
                 <label class="visually-hidden">Ваш комментарий</label>
 
-                <? if (isset($_GET['error'])) : ?>
+                <?php if (isset($_GET['error'])) : ?>
                   <button class="form__error-button button" type="button">!</button>
                   <div class="form__error-text">
                     <h3 class="form__error-title">Ошибка валидации</h3>
                     <p class="form__error-desc"><?= $_GET['error']; ?></p>
                   </div>
-                <? endif; ?>
+                <?php endif; ?>
               </div>
               <button class="comments__submit button button--green" type="submit">Отправить</button>
             </form>
             <div class="comments__list-wrapper">
               <ul class="comments__list">
-                <? if (isset($comments)) : ?>
-                  <? foreach ($comments as $key => $comment) : ?>
+                <?php if (isset($comments)) : ?>
+                  <?php foreach ($comments as $key => $comment) : ?>
                     <li class="comments__item user">
                       <div class="comments__avatar">
                         <a class="user__avatar-link" href="/profile.php?id=<?= $comment["id_user"]; ?>&active=posts">
@@ -128,11 +128,11 @@
                             <span><?= $comment['user_login']; ?></span>
                           </a>
                           <time class="post__time" datetime="<?= $dataForDatatime = date('Y-m-d H:i:s', strtotime($comment["comment_date"])); ?>" title="<?= date('%d.%m.%Y %H:%M', strtotime($comment["comment_date"])); ?>">
-                            <? if (empty(createTextForDate($dataForDatatime))) : ?>
+                            <?php if (empty(createTextForDate($dataForDatatime))) : ?>
                               только что
-                            <? else : ?>
+                            <?php else : ?>
                               <?= createTextForDate($dataForDatatime); ?> назад
-                            <? endif; ?>
+                            <?php endif; ?>
                           </time>
                         </div>
                         <p class="comments__text">
@@ -140,15 +140,15 @@
                         </p>
                       </div>
                     </li>
-                  <? endforeach; ?>
-                <? endif; ?>
+                  <?php endforeach; ?>
+                <?php endif; ?>
               </ul>
-              <? if (isset($moreCommentsExist)) : ?>
+              <?php if (isset($moreCommentsExist)) : ?>
                 <a class="comments__more-link" href="<?= $_SERVER['REQUEST_URI'] . '&comments=all'; ?>">
                   <span>Показать все комментарии</span>
                   <sup class="comments__amount"><?= $moreCommentsExist; ?></sup>
                 </a>
-              <? endif; ?>
+              <?php endif; ?>
             </div>
           </div>
         </div>
@@ -176,14 +176,16 @@
               <span class="post-details__rating-text user__rating-text"><?= get_noun_plural_form($postsAmount, 'публикация', 'публикации', 'публикаций') ?></span>
             </p>
           </div>
-          <div class="post-details__user-buttons user__buttons">
-            <? if (isset($amISubOnMainProfile) && $amISubOnMainProfile === 0) : ?>
-              <a class="user__button user__button--subscription button button--main" href="/sub.php?sub=sub&id=<?= $card["id_user"]; ?>">Подписаться</a>
-            <? else : ?>
-              <a class="user__button user__button--subscription button button--main button--quartz" href="/sub.php?sub=onsub&id=<?= $card["id_user"]; ?>">Отписаться</a>
-            <? endif; ?>
-            <a class="user__button user__button--writing button button--green" href="#">Сообщение</a>
-          </div>
+          <?php if (!$isMyProfile) : ?>
+            <div class="post-details__user-buttons user__buttons">
+              <?php if (isset($amISubOnMainProfile) && $amISubOnMainProfile === 0) : ?>
+                <a class="user__button user__button--subscription button button--main" href="/sub.php?sub=sub&id=<?= $card["id_user"]; ?>">Подписаться</a>
+              <?php else : ?>
+                <a class="user__button user__button--subscription button button--main button--quartz" href="/sub.php?sub=onsub&id=<?= $card["id_user"]; ?>">Отписаться</a>
+              <?php endif; ?>
+              <a class="user__button user__button--writing button button--green" href="/messages.php?dialogWithUser=<?= $card['id_user']; ?>">Сообщение</a>
+            </div>
+          <?php endif; ?>
         </div>
       </div>
     </section>

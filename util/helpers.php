@@ -1,6 +1,8 @@
 <?php
 require_once 'vendor/autoload.php';
 
+
+
 /**
  * отправляет сообщение на электронную почту
  * @param string $email адрес получателя
@@ -11,7 +13,7 @@ function sendEmail($email, $title, $body)
 {
   $transport = (new Swift_SmtpTransport('smtp.mail.ru', 465, 'ssl'))
     ->setUsername('blinov228322@mail.ru')
-    ->setPassword('kV7WExHcHmpiMAwfwqet');
+    ->setPassword('RA64yZbzBBYryolnMZWG');
 
   $mailer = new Swift_Mailer($transport);
 
