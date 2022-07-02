@@ -44,6 +44,12 @@ if (isset($card[0])) {
       $dataForTemplate['moreCommentsExist'] = $moreCommentsExist;
     }
   }
+
+  if ($postAuthor === $userId) {
+    $dataForTemplate['isMyProfile'] = true;
+  } else {
+    $dataForTemplate['isMyProfile'] = false;
+  }
 }
 
 if (isset($dataForTemplate)) {

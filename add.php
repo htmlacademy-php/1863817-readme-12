@@ -17,14 +17,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $location = "Location: /add.php?filter=photo";
 
     foreach ($_POST as $key => $value) {
-      test_input($con, $value);
+      $valuesAfterTest[$key] = test_input($con, $value);
     }
 
     $errors = [
-      'resultHeading' => validateLength($_POST["photo-heading"], 5, 20),
-      'resultTags' => validateTags($_POST["photo-tags"]),
+      'resultHeading' => validateLength($valuesAfterTest["photo-heading"], 5, 20),
+      'resultTags' => validateTags($valuesAfterTest["photo-tags"]),
       'resultFile' => validatePhotoFile($_FILES["userpic-file-photo"]),
-      'resultLink' => validatePhotoLink($_POST["photo-link"])
+      'resultLink' => validatePhotoLink($valuesAfterTest["photo-link"])
     ];
 
     if ($errors['resultHeading']) {
@@ -59,11 +59,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
 
-    if (iconv_strlen($location) > 27) {
+    if (iconv_strlen($location) > 31) {
       $error = true;
     }
 
-    if ($error) {
+    if (isset($error) && $error === true) {
       foreach ($_POST as $key => $value) {
         $location .= "&$key=" . urlencode($value);
       }
@@ -75,8 +75,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $file_path = __DIR__ . '/uploads/';
         move_uploaded_file($_FILES["userpic-file-photo"]['tmp_name'], $file_path . $file_name);
         $photo = urlencode('uploads/' . $file_name);
-      } else if (!empty($_POST["link-download-if-reload"])) {
-        $photo = $_POST["link-download-if-reload"];
+      } else if (!empty($valuesAfterTest["link-download-if-reload"])) {
+        $photo = $valuesAfterTest["link-download-if-reload"];
       }
 
       if (!empty($_POST["link-download-if-reload"]) || !empty($_FILES["userpic-file-photo"]['tmp_name'])) {
@@ -87,8 +87,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     } else {
 
       if ($_POST["photo-link"] && empty($_FILES["userpic-file-photo"]['tmp_name']) && empty($_POST["link-download-if-reload"])) {
-        downloadPhotoFromWebLink($_POST["photo-link"]);
-        $photo = '/uploads/' . getEndPath($_POST["photo-link"], '/');
+        downloadPhotoFromWebLink($valuesAfterTest["photo-link"]);
+        $photo = '/uploads/' . getEndPath($valuesAfterTest["photo-link"], '/');
       } else if ($_FILES["userpic-file-photo"]['tmp_name']) {
         if (!empty($_POST["link-download-if-reload"])) {
           unlink($_POST["link-download-if-reload"]);
@@ -98,11 +98,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         move_uploaded_file($_FILES["userpic-file-photo"]['tmp_name'], $file_path . $file_name);
         $photo = '/uploads/' . $_FILES["userpic-file-photo"]['name'];
       } else {
-        $photo = $_POST["link-download-if-reload"];
+        $photo = $valuesAfterTest["link-download-if-reload"];
       }
 
-      $heading = $_POST["photo-heading"];
-      $id = transactionForAddPosts($con, $_POST["photo-tags"], "INSERT INTO posts (post_date, title, content_type, image_link, id_user, number_of_views) VALUE (NOW(), '$heading', 'post-photo', '$photo', $userId, 0)");
+      $heading = $valuesAfterTest["photo-heading"];
+      $id = transactionForAddPosts($con, $valuesAfterTest["photo-tags"], "INSERT INTO posts (post_date, title, content_type, image_link, id_user, number_of_views) VALUE (NOW(), '$heading', 'post-photo', '$photo', $userId, 0)");
       if ($id === 'error') {
         print('При отправке данных на сервер произошла ошибка, попробуйте перезагрузить страницу и повторите попытку');
         header($location);
@@ -117,13 +117,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $location = "Location: /add.php?filter=video";
 
     foreach ($_POST as $key => $value) {
-      test_input($con, $value);
+      $valuesAfterTest[$key] = test_input($con, $value);
     }
 
     $errors = [
-      'resultHeading' => validateLength($_POST["video-heading"], 5, 20),
-      'resultLink' => validateVideo($_POST["video-link"]),
-      'resultTags' => validateTags($_POST["video-tags"])
+      'resultHeading' => validateLength($valuesAfterTest["video-heading"], 5, 20),
+      'resultLink' => validateVideo($valuesAfterTest["video-link"]),
+      'resultTags' => validateTags($valuesAfterTest["video-tags"])
     ];
 
     foreach ($errors as $key => $value) {
@@ -133,16 +133,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       }
     }
 
-    if ($error) {
+    if (isset($error) && $error === true) {
       foreach ($_POST as $key => $value) {
         $location .= "&$key=" . urlencode($value);
       }
 
       header($location);
     } else {
-      $linkVideo = $_POST["video-link"];
-      $heading = $_POST["video-heading"];
-      $id = transactionForAddPosts($con, $_POST["video-tags"], "INSERT INTO posts (post_date, title, content_type, video_link, id_user, number_of_views) VALUE (NOW(), '$heading', 'post-video', '$linkVideo', $userId, 0)");
+      $linkVideo = $valuesAfterTest["video-link"];
+      $heading = $valuesAfterTest["video-heading"];
+      $id = transactionForAddPosts($con, $valuesAfterTest["video-tags"], "INSERT INTO posts (post_date, title, content_type, video_link, id_user, number_of_views) VALUE (NOW(), '$heading', 'post-video', '$linkVideo', $userId, 0)");
       if ($id === 'error') {
         print('При отправке данных на сервер произошла ошибка, попробуйте перезагрузить страницу и повторите попытку');
         header($location);
@@ -157,13 +157,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $location = "Location: /add.php?filter=text";
 
     foreach ($_POST as $key => $value) {
-      test_input($con, $value);
+      $valuesAfterTest[$key] = test_input($con, $value);
     }
 
     $errors = [
-      'resultHeading' => validateLength($_POST["text-heading"], 5, 20),
-      'resultText' => validateLength($_POST["text-text"], 30, 600),
-      'resultTags' => validateTags($_POST["text-tags"])
+      'resultHeading' => validateLength($valuesAfterTest["text-heading"], 5, 20),
+      'resultText' => validateLength($valuesAfterTest["text-text"], 30, 600),
+      'resultTags' => validateTags($valuesAfterTest["text-tags"])
     ];
 
     foreach ($errors as $key => $value) {
@@ -173,16 +173,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       }
     }
 
-    if ($error) {
+    if (isset($error) && $error === true) {
       foreach ($_POST as $key => $value) {
         $location .= "&$key=" . urlencode($value);
       }
 
       header($location);
     } else {
-      $heading = $_POST["text-heading"];
-      $text = $_POST["text-text"];
-      $id = transactionForAddPosts($con, $_POST["text-tags"], "INSERT INTO posts (post_date, title, content_type, text_content, id_user, number_of_views) VALUE (NOW(), '$heading', 'post-text', '$text', $userId, 0)");
+      $heading = $valuesAfterTest["text-heading"];
+      $text = $valuesAfterTest["text-text"];
+      $id = transactionForAddPosts($con, $valuesAfterTest["text-tags"], "INSERT INTO posts (post_date, title, content_type, text_content, id_user, number_of_views) VALUE (NOW(), '$heading', 'post-text', '$text', $userId, 0)");
       if ($id === 'error') {
         print('При отправке данных на сервер произошла ошибка, попробуйте перезагрузить страницу и повторите попытку');
         header($location);
@@ -197,14 +197,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $location = "Location: /add.php?filter=quote";
 
     foreach ($_POST as $key => $value) {
-      test_input($con, $value);
+      $valuesAfterTest[$key] = test_input($con, $value);
     }
 
     $errors = [
-      'resultHeading' => validateLength($_POST["quote-heading"], 5, 20),
-      'resultText' => validateLength($_POST["quote-text"], 30, 100),
-      'resultAuthor' => validateLength($_POST["quote-author"], 5, 20),
-      'resultTags' => validateTags($_POST["quote-tags"])
+      'resultHeading' => validateLength($valuesAfterTest["quote-heading"], 5, 20),
+      'resultText' => validateLength($valuesAfterTest["quote-text"], 30, 100),
+      'resultAuthor' => validateLength($valuesAfterTest["quote-author"], 5, 20),
+      'resultTags' => validateTags($valuesAfterTest["quote-tags"])
     ];
 
     foreach ($errors as $key => $value) {
@@ -214,17 +214,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       }
     }
 
-    if ($error) {
+    if (isset($error) && $error === true) {
       foreach ($_POST as $key => $value) {
         $location .= "&$key=" . urlencode($value);
       }
 
       header($location);
     } else {
-      $heading = $_POST["quote-heading"];
-      $text = $_POST["quote-text"];
-      $author = $_POST["quote-author"];
-      $id = transactionForAddPosts($con, $_POST["quote-tags"], "INSERT INTO posts (post_date, title, content_type, text_content, quote_author, id_user, number_of_views) VALUE (NOW(), '$heading', 'post-quote', '$text', '$author', $userId, 0)");
+      $heading = $valuesAfterTest["quote-heading"];
+      $text = $valuesAfterTest["quote-text"];
+      $author = $valuesAfterTest["quote-author"];
+      $id = transactionForAddPosts($con, $valuesAfterTest["quote-tags"], "INSERT INTO posts (post_date, title, content_type, text_content, quote_author, id_user, number_of_views) VALUE (NOW(), '$heading', 'post-quote', '$text', '$author', $userId, 0)");
       if ($id === 'error') {
         print('При отправке данных на сервер произошла ошибка, попробуйте перезагрузить страницу и повторите попытку');
         header($location);
@@ -239,13 +239,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $location = "Location: /add.php?filter=link";
 
     foreach ($_POST as $key => $value) {
-      test_input($con, $value);
+      $valuesAfterTest[$key] = test_input($con, $value);
     }
 
     $errors = [
-      'resultHeading' => validateLength($_POST["link-heading"], 5, 20),
-      'resultText' => validateWebLink($_POST["link-link"]),
-      'resultTags' => validateTags($_POST["link-tags"]),
+      'resultHeading' => validateLength($valuesAfterTest["link-heading"], 5, 20),
+      'resultLink' => validateWebLink($valuesAfterTest["link-link"]),
+      'resultTags' => validateTags($valuesAfterTest["link-tags"]),
     ];
 
     foreach ($errors as $key => $value) {
@@ -255,16 +255,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       }
     }
 
-    if ($error) {
+    if (isset($error) && $error === true) {
       foreach ($_POST as $key => $value) {
         $location .= "&$key=" . urlencode($value);
       }
 
       header($location);
     } else {
-      $link = $_POST["link-link"];
-      $heading = $_POST["link-heading"];
-      $id = transactionForAddPosts($con, $_POST["link-tags"], "INSERT INTO posts (post_date, title, content_type, website_link, id_user, number_of_views) VALUE (NOW(), '$heading', 'post-link', '$link', $userId, 0)");
+      $link = $valuesAfterTest["link-link"];
+      $heading = $valuesAfterTest["link-heading"];
+      $id = transactionForAddPosts($con, $valuesAfterTest["link-tags"], "INSERT INTO posts (post_date, title, content_type, website_link, id_user, number_of_views) VALUE (NOW(), '$heading', 'post-link', '$link', $userId, 0)");
       if ($id === 'error') {
         print('При отправке данных на сервер произошла ошибка, попробуйте перезагрузить страницу и повторите попытку');
         header($location);

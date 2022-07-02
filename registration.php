@@ -3,6 +3,8 @@ require 'util/helpers.php';
 require 'util/mysql.php';
 require 'util/validate.php';
 
+$con = connect();
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $location = "Location: /registration.php?registration=1";
 
@@ -25,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
   }
 
-  if ($error) {
+  if (isset($error) && $error === true) {
     foreach ($_POST as $key => $value) {
       $location .= "&$key=" . urlencode($value);
     }
@@ -57,6 +59,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       $photo = '/uploads/' . $_FILES["userpic-file-photo"]['name'];
     } else if (!empty($_POST["link-download-if-reload"])) {
       $photo = $_POST["link-download-if-reload"];
+    } else {
+      $photo = '';
     }
 
     $password = password_hash($_POST["password"], PASSWORD_BCRYPT);
@@ -67,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   }
 }
 
-if ($_GET['registration'] === '1') {
+if (isset($_GET['registration']) && $_GET['registration'] === '1') {
   $page_content = include_template('reg-template.php');
   $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'readme: добавление публикации']);
 }

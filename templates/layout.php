@@ -90,7 +90,7 @@
           micro blogging
         </p>
       </div>
-      <? if (empty($_GET['registration'])) : ?>
+      <?php if (empty($_GET['registration'])) : ?>
         <form class="header__search-form form" action="/search.php" method="get" autocomplete="off">
           <div class="header__search">
             <label class="visually-hidden">Поиск</label>
@@ -152,9 +152,9 @@
                         <a class="header__profile-nav-link" href="/messages.php">
                           <span class="header__profile-nav-text">
                             Сообщения
-                            <? if ($res = getCountNoCheckedMessages($_SESSION['userId'])) : ?>
+                            <?php if ($res = getCountNoCheckedMessages($_SESSION['userId'])) : ?>
                               <i class="header__profile-indicator"><?= $res; ?></i>
-                            <? endif; ?>
+                            <?php endif; ?>
                           </span>
                         </a>
                       </li>
@@ -170,20 +170,20 @@
                   </div>
                 </div>
               </li>
-              <? if ($_SERVER['SCRIPT_NAME'] !== '/add.php') : ?>
+              <?php if ($_SERVER['SCRIPT_NAME'] !== '/add.php') : ?>
                 <li>
                   <a class="header__post-button button button--transparent" href="/add.php?filter=text">Пост</a>
                 </li>
-              <? else : ?>
+              <?php else : ?>
                 <li>
                   <a class="header__post-button header__post-button--active button button--transparent" href="/feed.php?filter=all">Закрыть</a>
                 </li>
-              <? endif; ?>
+              <?php endif; ?>
             </ul>
           </nav>
         </div>
-      <? endif; ?>
-      <? if (!empty($_GET['registration'])) : ?>
+      <?php endif; ?>
+      <?php if (!empty($_GET['registration'])) : ?>
         <ul class="header__user-nav">
           <li class="header__authorization">
             <a class="header__user-button header__authorization-button button" href="/login.php">Вход</a>
@@ -192,7 +192,7 @@
             <a class="header__user-button header__user-button--active header__register-button button">Регистрация</a>
           </li>
         </ul>
-      <? endif; ?>
+      <?php endif; ?>
     </div>
   </header>
   <main class="content"><?= $content; ?></main>
@@ -250,9 +250,9 @@
       </div>
     </div>
   </footer>
-  <? if ((isset($_GET['filter']) && $_GET['filter'] === 'photo') || (isset($_GET['registration']) && $_GET['registration'] === '1')) : ?>
+  <?php if ((isset($_GET['filter']) && $_GET['filter'] === 'photo') || (isset($_GET['registration']) && $_GET['registration'] === '1')) : ?>
     <script src="js/helpers.js"></script>
-  <? endif; ?>
+  <?php endif; ?>
 </body>
 
 </html>

@@ -22,20 +22,20 @@
             <span class="profile__rating-text user__rating-text"><?= get_noun_plural_form($subscriptionsAmount, 'подписчик', 'подписчика', 'подписчиков'); ?></span>
           </p>
         </div>
-        <? if (!$isMyProfile) : ?>
+        <?php if (!$isMyProfile) : ?>
           <div class="profile__user-buttons user__buttons">
-            <? if ($amISubOnMainProfile === 0) : ?>
+            <?php if ($amISubOnMainProfile === 0) : ?>
               <div class="profile__user-button user__button user__button--subscription button button--main">
                 <a class="" href="/sub.php?sub=sub&id=<?= $_GET['id']; ?>">Подписаться</a>
               </div>
-            <? else : ?>
+            <?php else : ?>
               <div class="profile__user-button user__button user__button--subscription button button--quartz">
                 <a class="" href="/sub.php?sub=onsub&id=<?= $_GET['id']; ?>">Отписаться</a>
               </div>
-            <? endif; ?>
-            <a class="profile__user-button user__button user__button--writing button button--green" href="/messages.php?dialogWithUser=<?= $_GET['id']; ?>&newMessage=1">Сообщение</a>
+            <?php endif; ?>
+            <a class="profile__user-button user__button user__button--writing button button--green" href="/messages.php?dialogWithUser=<?= $_GET['id']; ?>">Сообщение</a>
           </div>
-        <? endif; ?>
+        <?php endif; ?>
       </div>
     </div>
     <div class="profile__tabs-wrapper tabs">
@@ -55,14 +55,14 @@
           </ul>
         </div>
         <div class="profile__tab-content">
-          <? if ($_GET['active'] === 'posts') : ?>
+          <?php if ($_GET['active'] === 'posts') : ?>
             <section class="profile__posts tabs__content <?= $_GET['active'] === 'posts' ? 'tabs__content--active' : ''; ?>">
               <h2 class="visually-hidden">Публикации</h2>
-              <? if (isset($postsByUser)) : ?>
+              <?php if (isset($postsByUser)) : ?>
                 <?php foreach ($postsByUser as $key => $post) : ?>
                   <article class="profile__post post <?= $post['content_type']; ?>">
                     <header class="post__header">
-                      <? if ($post['repost'] === '1') : ?>
+                      <?php if ($post['repost'] === '1') : ?>
                         <div class="post__author">
                           <a class="post__author-link" href="#" title="Автор">
                             <div class="post__avatar-wrapper post__avatar-wrapper--repost">
@@ -74,9 +74,9 @@
                           </a>
                         </div>
                         <h2><a href="/post.php?post-id=<?= $post["id_post"]; ?>"><?= $post['title']; ?></a></h2>
-                      <? else : ?>
+                      <?php else : ?>
                         <h2><a href="/post.php?post-id=<?= $post["id_post"]; ?>"><?= $post['title']; ?></a></h2>
-                      <? endif; ?>
+                      <?php endif; ?>
                     </header>
                     <div class="post__main">
                       <?php if ($post["content_type"] === "post-quote") : ?>
@@ -152,11 +152,11 @@
                           </a>
                         </div>
                         <time class="post__time" datetime="<?= $dataForDatatime = date('Y-m-d H:i:s', strtotime($post["post_date"])); ?>" title="<?= date('%d.%m.%Y %H:%M', strtotime($post["post_date"])); ?>">
-                          <? if (empty(createTextForDate($dataForDatatime))) : ?>
+                          <?php if (empty(createTextForDate($dataForDatatime))) : ?>
                             только что
-                          <? else : ?>
+                          <?php else : ?>
                             <?= createTextForDate($dataForDatatime); ?> назад
-                          <? endif; ?>
+                          <?php endif; ?>
                         </time>
                       </div>
                       <ul class="post__tags">
@@ -164,21 +164,21 @@
                         $tags = ($post["tags"]);
                         $tags = explode(' ', $tags);
                         ?>
-                        <? foreach ($tags as $key => $tag) : ?>
+                        <?php foreach ($tags as $key => $tag) : ?>
                           <li><a href="/search.php?search=<?= urlencode($tag); ?>"><?= $tag ?></a></li>
-                        <? endforeach; ?>
+                        <?php endforeach; ?>
                       </ul>
                     </footer>
-                    <? if (!empty($post['comments']) && !isset($_GET['showcomments'])) : ?>
+                    <?php if (!empty($post['comments']) && !isset($_GET['showcomments'])) : ?>
                       <div class="comments">
                         <a class="comments__button button" href="/profile.php?id=<?= $_GET['id']; ?>&active=posts&showcomments=1">Показать комментарии</a>
                       </div>
-                    <? endif; ?>
+                    <?php endif; ?>
                     <div class="comments">
                       <div class="comments__list-wrapper">
                         <ul class="comments__list">
-                          <? if (isset($_GET['showcomments']) && !empty($post['comments'])) : ?>
-                            <? foreach ($post['comments'] as $key => $comment) : ?>
+                          <?php if (isset($_GET['showcomments']) && !empty($post['comments'])) : ?>
+                            <?php foreach ($post['comments'] as $key => $comment) : ?>
                               <li class="comments__item user">
                                 <div class="comments__avatar">
                                   <a class="user__avatar-link" href="/profile.php?id=<?= $comment["id_user"]; ?>&active=posts">
@@ -197,18 +197,18 @@
                                   </p>
                                 </div>
                               </li>
-                            <? endforeach; ?>
-                          <? endif; ?>
+                            <?php endforeach; ?>
+                          <?php endif; ?>
                         </ul>
-                        <? if (isset($post['moreCommentsExist']) && isset($_GET['showcomments'])) : ?>
+                        <?php if (isset($post['moreCommentsExist']) && isset($_GET['showcomments'])) : ?>
                           <a class="comments__more-link" href="/profile.php?id=<?= $_GET['id']; ?>&active=posts&showcomments=1&comments=1">
                             <span>Показать все комментарии</span>
                             <sup class="comments__amount"><?= $post['moreCommentsExist']; ?></sup>
                           </a>
-                        <? endif; ?>
+                        <?php endif; ?>
                       </div>
                     </div>
-                    <? if (isset($_GET['showcomments'])) : ?>
+                    <?php if (isset($_GET['showcomments'])) : ?>
 
                       <form class="comments__form form" action="/comment.php" method="post">
 
@@ -221,29 +221,29 @@
                           <input class="visually-hidden" name="id" value="<?= $post['id_post']; ?>">
                           <label class="visually-hidden">Ваш комментарий</label>
 
-                          <? if (isset($_GET['error'])) : ?>
+                          <?php if (isset($_GET['error'])) : ?>
                             <button class="form__error-button button" type="button">!</button>
                             <div class="form__error-text">
                               <h3 class="form__error-title">Ошибка валидации</h3>
                               <p class="form__error-desc"><?= $_GET['error']; ?></p>
                             </div>
-                          <? endif; ?>
+                          <?php endif; ?>
                         </div>
                         <button class="comments__submit button button--green" type="submit">Отправить</button>
                       </form>
 
-                    <? endif; ?>
+                    <?php endif; ?>
                   </article>
-                <? endforeach; ?>
-              <? endif; ?>
+                <?php endforeach; ?>
+              <?php endif; ?>
 
             </section>
 
-          <? elseif ($_GET['active'] === 'likes') : ?>
+          <?php elseif ($_GET['active'] === 'likes') : ?>
             <section class="profile__likes tabs__content <?= $_GET['active'] === 'likes' ? 'tabs__content--active' : ''; ?>">
               <h2 class="visually-hidden">Лайки</h2>
               <ul class="profile__likes-list">
-                <? if (isset($likes)) : ?>
+                <?php if (isset($likes)) : ?>
                   <?php foreach ($likes as $key => $like) : ?>
                     <li class="post-mini post-mini--photo post user">
                       <div class="post-mini__user-info user__info">
@@ -264,28 +264,28 @@
                       </div>
                       <div class="post-mini__preview">
                         <a class="post-mini__link" href="/post.php?post-id=<?= $like['id_post']; ?>" title="Перейти на публикацию">
-                          <? if ($like['content_type'] === 'post-quote') : ?>
+                          <?php if ($like['content_type'] === 'post-quote') : ?>
                             <span class="visually-hidden">Цитата</span>
                             <svg class="post-mini__preview-icon" width="21" height="20">
                               <use xlink:href="#icon-filter-quote"></use>
                             </svg>
-                          <? elseif ($like['content_type'] === 'post-text') : ?>
+                          <?php elseif ($like['content_type'] === 'post-text') : ?>
                             <span class="visually-hidden">Текст</span>
                             <svg class="post-mini__preview-icon" width="20" height="21">
                               <use xlink:href="#icon-filter-text"></use>
                             </svg>
                             <span class="visually-hidden">Текст</span>
-                          <? elseif ($like['content_type'] === 'post-link') : ?>
+                          <?php elseif ($like['content_type'] === 'post-link') : ?>
                             <span class="visually-hidden">Ссылка</span>
                             <svg class="post-mini__preview-icon" width="21" height="18">
                               <use xlink:href="#icon-filter-link"></use>
                             </svg>
-                          <? elseif ($like['content_type'] === 'post-photo') : ?>
+                          <?php elseif ($like['content_type'] === 'post-photo') : ?>
                             <div class="post-mini__image-wrapper">
                               <img class="post-mini__image" src="<?= $like['image_link']; ?>" width="109" height="109" alt="Превью публикации">
                             </div>
                             <span class="visually-hidden">Фото</span>
-                          <? elseif ($like['content_type'] === 'post-video') : ?>
+                          <?php elseif ($like['content_type'] === 'post-video') : ?>
                             <div class="post-mini__image-wrapper">
                               <?= embed_youtube_cover($like["video_link"], 109, 109, 'post-mini__image'); ?>
                               <span class="post-mini__play-big">
@@ -295,20 +295,20 @@
                               </span>
                             </div>
                             <span class="visually-hidden">Видео</span>
-                          <? endif; ?>
+                          <?php endif; ?>
                         </a>
                       </div>
                     </li>
-                  <? endforeach; ?>
-                <? endif; ?>
+                  <?php endforeach; ?>
+                <?php endif; ?>
               </ul>
             </section>
 
-          <? elseif ($_GET['active'] === 'subs') : ?>
+          <?php elseif ($_GET['active'] === 'subs') : ?>
             <section class="profile__subscriptions tabs__content <?= $_GET['active'] === 'subs' ? 'tabs__content--active' : ''; ?>">
               <h2 class="visually-hidden">Подписки</h2>
               <ul class="profile__subscriptions-list">
-                <? if (isset($subs)) : ?>
+                <?php if (isset($subs)) : ?>
                   <?php foreach ($subs as $key => $sub) : ?>
                     <li class="post-mini post-mini--photo post user">
                       <div class="post-mini__user-info user__info">
@@ -335,21 +335,21 @@
                           <span class="post-mini__rating-text user__rating-text"><?= get_noun_plural_form($sub['subsAmount'], 'подписчик', 'подписчика', 'подписчиков') ?></span>
                         </p>
                       </div>
-                      <? if ($sub['amISub'] === '0' && $sub['id_user'] !== $_SESSION['userId']) : ?>
+                      <?php if ($sub['amISub'] === '0' && $sub['id_user'] !== $_SESSION['userId']) : ?>
                         <div class="post-mini__user-buttons user__buttons">
-                          <a class="post-mini__user-button user__button user__button--subscription button button--main" href="/sub.php?sub=sub&id=<?= $sub['id_receiver_sub']; ?>">Подписаться</a>
+                          <a class="post-mini__user-button user__button user__button--subscription button button--main" href="/sub.php?sub=sub&id=<?= $sub['id_user']; ?>">Подписаться</a>
                         </div>
-                      <? elseif ($sub['amISub'] !== '0' && $sub['id_user'] !== $_SESSION['userId']) : ?>
+                      <?php elseif ($sub['amISub'] !== '0' && $sub['id_user'] !== $_SESSION['userId']) : ?>
                         <div class="post-mini__user-buttons user__buttons">
-                          <a class="post-mini__user-button user__button user__button--subscription button button--quartz" href="/sub.php?sub=onsub&id=<?= $sub['id_receiver_sub']; ?>">Отписаться</a>
+                          <a class="post-mini__user-button user__button user__button--subscription button button--quartz" href="/sub.php?sub=onsub&id=<?= $sub['id_user']; ?>">Отписаться</a>
                         </div>
-                      <? endif; ?>
+                      <?php endif; ?>
                     </li>
-                  <? endforeach; ?>
-                <? endif; ?>
+                  <?php endforeach; ?>
+                <?php endif; ?>
               </ul>
             </section>
-          <? endif; ?>
+          <?php endif; ?>
         </div>
       </div>
     </div>

@@ -127,7 +127,7 @@
       <section class="authorization">
         <h2 class="visually-hidden">Авторизация</h2>
         <form class="authorization__form form" action="/index.php" method="post" enctype="multipart/form-data" autocomplete="off">
-          <? if (empty($_GET)) : ?>
+          <?php if (empty($_GET)) : ?>
             <div class="authorization__input-wrapper form__input-wrapper">
               <input class="authorization__input authorization__input--login form__input" type="text" name="login" placeholder="Логин">
               <svg class="form__input-icon" width="19" height="18">
@@ -145,7 +145,7 @@
             <a class="authorization__recovery" href="#">Восстановить пароль</a>
             <button class="authorization__submit button button--main" type="submit">Войти</button>
 
-          <? else : ?>
+          <?php else : ?>
 
             <div class="authorization__input-wrapper form__input-wrapper">
               <div class="form__input-section form__input-section--error">
@@ -165,11 +165,11 @@
                 </svg>
                 <label class="visually-hidden">Пароль</label>
               </div>
-              <span class="form__error-label"><?= !empty($_GET['passError']) ? $_GET['passError'] : null ?></span>
+              <span class="form__error-label"><?= !empty($_GET['passError']) ? $_GET['passError'] : '' ?></span>
             </div>
             <a class="authorization__recovery" href="#">Восстановить пароль</a>
             <button class="authorization__submit button button--main" type="submit">Войти</button>
-          <? endif; ?>
+          <?php endif; ?>
         </form>
       </section>
     </div>

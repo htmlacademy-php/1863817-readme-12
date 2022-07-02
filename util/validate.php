@@ -1,5 +1,7 @@
 <?php
 
+
+
 /**
  * Убирает из параметра запроса/текстового поля sql/xss иньекции
  * @param object $con ресурс соединения с бд
@@ -106,7 +108,7 @@ function validatePassword($value)
     $textErrors[] = 'Пароль должен содержать только цифры и буквы латинского алфавита, без использования спецсимволов или пробелов';
   }
 
-  if (count($textErrors) > 1) {
+  if (isset($textError) && count($textErrors) > 1) {
     $textErrors = implode('<br>', $textErrors);
   }
 
@@ -305,10 +307,10 @@ function validateLength($name, $min, $max)
     return $textError = 'Это поле должно быть заполнено';
   }
 
-  $len = iconv_strlen($name);
+  $len = iconv_strlen(trim($name));
 
   if ($len > $max || $len < $min) {
-    return $textError = "Значение должно быть от $min до $max символов $len";
+    return $textError = "Значение должно быть от $min до $max символов";
   } else {
     return false;
   }

@@ -8,8 +8,8 @@
       <div class="feed__main-wrapper">
         <div class="feed__wrapper">
 
-          <? if (isset($posts)) : ?>
-            <? foreach ($posts as $key => $post) : ?>
+          <?php if (isset($posts)) : ?>
+            <?php foreach ($posts as $key => $post) : ?>
 
               <article class="feed__post post <?= $post['content_type']; ?>">
                 <header class="post__header post__author">
@@ -20,16 +20,17 @@
                     <div class="post__info">
                       <b class="post__author-name"><?= $post["user_login"]; ?></b>
                       <time class="post__time" datetime="<?= $dataForDatatime = date('Y-m-d H:i:s', strtotime($post["post_date"])); ?>" title="<?= date('%d.%m.%Y %H:%M', strtotime($post["post_date"])); ?>">
-                        <? if (empty(createTextForDate($dataForDatatime))) : ?>
+                        <?php if (empty(createTextForDate($dataForDatatime))) : ?>
                           только что
-                        <? else : ?>
+                        <?php else : ?>
                           <?= createTextForDate($dataForDatatime); ?> назад
-                        <? endif; ?>
+                        <?php endif; ?>
                       </time>
                     </div>
                   </a>
                 </header>
                 <div class="post__main">
+                  <h2><a href="/post.php?post-id=<?= $post["id_post"]; ?>"><?= $post["title"]; ?></a></h2>
                   <?php if ($post["content_type"] === "post-quote") : ?>
                     <blockquote>
                       <p>
@@ -44,7 +45,7 @@
                     </p>
                     <?php if ($cut) : ?>
                       <div class="post-text__more-link-wrapper">
-                        <a class="post-text__more-link" href="#">Читать далее</a>
+                        <a class="post-text__more-link" href="/post.php?post-id=<?= $post["id_post"]; ?>">Читать далее</a>
                       </div>
                     <?php endif; ?>
                   <?php elseif ($post["content_type"] === "post-photo") : ?>
@@ -55,7 +56,7 @@
                     <div class="post-video__block">
                       <div class="post-video__preview">
                         <a href='<?= $post["video_link"]; ?>'>
-                          <?= embed_youtube_cover($post["video_link"], 320, 120); ?>
+                          <?= embed_youtube_cover($post["video_link"], 758, 300); ?>
                         </a>
                       </div>
                       <a href="post-details.html" class="post-video__play-big button">
@@ -110,8 +111,8 @@
                   </div>
                 </footer>
               </article>
-            <? endforeach; ?>
-          <? endif; ?>
+            <?php endforeach; ?>
+          <?php endif; ?>
         </div>
       </div>
       <ul class="feed__filters filters">

@@ -1,5 +1,7 @@
 <?php
 
+
+
 /**
  * Устанавливает соединение с бд
  * @return object в случаи успешного соединения возвращает объект соединения
@@ -8,7 +10,7 @@
 function connect()
 {
   $con =  mysqli_connect("127.0.0.1", "root", "", "readme");
-  mysqli_set_charset($con, "utf8");
+  mysqli_set_charset($con, "utf8mb4");
 
   return $con;
 }
@@ -24,7 +26,7 @@ function doQuery($conWithDatabase, $sql)
 {
   $result = mysqli_query($conWithDatabase, $sql);
 
-  if (isset($result)) {
+  if (isset($result) && $result !== false) {
     $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
     return $rows;
   } else {

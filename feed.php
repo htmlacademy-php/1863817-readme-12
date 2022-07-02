@@ -19,7 +19,8 @@ if ($_GET['filter'] === 'all') {
 
 $sql = "SELECT posts.*, users.user_login, users.avatar_link, COUNT(likes.id_post) AS likes_count,
 (SELECT COUNT(*) FROM comments WHERE comments.id_post = posts.id_post) AS comments_count,
-(SELECT COUNT(*) FROM posts AS second_posts WHERE posts.id_post = second_posts.original_post_id) AS reposts_count
+(SELECT COUNT(*) FROM posts AS second_posts WHERE posts.id_post = second_posts.original_post_id) AS reposts_count,
+(SELECT COUNT(*) FROM likes WHERE likes.id_post = posts.id_post AND likes.id_user = $userId) AS amILikeThisPost
 FROM posts
 JOIN users ON posts.id_user = users.id_user
 JOIN subscriptions ON posts.id_user = subscriptions.id_receiver_sub

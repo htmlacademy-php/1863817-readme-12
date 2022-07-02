@@ -8,7 +8,7 @@
         <b class="popular__sorting-caption sorting__caption">Сортировка:</b>
         <ul class="popular__sorting-list sorting__list">
           <li class="sorting__item sorting__item--popular">
-            <a class="sorting__link <?= $_GET['sort'] === 'popular' ? 'sorting__link--active' : ''; ?>" href="/popular.php?sort=popular&post=popular">
+            <a class="sorting__link <?= isset($_GET['sort']) && $_GET['sort'] === 'popular' ? 'sorting__link--active' : ''; ?>" href="/popular.php?sort=popular<?= isset($_GET['post']) ? '&post=' .  $_GET['post'] : ''; ?>">
               <span>Популярность</span>
               <svg class="sorting__icon" width="10" height="12">
                 <use xlink:href="#icon-sort"></use>
@@ -16,7 +16,7 @@
             </a>
           </li>
           <li class="sorting__item">
-            <a class="sorting__link <?= $_GET['sort'] === 'likes' ? 'sorting__link--active' : ''; ?>" href="/popular.php?sort=likes&post=likes">
+            <a class="sorting__link <?= isset($_GET['sort']) && $_GET['sort'] === 'likes' ? 'sorting__link--active' : ''; ?>" href="/popular.php?sort=likes<?= isset($_GET['post']) ? '&post=' .  $_GET['post'] : ''; ?>">
               <span>Лайки</span>
               <svg class="sorting__icon" width="10" height="12">
                 <use xlink:href="#icon-sort"></use>
@@ -24,7 +24,7 @@
             </a>
           </li>
           <li class="sorting__item">
-            <a class="sorting__link <?= $_GET['sort'] === 'data' ? 'sorting__link--active' : ''; ?>" href="/popular.php?sort=data&post=data">
+            <a class="sorting__link <?= isset($_GET['sort']) && $_GET['sort'] === 'data' ? 'sorting__link--active' : ''; ?>" href="/popular.php?sort=data<?= isset($_GET['post']) ? '&post=' .  $_GET['post'] : ''; ?>">
               <span>Дата</span>
               <svg class="sorting__icon" width="10" height="12">
                 <use xlink:href="#icon-sort"></use>
@@ -37,12 +37,12 @@
         <b class="popular__filters-caption filters__caption">Тип контента:</b>
         <ul class="popular__filters-list filters__list">
           <li class="popular__filters-item popular__filters-item--all filters__item filters__item--all">
-            <a class="filters__button filters__button--ellipse filters__button--all <?= $_GET['post'] === 'all' ? 'filters__button--active' : '' ?>" href="/popular.php?page=1&post=all">
+            <a class="filters__button filters__button--ellipse filters__button--all <?= isset($_GET['post']) && $_GET['post'] === 'all' ? 'filters__button--active' : '' ?>" href="/popular.php?page=1&post=all">
               <span>Все</span>
             </a>
           </li>
           <li class="popular__filters-item filters__item">
-            <a class="filters__button filters__button--photo button <?= $_GET['post'] === '3' ? 'filters__button--active' : '' ?>" href="/popular.php?post=3">
+            <a class="filters__button filters__button--photo button <?= isset($_GET['post']) && $_GET['post'] === '3' ? 'filters__button--active' : '' ?>" href="/popular.php?page=1&post=3">
               <span class="visually-hidden">Фото</span>
               <svg class="filters__icon" width="22" height="18">
                 <use xlink:href="#icon-filter-photo"></use>
@@ -50,7 +50,7 @@
             </a>
           </li>
           <li class="popular__filters-item filters__item">
-            <a class="filters__button filters__button--video button <?= $_GET['post'] === '5' ? 'filters__button--active' : '' ?>" href="/popular.php?page=1&post=5">
+            <a class="filters__button filters__button--video button <?= isset($_GET['post']) && $_GET['post'] === '5' ? 'filters__button--active' : '' ?>" href="/popular.php?page=1&post=5">
               <span class="visually-hidden">Видео</span>
               <svg class="filters__icon" width="24" height="16">
                 <use xlink:href="#icon-filter-video"></use>
@@ -58,7 +58,7 @@
             </a>
           </li>
           <li class="popular__filters-item filters__item">
-            <a class="filters__button filters__button--text button <?= $_GET['post'] === '2' ? 'filters__button--active' : '' ?>" href="/popular.php?page=1&post=2">
+            <a class="filters__button filters__button--text button <?= isset($_GET['post']) && $_GET['post'] === '2' ? 'filters__button--active' : '' ?>" href="/popular.php?page=1&post=2">
               <span class="visually-hidden">Текст</span>
               <svg class="filters__icon" width="20" height="21">
                 <use xlink:href="#icon-filter-text"></use>
@@ -66,7 +66,7 @@
             </a>
           </li>
           <li class="popular__filters-item filters__item">
-            <a class="filters__button filters__button--quote button <?= $_GET['post'] === '1' ? 'filters__button--active' : '' ?>" href="/popular.php?page=1&post=1">
+            <a class="filters__button filters__button--quote button <?= isset($_GET['post']) && $_GET['post'] === '1' ? 'filters__button--active' : '' ?>" href="/popular.php?page=1&post=1">
               <span class="visually-hidden">Цитата</span>
               <svg class="filters__icon" width="21" height="20">
                 <use xlink:href="#icon-filter-quote"></use>
@@ -74,7 +74,7 @@
             </a>
           </li>
           <li class="popular__filters-item filters__item">
-            <a class="filters__button filters__button--link button <?= $_GET['post'] === '4' ? 'filters__button--active' : '' ?>" href="/popular.php?page=1&post=4">
+            <a class="filters__button filters__button--link button <?= isset($_GET['post']) && $_GET['post'] === '4' ? 'filters__button--active' : '' ?>" href="/popular.php?page=1&post=4">
               <span class="visually-hidden">Ссылка</span>
               <svg class="filters__icon" width="21" height="18">
                 <use xlink:href="#icon-filter-link"></use>
@@ -85,7 +85,7 @@
       </div>
     </div>
     <div class="popular__posts">
-      <?php if ($cards && is_array($cards)) : ?>
+      <?php if (isset($cards)) : ?>
         <?php foreach ($cards as $key => $card) : ?>
           <article class="popular__post post <?= $card["content_type"]; ?>">
             <header class="post__header">
@@ -154,11 +154,11 @@
                   <div class="post__info">
                     <b class="post__author-name"><?= $card["user_login"]; ?></b>
                     <time class="post__time" datetime="<?= $dataForDatatime = date('Y-m-d H:i:s', strtotime($card["post_date"])); ?>" title="<?= date('%d.%m.%Y %H:%M', strtotime($card["post_date"])); ?>">
-                      <? if (empty(createTextForDate($dataForDatatime))) : ?>
+                      <?php if (empty(createTextForDate($dataForDatatime))) : ?>
                         только что
-                      <? else : ?>
+                      <?php else : ?>
                         <?= createTextForDate($dataForDatatime); ?> назад
-                      <? endif; ?>
+                      <?php endif; ?>
                     </time>
                   </div>
                 </a>
@@ -189,15 +189,15 @@
         <?php endforeach; ?>
       <?php endif; ?>
     </div>
-    <? if (isset($linkForMorePage)) : ?>
+    <?php if (isset($pagesNavBlockExist)) : ?>
       <div class="popular__page-links">
-        <? if (isset($_GET['page']) && $_GET['page'] !== '1') : ?>
+        <?php if (isset($_GET['page']) && $_GET['page'] !== '1') : ?>
           <a class="popular__page-link popular__page-link--prev button button--gray" href="/popular.php?page=<?= $_GET['page'] * 1 - 1 ?>">Предыдущая страница</a>
-        <? endif; ?>
-        <? if (isset($noMorePages) && !$noMorePages) : ?>
+        <?php endif; ?>
+        <?php if (isset($morePagesExist) && $morePagesExist === 1) : ?>
           <a class="popular__page-link popular__page-link--next button button--gray" href="/popular.php?page=<?= $_GET['page'] * 1 + 1 ?>">Следующая страница</a>
-        <? endif; ?>
+        <?php endif; ?>
       </div>
-    <? endif; ?>
+    <?php endif; ?>
   </div>
 </section>
